@@ -1,0 +1,47 @@
+{
+  "workbench.activityBar.visible": false,
+  "workbench.colorTheme": "Rouge",
+  "workbench.iconTheme": "file-icons-colourless",
+  "editor.minimap.enabled": false,
+  "editor.tabSize": 2,
+  // "cSpell.userWords": [
+  //   "Enablement",
+  //   "Strategize",
+  //   "wireframes"
+  // ],
+  "markdownlint.config": {
+    "MD013": false,
+    "no-inline-html": false
+  },
+  "workbench.sideBar.location": "left",
+  "workbench.panel.defaultLocation": "right",
+  "terminal.integrated.shell.osx": "/usr/local/bin/fish",
+  "editor.fontFamily": "Operator Mono, Monaco, 'Courier New', monospace",
+  "eslint.alwaysShowStatus": true, // shows eslint in status bar
+  "eslint.options": {
+    "configFile": "/Users/josef.aidtibm.com/.config/.eslintrc.js"
+  },
+  "eslint.packageManager": "yarn",
+  "eslint.autoFixOnSave": true,
+  "editor.formatOnSave": false,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "html"
+  ],
+  // "editor.rulers": [80, 100, 120]
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact" // enables emmet for React
+  },
+  "emmet.syntaxProfiles": {
+    "javascript": "jsx"
+  },
+  "emmet.excludeLanguages": [
+    "graphql"
+  ],
+  "emmet.triggerExpansionOnTab": true, // expand imported React components
+  "emmet.showSuggestionsAsSnippets": true, // to get html tag completions before extension snippets
+  "editor.snippetSuggestions": "top", // show snippets before any other auto completion
+  "editor.multiCursorModifier": "alt", 
+  "editor.acceptSuggestionOnEnter": "off",
+}
