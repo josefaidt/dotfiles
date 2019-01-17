@@ -49,7 +49,7 @@ cp ./vim/.vimrc ~
 # source ~/.config/fish/fish.config
 
 # install ESLint and other npm packages (uses custom fish function)
-yarn add -D \
+yarn global add \
   eslint babel-eslint eslint-loader \
   prettier eslint-config-prettier eslint-plugin-prettier \
   eslint-config-standard eslint-plugin-standard \
