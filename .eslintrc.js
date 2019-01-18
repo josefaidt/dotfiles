@@ -11,7 +11,8 @@ module.exports = {
     'prettier',
     'react',
     'standard',
-    'jsx-a11y'
+    'jsx-a11y',
+    'html'
   ],
   parser: 'babel-eslint',
   parserOptions: {
@@ -115,6 +116,7 @@ module.exports = {
       'singleQuote': true,
       'semi': false,
       'tabWidth': 2,
+      'useTabs': false,
       'printWidth': 100,
       'bracketSpacing': true,
       'jsxBracketSameLine': false,

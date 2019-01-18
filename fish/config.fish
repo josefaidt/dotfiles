@@ -1,5 +1,5 @@
 if status --is-login
-	set --exporrt -g PATH $PATH ~/bin ~/Documents/projects/.templates
+	set -gx PATH $PATH ~/bin ~/Documents/projects/.templates
     set --export PROJECTS ~/Documents/projects
     set --export FISH ~/.config/fish
     set --export PICS ~/Pictures
@@ -103,6 +103,7 @@ function _install_eslint
         eslint-plugin-promise \
         eslint-plugin-import \
         eslint-plugin-react \
+        eslint-plugin-html \
     ;and cp ~/.config/.eslintrc.js .
 end
 
