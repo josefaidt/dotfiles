@@ -17,7 +17,8 @@ brew install \
   node \
   yarn \
   tmux \
-  ranger
+  ranger \
+  tree
 
 # change default shell to /usr/local/bin/fish
 # install Fisher and Bass (for nvm, if we need it later)
