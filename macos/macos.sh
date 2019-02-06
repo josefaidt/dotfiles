@@ -29,8 +29,11 @@ defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 # Finder: show status bar
 defaults write com.apple.finder ShowStatusBar -bool true
 
-# Finder: show path bar
+# Finder: show path bar (bottom breadcrumb)
 defaults write com.apple.finder ShowPathbar -bool true
+
+# Finder: show path bar (top full path)
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true; killall Finder
 
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false

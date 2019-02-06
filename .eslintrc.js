@@ -74,10 +74,7 @@ module.exports = {
       'newlines-between': 'never'
     }],
 
-    // standard plugin - options
-    // 'standard/object-curly-even-spacing': [2, 'either'],
-    // 'standard/array-bracket-even-spacing': [2, 'either'],
-    // 'standard/computed-property-even-spacing': [2, 'even'],
+    // standard.js (use async/await or Promises instead of callbacks!)
     'standard/no-callback-literal': [2, ['cb', 'callback']],
 
     // Node.js and CommonJS
@@ -106,13 +103,14 @@ module.exports = {
     'react/sort-comp': 2,
     'react/prop-types': 0,
 
+    // https://www.npmjs.com/package/eslint-plugin-jsx-a11y#supported-rules
     'jsx-a11y/accessible-emoji': 0,
     'jsx-a11y/anchor-is-valid': 1,
 
 
     // prettier
     'prettier/prettier': [2, {
-      'trailingComma': 'none',
+      'trailingComma': 'es5',
       'singleQuote': true,
       'semi': false,
       'tabWidth': 2,
