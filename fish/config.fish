@@ -103,7 +103,7 @@ function _install_eslint
         eslint-plugin-promise \
         eslint-plugin-import \
         eslint-plugin-react \
-        eslint-plugin-html \
+        eslint-plugin-react-hooks \
     ;and cp ~/.config/.eslintrc.js .
 end
 

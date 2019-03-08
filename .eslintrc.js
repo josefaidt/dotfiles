@@ -3,6 +3,7 @@ module.exports = {
     'standard',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
+    'react-hooks',
     'prettier',
     'prettier/react',
     'prettier/standard'
@@ -102,6 +103,10 @@ module.exports = {
     'react/react-in-jsx-scope': 0, // turn off when working with Apollo
     'react/sort-comp': 2,
     'react/prop-types': 0,
+
+    // react hooks
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 1,
 
     // https://www.npmjs.com/package/eslint-plugin-jsx-a11y#supported-rules
     'jsx-a11y/accessible-emoji': 0,
