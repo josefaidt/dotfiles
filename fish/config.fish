@@ -5,8 +5,10 @@ if status --is-login
     set --export PICS ~/Pictures
     set --export DOCS ~/Documents
     set --export -g NVM_DIR ~/.nvm
-    # bass source ~/.nvm/nvm.sh --no-use ';' nvm
-    # bass source /usr/local/opt/nvm/nvm.sh --no-use ';' nvm
+end
+
+function fish_greeting
+    printf "Hello, josef, how are you today?"
 end
 
 function eslint
@@ -27,6 +29,13 @@ function fish_prompt
     echo -n (prompt_pwd)
     set_color normal
     echo -n '> '
+end
+
+function ywrs
+    command yarn workspaces $argv
+end
+function ywr
+    command yarn workspace $argv
 end
 
 function notes
@@ -81,16 +90,28 @@ end
 function yawn
     if test (count $argv) -lt 1; or test $argv[1] = "--help"
         printf "Don't yawn too loud now, I need a package name"
-    else if test (count $argv) -eq 1
+    else if test (count $argv) -gt 1
         switch $argv[1]
             case 'eslint'
                 _install_eslint
+            case 'gulp'
+                _install_gulp
+            case 'init'
+                _init_my_project $argv
+            case 'node'
+                _install_latest_node
             case '*'
                 echo "Doesn't look like I have that package, try again."
         end
     else
         echo $argv
     end
+end
+
+function _install_latest_node
+    command nvm install node
+    command nvm alias default node
+    command nvm use default
 end
 
 function _install_eslint
@@ -107,6 +128,7 @@ function _install_eslint
     ;and cp ~/.config/.eslintrc.js .
 end
 
-function fish_greeting
-    
+function _install_gulp
+    yarn add -D gulp gulp-rename gulp-inline-css
+    ;and cp ~/.config/gulpfile.js .
 end
