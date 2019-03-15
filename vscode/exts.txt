@@ -1,9 +1,6 @@
-<<<<<<< Updated upstream
-=======
 josef.rouge-theme
 alefragnani.project-manager
 asvetliakov.snapshot-tools
->>>>>>> Stashed changes
 bierner.markdown-preview-github-styles
 bradgashler.htmltagwrap
 BriteSnow.vscode-toggle-quotes
@@ -17,10 +14,6 @@ eamodio.gitlens
 file-icons.file-icons
 formulahendry.auto-close-tag
 formulahendry.auto-rename-tag
-<<<<<<< Updated upstream
-josef.rouge-theme
-=======
->>>>>>> Stashed changes
 jpoissonnier.vscode-styled-components
 mechatroner.rainbow-csv
 mikestead.dotenv
@@ -31,19 +24,7 @@ PeterJausovec.vscode-docker
 pnp.polacode
 Prisma.vscode-graphql
 robertohuertasm.vscode-icons
-<<<<<<< Updated upstream
-sdras.night-owl
-silvenon.mdx
-skyapps.fish-vscode
-streetsidesoftware.code-spell-checker
-
-Sometimes used:
----
-oderwat.indent-rainbow
-pflannery.vscode-versionlens
-=======
 skyapps.fish-vscode
 streetsidesoftware.code-spell-checker
 yzhang.markdown-all-in-one
 silvenon.mdx
->>>>>>> Stashed changes

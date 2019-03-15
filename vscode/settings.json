@@ -48,5 +48,6 @@
   "editor.acceptSuggestionOnEnter": "off",
   "explorer.confirmDragAndDrop": false,
   "javascript.updateImportsOnFileMove.enabled": "prompt",
-  "debug.node.autoAttach": "on"
+  "debug.node.autoAttach": "on",
+  "extensions.showRecommendationsOnlyOnDemand": true
 }
