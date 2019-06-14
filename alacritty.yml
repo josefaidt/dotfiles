@@ -18,16 +18,16 @@ window:
   # Specified in number of columns/lines, not pixels.
   # If both are `0`, this setting is ignored.
   dimensions:
-    columns: 0
-    lines: 0
+    columns: 1000
+    lines: 33
 
   # Window position (changes require restart)
   #
   # Specified in number of pixels.
   # If the position is not set, the window manager will handle the placement.
-  #position:
-  #  x: 0
-  #  y: 0
+  position:
+    x: 0
+    y: 0
 
   # Window padding (changes require restart)
   #
@@ -35,7 +35,7 @@ window:
   # by DPI and the specified value is always added at both opposing sides.
   padding:
     x: 10
-    y: 3
+    y: 10
 
   # Spread additional padding evenly around the terminal content.
   dynamic_padding: false
@@ -122,7 +122,7 @@ font:
     #family: monospace
 
     # The `style` can be specified to pick a specific face.
-    style: Bold
+    style: Operator Mono Bold
 
   # Italic font face
   italic:
@@ -133,7 +133,7 @@ font:
     #family: monospace
 
     # The `style` can be specified to pick a specific face.
-    style: Italic
+    style: Operator Mono Italic
 
   # Point size
   size: 13.0
@@ -666,4 +666,3 @@ key_bindings:
   - { key: F11,      mods: Super,   chars: "\x1b[23;3~"                      }
   - { key: F12,      mods: Super,   chars: "\x1b[24;3~"                      }
   - { key: NumpadEnter,             chars: "\n"                              }
-
