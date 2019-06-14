@@ -173,30 +173,34 @@ draw_bold_text_with_bright_colors: true
 colors:
   # Default colors
   primary:
-    background: '0x050014'
-    foreground: '0x736e7d'
+    background: '0x040112'
+    foreground: '0x726f7c'
 
   # Normal colors
   normal:
-    black:   '0x230046'
-    red:     '0x7d1625'
-    green:   '0x337e6f'
-    yellow:  '0x7f6f49'
-    blue:    '0x4f4a7f'
-    magenta: '0x5a3f7f'
-    cyan:    '0x58777f'
-    white:   '0x736e7d'
+    black:   '0x1e0543'
+    red:     '0x732027'
+    green:   '0x477c70'
+    yellow:  '0x7d6f4e'
+    blue:    '0x4e4b7b'
+    magenta: '0x56427b'
+    cyan:    '0x5e767e'
+    white:   '0x726f7c'
 
   # Bright colors
   bright:
-    black:   '0x372d46'
-    red:     '0xe05167'
-    green:   '0x52e0c4'
-    yellow:  '0xe0c386'
-    blue:    '0x8e87e0'
-    magenta: '0xa776e0'
-    cyan:    '0x9ad4e0'
-    white:   '0x8c91fa'
+    black:   '0x352d44'
+    red:     '0xd05b69'
+    green:   '0x7bdcc5'
+    yellow:  '0xdbc38e'
+    blue:    '0x8c89da'
+    magenta: '0x9f7bd9'
+    cyan:    '0xa6d2de'
+    white:   '0x8c93f3'
+  
+  cursor:
+    cursor:  '0x8c93f3'
+    text:    '0x8c93f3'
 
 
 
