@@ -8,3 +8,6 @@ My dotfiles.
 - macOS terminal theme from [lysyi3m/macos-terminal-themes](https://github.com/lysyi3m/macos-terminal-themes)
   - [Lavandula.terminal](https://github.com/lysyi3m/macos-terminal-themes/blob/master/schemes/Lavandula.terminal) (*current*)
 - [Fish shell](https://fishshell.com/)
+- Alacritty terminal
+- BetterTouchTools preset
+- tmux config

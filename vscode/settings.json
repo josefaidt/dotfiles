@@ -1,9 +1,14 @@
 {
   "workbench.activityBar.visible": false,
-  "workbench.colorTheme": "Rouge",
   "workbench.iconTheme": "file-icons-colourless",
   "editor.minimap.enabled": false,
   "editor.tabSize": 2,
+  // "eslint.trace.server": "messages",
+  // "cSpell.userWords": [
+  //   "Enablement",
+  //   "Strategize",
+  //   "wireframes"
+  // ],
   "markdownlint.config": {
     "MD013": false,
     "no-inline-html": false
@@ -13,41 +18,76 @@
   "terminal.integrated.shell.osx": "/usr/local/bin/fish",
   "editor.fontFamily": "Operator Mono, Monaco, 'Courier New', monospace",
   "editor.formatOnSave": false,
+  // 
+  // prettier
+  // 
+  "prettier.disableLanguages": ["javascript", "javascriptreact"],
+  "prettier.arrowParens": "always",
+  "prettier.bracketSpacing": true,
+  "prettier.printWidth": 100,
+  "prettier.semi": false,
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false,
+  "prettier.trailingComma": "es5",
+  "prettier.singleQuote": true,
+  // 
+  // LANGUAGE SPECIFICS
+  // 
   "[html]": {
     "editor.formatOnSave": true,
-    // "editor.rulers": [100],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.formatOnSave": true
+  },
+  "[xml]": {
+    "editor.formatOnSave": true
   },
   "[markdown]": {
     "editor.formatOnSave": true,
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[mdx]": {
+    "editor.formatOnSave": true,
+    "editor.wordWrapColumn": 80,
+    "editor.wordWrap": "on",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // 
+  // ESLINT
+  // 
+  "eslint.enable": true,
   "eslint.alwaysShowStatus": true, // shows eslint in status bar
   "eslint.options": {
-    "configFile": "/Users/josef/.config/.eslintrc.js",
-    "ignorePath": "/Users/josef/.config/.eslintignore"
+    "configFile": "/Users/josef.aidtibm.com/.config/.eslintrc.js",
+    "ignorePath": "/Users/josef.aidtibm.com/.config/.eslintignore"
   },
   "eslint.packageManager": "yarn",
   "eslint.autoFixOnSave": true,
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-  ],
+  "eslint.validate": ["javascript", "javascriptreact"],
   "emmet.includeLanguages": {
-    "javascript": "javascriptreact" // enables emmet for React
+    "javascript": "javascriptreact", // enables emmet for React
+    // "mdx": "javascriptreact" // enables emmet for React
   },
   "emmet.syntaxProfiles": {
-    "javascript": "jsx"
+    "javascript": "jsx",
+    // "mdx": "jsx"
   },
-  "emmet.excludeLanguages": [
-    "graphql"
-  ],
+  // 
+  "emmet.excludeLanguages": ["graphql"],
+  // "editor.tabCompletion": "on",
   "emmet.triggerExpansionOnTab": true, // expand imported React components
   "emmet.showSuggestionsAsSnippets": true, // to get html tag completions before extension snippets
   "editor.snippetSuggestions": "top", // show snippets before any other auto completion
-  "editor.multiCursorModifier": "alt", 
+  "editor.multiCursorModifier": "alt",
   "editor.acceptSuggestionOnEnter": "off",
+  "markdownlint.run": "onSave",
   "explorer.confirmDragAndDrop": false,
   "javascript.updateImportsOnFileMove.enabled": "prompt",
-  "debug.node.autoAttach": "on",
-  "extensions.showRecommendationsOnlyOnDemand": true
+  "debug.node.autoAttach": "off",
+  "extensions.showRecommendationsOnlyOnDemand": true,
+  "workbench.colorTheme": "Rouge 2 (alpha)",
+  "window.zoomLevel": 0,
+  "git.autofetch": true
 }

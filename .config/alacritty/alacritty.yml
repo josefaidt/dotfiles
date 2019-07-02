@@ -18,7 +18,7 @@ window:
   # Specified in number of columns/lines, not pixels.
   # If both are `0`, this setting is ignored.
   dimensions:
-    columns: 1000
+    columns: 237
     lines: 33
 
   # Window position (changes require restart)
@@ -35,7 +35,7 @@ window:
   # by DPI and the specified value is always added at both opposing sides.
   padding:
     x: 10
-    y: 10
+    y: 0
 
   # Spread additional padding evenly around the terminal content.
   dynamic_padding: false
@@ -191,7 +191,7 @@ colors:
   # Bright colors
   bright:
     black:   '0x352d44'
-    red:     '0xd05b69'
+    red:     '0xea7480'
     green:   '0x7bdcc5'
     yellow:  '0xdbc38e'
     blue:    '0x8c89da'
