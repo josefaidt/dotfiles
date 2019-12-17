@@ -33,6 +33,7 @@ set wildmenu
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
+set splitright
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
@@ -53,6 +54,7 @@ map <leader>t<leader> :tabnext
 
 " useful shortcuts
 cnoreabbrev Q qa
+cnoreabbrev vertt vert ter
 
 """"""""""""""""""""""""""""""
 " => Status line
