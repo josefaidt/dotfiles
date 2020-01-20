@@ -11,6 +11,8 @@ set number
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'mattn/emmet-vim'
+Plug 'w0rp/ale'
 call plug#end()
 "...
 "
@@ -20,6 +22,13 @@ highlight LineNr ctermfg=darkgrey
 highlight Comment ctermfg=darkcyan
 highlight Normal ctermfg=white
 
+let g:ale_fixers = {
+\   'javascript': ['eslint'],
+\   'css': ['prettier'],
+\}
+
+let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
+let g:ale_html_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
 
 set ignorecase
 set smartcase
@@ -152,3 +161,12 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 
 " special syntax
 au BufReadPost *.svelte set syntax=html
+
+" emmet
+"let g:user_emmet_leader_key='<Tab>'
+let g:user_emmet_expandabbr_key='<Tab>'
+imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
+
+" sessions
+nnoremap <Leader>ss :mks!
+nnoremap <Leader>sr :so
