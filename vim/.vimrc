@@ -11,11 +11,13 @@ set autochdir
 set bsdir=last			" Go to last folder when browsing
 set incsearch			" Turn on incremental searching
 set history=100			" Keep X commands in history
+set undolevels=100
 set t_Co=256			" Enable 256 colors
 
 "set relativenumber
 set number
 
+set nobackup
 " Unless you're editing huge files, leave this line active.
 " This disables the swap file and puts all data in memory.
 " Modern machines can handle this just fine, but if you're
@@ -39,6 +41,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'vim-airline/vim-airline'
     Plug 'gorodinskiy/vim-coloresque'
     Plug 'yggdroot/indentline'
+    Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 
 " Enable Markdown folding
@@ -56,6 +59,9 @@ let g:airline_right_sep=''
 
 " enable indent lines
 let g:indentLine_enabled = 1
+let g:indentLine_setColors = 1
+let g:indentLine_char_list = ['▏']
+let g:indentLine_color_term = 239
 
 " Force Airline to refresh after setup so settings work
 ":autocmd!
@@ -204,6 +210,7 @@ map <C-k> :NERDTreeFocus<CR>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+autocmd BufWritePost * NERDTreeFocus | execute 'normal R' | wincmd p
 
 
 " special syntax
