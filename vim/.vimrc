@@ -1,3 +1,4 @@
+"set rtp+=$GOROOT/misc/vim
 filetype plugin indent on
 syntax on
 set gfn=Operator\ Mono\ Medium:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
@@ -25,23 +26,27 @@ set nobackup
 set noswapfile
 
 augroup reload_vimrc
-autocmd!
-autocmd BufWritePost $MYVIMRC source $MYVIMRC
+  autocmd!
+  autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END
 
 
 call plug#begin('~/.vim/plugged')
-    Plug 'scrooloose/nerdtree'
-    Plug 'Xuyuanp/nerdtree-git-plugin'
-    Plug 'mattn/emmet-vim'
-    Plug 'w0rp/ale'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'nelstrom/vim-markdown-folding'
-    Plug 'tpope/vim-markdown'
-    Plug 'vim-airline/vim-airline'
-    Plug 'gorodinskiy/vim-coloresque'
-    Plug 'yggdroot/indentline'
-    Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'mattn/emmet-vim'
+Plug 'w0rp/ale'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'nelstrom/vim-markdown-folding'
+Plug 'tpope/vim-markdown'
+Plug 'vim-airline/vim-airline'
+Plug 'gorodinskiy/vim-coloresque'
+Plug 'yggdroot/indentline'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'tpope/vim-surround'
+Plug 'junegunn/fzf', { 'do': './install --bin' }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 " Enable Markdown folding
@@ -73,12 +78,27 @@ let g:indentLine_color_term = 239
 highlight LineNr ctermfg=darkgrey
 highlight Comment ctermfg=darkcyan
 highlight Normal ctermfg=white
+highlight Error term=underline ctermfg=15 ctermbg=9 guifg=White guibg=Red
 let g:airline_theme='lavandula'
+let g:go_highlight_structs = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_function_parameters = 0
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_highlight_function_calls = 1
 
 let g:ale_fixers = {
-\   'javascript': ['eslint'],
-\   'css': ['prettier'],
-\}
+      \   'javascript': ['eslint'],
+      \   'css': ['prettier'],
+      \}
 
 let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
 let g:ale_html_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
@@ -172,11 +192,11 @@ endif
 
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
-    let save_cursor = getpos(".")
-    let old_query = getreg('/')
-    silent! %s/\s\+$//e
-    call setpos('.', save_cursor)
-    call setreg('/', old_query)
+  let save_cursor = getpos(".")
+  let old_query = getreg('/')
+  silent! %s/\s\+$//e
+  call setpos('.', save_cursor)
+  call setreg('/', old_query)
 endfun
 
 " Disable scrollbars
@@ -190,8 +210,8 @@ set guioptions-=L
 "    means that you can undo even when you close a buffer/VIM
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 try
-    set undodir=~/.vim_runtime/temp_dirs/undodir
-    set undofile
+  set undodir=~/.vim_runtime/temp_dirs/undodir
+  set undofile
 catch
 endtry
 
@@ -205,12 +225,12 @@ inoremap $e ""<esc>i
 
 
 "autocmd vimenter * NERDTree
-map <C-j> :NERDTreeToggle<CR>
-map <C-k> :NERDTreeFocus<CR>
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-autocmd BufWritePost * NERDTreeFocus | execute 'normal R' | wincmd p
+"map <C-j> :NERDTreeToggle<CR>
+"map <C-k> :NERDTreeFocus<CR>
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"autocmd BufWritePost * NERDTreeFocus | execute 'normal R' | wincmd p
 
 
 " special syntax
