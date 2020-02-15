@@ -33,11 +33,12 @@ call plug#begin('~/.vim/plugged')
     Plug 'Xuyuanp/nerdtree-git-plugin'
     Plug 'mattn/emmet-vim'
     Plug 'w0rp/ale'
-"    Plug 'vim-airline/vim-airline-themes'
+    Plug 'vim-airline/vim-airline-themes'
     Plug 'nelstrom/vim-markdown-folding'
     Plug 'tpope/vim-markdown'
     Plug 'vim-airline/vim-airline'
     Plug 'gorodinskiy/vim-coloresque'
+    Plug 'yggdroot/indentline'
 call plug#end()
 
 " Enable Markdown folding
@@ -52,6 +53,9 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'default'
 let g:airline_left_sep=''
 let g:airline_right_sep=''
+
+" enable indent lines
+let g:indentLine_enabled = 1
 
 " Force Airline to refresh after setup so settings work
 ":autocmd!
