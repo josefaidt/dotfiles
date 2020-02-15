@@ -1,26 +1,69 @@
+filetype plugin indent on
 syntax on
 set gfn=Operator\ Mono\ Medium:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
 set tabstop=2
 set softtabstop=2
-set autoindent
+set shiftwidth=2
+set ruler
 set expandtab
+set smarttab
+set autochdir
+set bsdir=last			" Go to last folder when browsing
+set incsearch			" Turn on incremental searching
+set history=100			" Keep X commands in history
+set t_Co=256			" Enable 256 colors
 
 "set relativenumber
 set number
 
+" Unless you're editing huge files, leave this line active.
+" This disables the swap file and puts all data in memory.
+" Modern machines can handle this just fine, but if you're
+" limited on RAM, comment this out.
+set noswapfile
+
+augroup reload_vimrc
+autocmd!
+autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END
+
+
 call plug#begin('~/.vim/plugged')
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'mattn/emmet-vim'
-Plug 'w0rp/ale'
+    Plug 'scrooloose/nerdtree'
+    Plug 'Xuyuanp/nerdtree-git-plugin'
+    Plug 'mattn/emmet-vim'
+    Plug 'w0rp/ale'
+"    Plug 'vim-airline/vim-airline-themes'
+    Plug 'nelstrom/vim-markdown-folding'
+    Plug 'tpope/vim-markdown'
+    Plug 'vim-airline/vim-airline'
+    Plug 'gorodinskiy/vim-coloresque'
 call plug#end()
+
+" Enable Markdown folding
+set foldenable
+
+" Make airline appear all the time
+set laststatus=2
+
+" Show word count
+let g:airline#extensions#wordcount#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline_left_sep=''
+let g:airline_right_sep=''
+
+" Force Airline to refresh after setup so settings work
+":autocmd!
+":autocmd VimEnter * :AirlineRefresh
+
 "...
 "
 "colors
-set t_Co=256
 highlight LineNr ctermfg=darkgrey
 highlight Comment ctermfg=darkcyan
 highlight Normal ctermfg=white
+let g:airline_theme='lavandula'
 
 let g:ale_fixers = {
 \   'javascript': ['eslint'],
