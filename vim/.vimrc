@@ -78,7 +78,13 @@ let g:indentLine_color_term = 239
 highlight LineNr ctermfg=darkgrey
 highlight Comment ctermfg=darkcyan
 highlight Normal ctermfg=white
-highlight Error term=underline ctermfg=15 ctermbg=9 guifg=White guibg=Red
+highlight SpellRare ctermbg=NONE cterm=underline
+highlight Error term=underline cterm=underline ctermfg=Red ctermbg=NONE
+highlight SpellBad cterm=underline
+highlight ALESignColumnWithErrors ctermbg=NONE
+highlight ALESignColumnWithoutErrors ctermbg=NONE
+highlight ALEError ctermbg=NONE ctermfg=Red
+highlight ALEErrorSign ctermbg=NONE ctermfg=Red
 let g:airline_theme='lavandula'
 let g:go_highlight_structs = 1
 let g:go_highlight_methods = 1
@@ -95,6 +101,8 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_function_calls = 1
 
+" Set this. Airline will handle the rest.
+let g:airline#extensions#ale#enabled = 1
 let g:ale_fixers = {
       \   'javascript': ['eslint'],
       \   'css': ['prettier'],
@@ -102,6 +110,11 @@ let g:ale_fixers = {
 
 let g:ale_javascript_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
 let g:ale_html_prettier_options = '--single-quote --trailing-comma es5 --no-semi true'
+let g:ale_sign_error = '●'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_change_sign_column_color = 1
 
 set ignorecase
 set smartcase
@@ -235,6 +248,7 @@ inoremap $e ""<esc>i
 
 " special syntax
 au BufReadPost *.svelte set syntax=html
+" au BufRead *.txt highlight Normal ctermfg=Gray
 
 " emmet
 "let g:user_emmet_leader_key='<Tab>'
