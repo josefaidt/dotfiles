@@ -18,7 +18,8 @@ brew install \
   yarn \
   tmux \
   ranger \
-  tree
+  tree \
+  neovim
 
 # change default shell to /usr/local/bin/fish
 # install Fisher and Bass (for nvm, if we need it later)
@@ -36,12 +37,10 @@ brew cask install \
   spotify \
   spotmenu \
   docker \
-  spectacle \
   github \
   vlc \
   postman \
-  graphql-playground \
-  anaconda
+  graphql-playground
 
 # change default shell to fish
 sudo echo /usr/local/bin/fish >> /etc/shells
@@ -49,23 +48,7 @@ chsh -s /usr/local/bin/fish
 cp -r ./fish ~/.config
 
 # copy other dotfiles
-cp ./tmux/.tmux.conf ~
+cp ./.tmux.conf ~
 mkdir ~/.vim
-cp -r ./vim/colors ~/.vim
-cp ./vim/.vimrc ~
-
-# reload config
-# source ~/.config/fish/fish.config
-
-# install ESLint and other npm packages (uses custom fish function)
-yarn global add \
-  eslint babel-eslint eslint-loader \
-  prettier eslint-config-prettier eslint-plugin-prettier \
-  eslint-config-standard eslint-plugin-standard \
-  eslint-plugin-node \
-  eslint-plugin-jsx-a11y \
-  eslint-plugin-promise \
-  eslint-plugin-import \
-  eslint-plugin-react \
-  eslint-plugin-react-hooks
-cp ./.eslintrc.js ~/.config
+cp -r ./.vim/colors ~/.vim
+cp ./.vimrc ~
