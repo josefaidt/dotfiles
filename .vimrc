@@ -1,4 +1,6 @@
 "set rtp+=$GOROOT/misc/vim
+
+" General settings
 filetype plugin indent on
 set gfn=Operator\ Mono\ Medium:h14
 set tabstop=2
@@ -28,8 +30,8 @@ set smartcase
 set backspace=indent,eol,start
 set showcmd
 set wildmenu
-set ai "Auto indent
-set si "Smart indent
+set autoindent "Auto indent
+set smartindent "Smart indent
 set wrap "Wrap lines
 set splitright
 " Enable Markdown folding
@@ -41,7 +43,7 @@ set laststatus=2
 "Always show current position
 set ruler
 " Height of the command bar
-set cmdheight=1
+set cmdheight=2
 " A buffer becomes hidden when it is abandoned
 set hid
 " Highlight search results
@@ -55,7 +57,6 @@ set magic
 " Show matching brackets when text indicator is over them
 set showmatch
 
-
 augroup reload_vimrc
   autocmd!
   autocmd BufWritePost $MYVIMRC source $MYVIMRC
@@ -63,8 +64,12 @@ augroup END
 
 
 call plug#begin('~/.vim/plugged')
+" NERDTree
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'preservim/nerdcommenter'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" COC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'w0rp/ale'
 Plug 'vim-airline/vim-airline-themes'
@@ -74,11 +79,11 @@ Plug 'vim-airline/vim-airline'
 Plug 'gorodinskiy/vim-coloresque'
 " indent line whitespace
 Plug 'yggdroot/indentline'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'ctrlpvim/ctrlp.vim' " fuzzy find files
+Plug 'christoomey/vim-tmux-navigator' " enables tmux navigation
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'preservim/nerdcommenter'
 Plug 'ryanoasis/vim-devicons'
 Plug 'justinmk/vim-sneak'
 Plug 'jparise/vim-graphql'
@@ -86,13 +91,15 @@ Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'yuezk/vim-js'               " JS syntax
 Plug 'maxmellon/vim-jsx-pretty'   " JSX syntax
-Plug 'leafgarland/typescript-vim' " TypeScript syntax
+"Plug 'leafgarland/typescript-vim' " TypeScript syntax
+Plug 'herringtondarkholme/yats.vim'
 Plug 'jparise/vim-graphql'        " GraphQL syntax
 " Git Tooling
 Plug 'mhinz/vim-signify' " Sign Columns
 Plug 'tpope/vim-fugitive' " Run `:git` commands
 Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/gv.vim' " Git commit browser
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 " Coc config
@@ -107,8 +114,11 @@ let g:coc_global_extensions = [
   \ 'coc-eslint',
   \ 'coc-prettier',
   \ 'coc-python',
-  \ 'coc-json',
+  \ 'coc-explorer',
   \ ]
+
+set conceallevel=0
+let mapleader = ' '
 
 " Show word count
 let g:airline#extensions#wordcount#enabled = 1
@@ -125,6 +135,7 @@ let g:indentLine_color_term = 239
 
 "colors
 syntax enable
+filetype plugin indent on
 set t_Co=256			" Enable 256 colors
 highlight LineNr ctermfg=darkgrey
 highlight Comment ctermfg=darkcyan
@@ -139,7 +150,9 @@ highlight ALESignColumnWithErrors ctermbg=NONE
 highlight ALESignColumnWithoutErrors ctermbg=NONE
 highlight ALEError ctermbg=NONE ctermfg=Red
 highlight ALEErrorSign ctermbg=NONE ctermfg=Red
-
+" CoC Colors
+highlight Pmenu guibg=DarkGrey ctermbg=0 ctermfg=white
+highlight PmenuSel guibg=Magenta guifg=Black ctermbg=Magenta ctermfg=Black
 
 let g:airline_theme='lavandula'
 let g:go_highlight_structs = 1
@@ -157,6 +170,9 @@ let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_highlight_function_calls = 1
 
+" Indent Line
+set conceallevel=0
+let g:indentLine_setConceal = 0
 " Airline Customization
 "let g:airline_section_z = '%{coc#status()}' 
 
@@ -176,23 +192,94 @@ let g:go_highlight_function_calls = 1
 "let g:ale_change_sign_column_color = 1
 "
 
+"
+" Fish shell
+" 
+if &shell =~# 'fish$'
+    set shell=sh
+endif
+autocmd FileType fish compiler fish
+
+"
 " COC Configuration
+"
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-" Delete trailing white space on save, useful for some filetypes ;)
-fun! CleanExtraSpaces()
-  let save_cursor = getpos(".")
-  let old_query = getreg('/')
-  silent! %s/\s\+$//e
-  call setpos('.', save_cursor)
-  call setreg('/', old_query)
-endfun
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-let mapleader = ' '
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+
+
 
 " Return to last edit position when opening files
 autocmd BufReadPost *
@@ -200,10 +287,7 @@ autocmd BufReadPost *
      \   exe "normal! g`\"" |
      \ endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Turn persistent undo on
-"    means that you can undo even when you close a buffer/VIM
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 try
   set undodir=~/.vim_runtime/temp_dirs/undodir
   set undofile
@@ -212,7 +296,6 @@ endtry
 
 " special syntax
 au BufReadPost *.svelte set syntax=html
-" au BufRead *.txt highlight Normal ctermfg=Gray
 
 " Shortcuts
 if has("mac") || has("macunix")
@@ -233,13 +316,6 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-"map <space> /
-"map <C-space> ?
-
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
 
@@ -247,14 +323,16 @@ map <silent> <leader><cr> :noh<cr>
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
+map <leader>ty :tabn<cr>
+map <leader>tr :tabp<cr>
 map <leader>tm :tabmove
 map <leader>t<leader> :tabnext
 
+" Useful mapping for traversing buffers
+"nnoremap <C-h> :bprev<CR>
+"nnoremap <C-l> :bnext<CR>
+
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-"nmap <M-j> mz:m+<cr>`z
-"nmap <M-k> mz:m-2<cr>`z
-"vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-"vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 nnoremap <M-j> :m .+1<CR>==
 nnoremap <M-k> :m .-2<CR>==
 inoremap <M-j> <Esc>:m .+1<CR>==gi
@@ -265,8 +343,38 @@ vnoremap <M-k> :m '<-2<CR>gv=gv
 " Replicate a line of text using ALT+SHIFT+[jk]
 nnoremap <M-J> yy$p k<CR>==
 nnoremap <M-K> yy$P k<CR>==
+inoremap <M-J> <Esc>yy$p k<CR>==gi
+inoremap <M-K> <Esc>yy$P k<CR>==gi
+vnoremap <M-J> y$p k<CR>gv==gv
+vnoremap <M-J> y$p k<CR>gv==gv
 
 " NERDcommentor
 " Remap comment key
-nmap <M-/> <plug>NERDCommenterToggle
-vmap <C-_> <plug>NERDCommenterToggle
+nmap <leader>++ <plug>NERDCommenterToggle
+vmap <leader>++ <plug>NERDCommenterToggle
+
+" NERDTree
+" sync open file with NERDTree
+" Check if NERDTree is open or active
+function! IsNERDTreeOpen()        
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
+" file, and we're not in vimdiff
+function! SyncTree()
+  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    wincmd p
+  endif
+endfunction
+
+" Highlight currently open buffer in NERDTree
+autocmd BufEnter * call SyncTree()
+nmap <C-b> :NERDTreeToggle<CR>
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" Prettier Coc
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
