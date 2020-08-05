@@ -16,7 +16,7 @@ set bsdir=last		" Go to last folder when browsing
 set incsearch			" Turn on incremental searching
 set history=100	  " Keep X commands in history
 set undolevels=100
-set number        "set relativenumber
+set number
 set nobackup
 " Unless you're editing huge files, leave this line active.
 " This disables the swap file and puts all data in memory.
@@ -31,7 +31,7 @@ set backspace=indent,eol,start
 set showcmd
 set wildmenu
 set autoindent "Auto indent
-set smartindent "Smart indent
+set cindent
 set wrap "Wrap lines
 set splitright
 " Enable Markdown folding
@@ -56,6 +56,8 @@ set lazyredraw
 set magic
 " Show matching brackets when text indicator is over them
 set showmatch
+" always show gutter
+set signcolumn=yes
 
 augroup reload_vimrc
   autocmd!
@@ -82,8 +84,8 @@ Plug 'yggdroot/indentline'
 Plug 'ctrlpvim/ctrlp.vim' " fuzzy find files
 Plug 'christoomey/vim-tmux-navigator' " enables tmux navigation
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+"Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"Plug 'junegunn/fzf.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'justinmk/vim-sneak'
 Plug 'jparise/vim-graphql'
@@ -115,6 +117,7 @@ let g:coc_global_extensions = [
   \ 'coc-prettier',
   \ 'coc-python',
   \ 'coc-explorer',
+  \ 'coc-lists',
   \ ]
 
 set conceallevel=0
@@ -153,6 +156,13 @@ highlight ALEErrorSign ctermbg=NONE ctermfg=Red
 " CoC Colors
 highlight Pmenu guibg=DarkGrey ctermbg=0 ctermfg=white
 highlight PmenuSel guibg=Magenta guifg=Black ctermbg=Magenta ctermfg=Black
+" Gutter (SignColumn)
+highlight clear SignColumn " get rid of preset background
+highlight SignColumn ctermfg=14 guifg=Cyan 
+
+" sync syntax when entering a buffer
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 let g:airline_theme='lavandula'
 let g:go_highlight_structs = 1
@@ -203,10 +213,27 @@ autocmd FileType fish compiler fish
 "
 " COC Configuration
 "
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+nnoremap <silent> <space>s :<C-u>CocList -I symbols<cr>
+nnoremap <silent> <space>l :<C-u>CocList diagnostics<cr>
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " Use K to show documentation in preview window.
@@ -221,7 +248,9 @@ function! s:show_documentation()
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
+set updatetime=750
 autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd CursorHoldI * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -278,6 +307,16 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " provide custom statusline: lightline.vim, vim-airline.
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+function! ShowDocIfNoDiagnostic(timer_id)
+  if (coc#util#has_float() == 0)
+    silent call CocActionAsync('doHover')
+  endif
+endfunction
+
+function! s:show_hover_doc()
+  call timer_start(500, 'ShowDocIfNoDiagnostic')
+endfunction
+
 
 
 
@@ -322,11 +361,24 @@ map <silent> <leader><cr> :noh<cr>
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>ty :tabn<cr>
-map <leader>tr :tabp<cr>
+map <leader>tw :tabclose<cr>
+map <leader>tu :tabn<cr>
+map <leader>te :tabp<cr>
 map <leader>tm :tabmove
-map <leader>t<leader> :tabnext
+nnoremap <Tab> :bn<CR>
+nnoremap <S-Tab> :bp<CR>
+nnoremap <leader>q :bd<CR>
+
+function! CleanNoNameEmptyBuffers()
+    let buffers = filter(range(1, bufnr('$')), 'buflisted(v:val) && empty(bufname(v:val)) && bufwinnr(v:val) < 0 && (getbufline(v:val, 1, "$") == [""])')
+    if !empty(buffers)
+        exe 'bd '.join(buffers, ' ')
+    else
+        "echo 'No buffer deleted'
+    endif
+endfunction
+
+autocmd BufEnter * :call CleanNoNameEmptyBuffers()
 
 " Useful mapping for traversing buffers
 "nnoremap <C-h> :bprev<CR>
@@ -345,8 +397,8 @@ nnoremap <M-J> yy$p k<CR>==
 nnoremap <M-K> yy$P k<CR>==
 inoremap <M-J> <Esc>yy$p k<CR>==gi
 inoremap <M-K> <Esc>yy$P k<CR>==gi
-vnoremap <M-J> y$p k<CR>gv==gv
-vnoremap <M-J> y$p k<CR>gv==gv
+vnoremap <M-J> yp k<CR>gv==gv
+vnoremap <M-K> yP k<CR>gv==gv
 
 " NERDcommentor
 " Remap comment key
@@ -354,27 +406,61 @@ nmap <leader>++ <plug>NERDCommenterToggle
 vmap <leader>++ <plug>NERDCommenterToggle
 
 " NERDTree
-" sync open file with NERDTree
-" Check if NERDTree is open or active
-function! IsNERDTreeOpen()        
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
+let NERDTreeShowHidden=1
+nmap <C-b> :NERDTreeToggle<CR>
+imap <C-b> <Esc>:NERDTreeToggle<CR>
+nmap <Leader>r :NERDTreeFocus<cr>R<c-w><c-p>
 
-" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
-" file, and we're not in vimdiff
-function! SyncTree()
-  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
-    NERDTreeFind
-    wincmd p
+" CtrlP
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git'
+let g:ctrlp_show_hidden=1
+" CtrlP auto cache clearing.
+function! SetupCtrlP()
+  if exists("g:loaded_ctrlp") && g:loaded_ctrlp
+    augroup CtrlPExtension
+      autocmd!
+      autocmd FocusGained  * CtrlPClearCache
+      autocmd BufWritePost * CtrlPClearCache
+    augroup END
   endif
 endfunction
-
-" Highlight currently open buffer in NERDTree
-autocmd BufEnter * call SyncTree()
-nmap <C-b> :NERDTreeToggle<CR>
+if has("autocmd")
+  autocmd VimEnter * :call SetupCtrlP()
+endif
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+" Show documentation automatically
+autocmd CursorHoldI * :call <SID>show_hover_doc()
+autocmd CursorHold * :call <SID>show_hover_doc()
+
 " Prettier Coc
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" ESLint and Prettier
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+
+" indent after opening braces and returning
+inoremap <expr> <CR> InsertMapForEnter()
+function! InsertMapForEnter()
+    if pumvisible()
+        return "\<C-y>"
+    elseif strcharpart(getline('.'),getpos('.')[2]-1,1) == '}'
+        return "\<CR>\<Esc>O"
+    elseif strcharpart(getline('.'),getpos('.')[2]-1,2) == '</'
+        return "\<CR>\<Esc>O"
+    elseif strcharpart(getline('.'),getpos('.')[2]-1,2) == ')'
+        return "\<CR>\<Esc>O"
+    elseif strcharpart(getline('.'),getpos('.')[2]-1,2) == ']'
+        return "\<CR>\<Esc>O"
+    else
+        return "\<CR>"
+    endif
+endfunction
