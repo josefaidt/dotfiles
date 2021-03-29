@@ -102,6 +102,8 @@ Plug 'tpope/vim-fugitive' " Run `:git` commands
 Plug 'tpope/vim-rhubarb'
 Plug 'junegunn/gv.vim' " Git commit browser
 Plug 'airblade/vim-gitgutter'
+" Rust
+Plug 'rust-lang/rust.vim'
 call plug#end()
 
 " Coc config

@@ -11,9 +11,17 @@ function fish_greeting
     printf "Hello, josef, how are you today?"
 end
 
-function eslint
-    command eslint --config ~/.config/.eslintrc.js $argv
+function fish_prompt
+    # printf '%s@%s%s%s%s ' (whoami | cut -d . -f 1) (hostname | cut -d . -f 1 | cut -d '-' -f 2)
+    printf '%s%s%s%s%s ' (whoami | cut -d . -f 1)
+    set_color $fish_color_cwd
+    echo -n (prompt_pwd)
+    set_color normal
+    echo -n '> '
 end
+
+alias vl=vercel
+alias vi=nvim
 
 # need to install Fisher via `curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish`
 # need to install bass via `fisher add edc/bass`
@@ -22,13 +30,15 @@ function nvm
     bass source /usr/local/Cellar/nvm/{$LATEST_NVM}/nvm.sh --no-use ';' nvm $argv
 end
 
-function fish_prompt
-    # printf '%s@%s%s%s%s ' (whoami | cut -d . -f 1) (hostname | cut -d . -f 1 | cut -d '-' -f 2)
-    printf '%s%s%s%s%s ' (whoami | cut -d . -f 1)
-    set_color $fish_color_cwd
-    echo -n (prompt_pwd)
-    set_color normal
-    echo -n '> '
+if test -e (pwd)/.nvmrc 
+    nvm use
+else
+    nvm use default
+end
+
+# KILL PROCESS BY PORT
+function kp
+    command kill -9 (lsof -t -i :$argv[1])
 end
 
 function ywrs
@@ -40,6 +50,10 @@ end
 
 function notes
     code -n ~/Documents/notes
+end
+
+function reload
+    source ~/.config/fish/config.fish
 end
 
 function edit
@@ -81,54 +95,4 @@ function read_confirm
                 return 1
         end
     end
-end
-
-function reload
-    source ~/.config/fish/config.fish
-end
-
-function yawn
-    if test (count $argv) -lt 1; or test $argv[1] = "--help"
-        printf "Don't yawn too loud now, I need a package name"
-    else if test (count $argv) -gt 1
-        switch $argv[1]
-            case 'eslint'
-                _install_eslint
-            case 'gulp'
-                _install_gulp
-            case 'init'
-                _init_my_project $argv
-            case 'node'
-                _install_latest_node
-            case '*'
-                echo "Doesn't look like I have that package, try again."
-        end
-    else
-        echo $argv
-    end
-end
-
-function _install_latest_node
-    command nvm install node
-    command nvm alias default node
-    command nvm use default
-end
-
-function _install_eslint
-    yarn add -D \
-        eslint babel-eslint eslint-loader \
-        prettier eslint-config-prettier eslint-plugin-prettier \
-        eslint-config-standard eslint-plugin-standard \
-        eslint-plugin-node \
-        eslint-plugin-jsx-a11y \
-        eslint-plugin-promise \
-        eslint-plugin-import \
-        eslint-plugin-react \
-        eslint-plugin-react-hooks \
-    ;and cp ~/.config/.eslintrc.js .
-end
-
-function _install_gulp
-    yarn add -D gulp gulp-rename gulp-inline-css
-    ;and cp ~/.config/gulpfile.js .
 end
