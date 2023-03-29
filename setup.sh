@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo '
+  ___  ___ _  _   _   _    ___ 
+ |   \| __| \| | /_\ | |  |_ _|
+ | |) | _|| .` |/ _ \| |__ | | 
+ |___/|___|_|\_/_/ \_\____|___|                              
+'
 echo 'Setting up your new device...'
 
 # Ask for the administrator password upfront
@@ -9,46 +15,18 @@ sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 # install homebrew
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # install the basics
 brew install \
   fish \
-  node \
-  yarn \
   tmux \
   ranger \
   tree \
-  neovim
-
-# change default shell to /usr/local/bin/fish
-# install Fisher and Bass (for nvm, if we need it later)
-curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
-fisher add edc/bass
-
-# install GUI applications
-brew tap caskroom/cask
-brew cask install \
-  google-chrome \
-  brave-browser \
-  firefox \
-  visual-studio-code \
-  sublime-text \
-  spotify \
-  spotmenu \
-  docker \
-  github \
-  vlc \
-  postman \
-  graphql-playground
+  fnm \
+  gh \
 
 # change default shell to fish
-sudo echo /usr/local/bin/fish >> /etc/shells
-chsh -s /usr/local/bin/fish
+echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/fish
 cp -r ./fish ~/.config
-
-# copy other dotfiles
-cp ./.tmux.conf ~
-mkdir ~/.vim
-cp -r ./.vim/colors ~/.vim
-cp ./.vimrc ~
