@@ -29,4 +29,4 @@ brew install \
 # change default shell to fish
 echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
 chsh -s /opt/homebrew/bin/fish
-cp -r ./fish ~/.config
+rsync -a ./fish ~/.config
