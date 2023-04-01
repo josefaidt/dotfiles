@@ -26,11 +26,13 @@ fi
 # install the basics
 brew install \
   fish \
-  tmux \
-  ranger \
-  tree \
   fnm \
+  fzf \
   gh \
+  jq \
+  tmux \
+  tree \
+  ranger \
   starship \
 
 # change default shell to fish
