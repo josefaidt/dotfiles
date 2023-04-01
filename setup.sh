@@ -31,6 +31,7 @@ brew install \
   tree \
   fnm \
   gh \
+  starship \
 
 # change default shell to fish
 if ! fgrep -q "/opt/homebrew/bin/fish" /etc/shells; then
