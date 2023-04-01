@@ -46,4 +46,4 @@ TEMP_DIR=$(mktemp -d)
 # download dotfiles repo
 git clone git@github.com:josefaidt/dotfiles.git $TEMP_DIR
 # copy to ~/.config
-rsync -a $TEMP_DIR/.config ~/.config
+rsync -a $TEMP_DIR/.config/* ~/.config
