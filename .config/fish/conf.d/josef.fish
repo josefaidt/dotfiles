@@ -94,24 +94,6 @@ function cdd
   cd ~/Documents
 end
 
-function ts
-  pnpm \
-  --package=@types/node \
-  --package=typescript \
-  --package=ts-node \
-  --silent \
-  dlx ts-node $argv[1]
-end
-
-function tse
-  pnpm \
-  --package=@types/node \
-  --package=typescript \
-  --package=ts-node \
-  --silent \
-  dlx ts-node --esm $argv[1]
-end
-
 function edit
   if test (count $argv) -lt 1; or test $argv[1] = --help
       # echo "What are you wanting to edit?"

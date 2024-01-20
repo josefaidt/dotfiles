@@ -10,7 +10,7 @@ add_newline = true
 # [│](bold green)$directory$rust$package
 # [└─>](bold green) """
 format = """
-$username$directory$git_branch
+$username$directory$git_branch$aws
 [➜](bold green)  
 """
 # $nodejs
@@ -22,3 +22,7 @@ success_symbol = "[➜](bold green)" # The "success_symbol" segment is being set
 # Disable the package module, hiding it from the prompt completely
 # [package]
 # disabled = true
+[aws]
+format = 'with [$symbol($profile )(\($region\) )]($style)'
+style = 'bold yellow'
+symbol = '🅰 '
