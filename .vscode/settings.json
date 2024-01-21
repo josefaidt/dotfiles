@@ -1,0 +1,240 @@
+{
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.quickSuggestions": {
+      "strings": true
+    }
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+  },
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  // https://gist.github.com/kamilogorek/f5542a8e5c4059a8ef9f62927a575db2
+  "apc.electron": {
+    "titleBarStyle": "hiddenInset",
+    "trafficLightPosition": {
+      "x": 11,
+      "y": 10
+    }
+  },
+  "apc.header": {
+    "height": 36
+  },
+  // Remove unnecessary controls from primary bar and tabs list
+  "apc.stylesheet": {
+    ".editor-actions": "display: none", // Remove editor action icons
+    ".nosidebar .inline-tabs-placeholder": "width: 75px", // Align tabs to not overlap window controls when primary bar is hidden
+    ".title-actions": "display: none", // Remove primary side bar action icons
+    ".title-label > h2": "display: none" // Remove primary side bar title
+  },
+  "aws.suppressPrompts": {
+    "amazonQWelcomePage": true
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Remove code-block folding icon
+  "editor.folding": false,
+  "editor.fontFamily": "Operator Mono, Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 13,
+  "editor.formatOnSave": true,
+  // Remove the line number gutter
+  "editor.glyphMargin": false,
+  "editor.guides.bracketPairs": "active",
+  // Remove position indicator in the editor's scrollbar
+  "editor.hideCursorInOverviewRuler": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.linkedEditing": true,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "none",
+  "editor.tabCompletion": "on",
+  "editor.tabSize": 2,
+  "editor.tokenColorCustomizations": {
+    "[Rouge 2]": {
+      "textMateRules": [
+        {
+          "scope": [
+            "support.class.component.tsx",
+            "support.class.component.astro"
+          ],
+          "settings": {
+            "foreground": "#D7A1A5"
+          }
+        }
+      ]
+    }
+  },
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 140,
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "javascriptreact": "javascriptreact",
+    "md": "javascriptreact",
+    "mdx": "javascriptreact",
+    "svelte": "javascriptreact"
+  },
+  "emmet.syntaxProfiles": {
+    "javascript": "jsx"
+  },
+  "emmet.triggerExpansionOnTab": true,
+  "eslint.alwaysShowStatus": true,
+  // "eslint.packageManager": "yarn",
+  "eslint.validate": ["javascript", "javascriptreact", "svelte"],
+  "explorer.compactFolders": false,
+  "explorer.confirmDragAndDrop": false,
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "files.associations": {
+    "*.css": "tailwindcss",
+    "*.js": "javascript",
+    "*.svx": "mdx",
+    "config": "ini",
+    "credentials": "ini"
+  },
+  "files.autoSave": "off",
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "github.copilot.enable": {
+    "*": true,
+    "ini": false,
+    "markdown": false,
+    "plaintext": false,
+    "properties": false,
+    "scminput": false
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "markdownlint.config": {
+    "MD024": false
+  },
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "redhat.telemetry.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "svelte.enable-ts-plugin": true,
+  "svelte.plugin.svelte.defaultScriptLanguage": "ts",
+  "svelte.plugin.svelte.note-new-transformation": false,
+  "terminal.integrated.defaultProfile.osx": "fish",
+  "terminal.integrated.fontFamily": "OperatorMono Nerd Font",
+  "terminal.integrated.fontSize": 13,
+  "terminal.integrated.fontWeight": "400",
+  "terminal.integrated.fontWeightBold": "600",
+  "terminal.integrated.tabs.enabled": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // "vim.statusBarColors.normal": ["#8FBCBB", "#434C5E"],
+  // "vim.statusBarColors.insert": "#BF616A",
+  // "vim.statusBarColors.visual": "#B48EAD",
+  // "vim.statusBarColors.visualline": "#B48EAD",
+  // "vim.statusBarColors.visualblock": "#A3BE8C",
+  // "vim.statusBarColors.replace": "#D08770",
+  // "vim.statusBarColors.commandlineinprogress": "#007ACC",
+  // "vim.statusBarColors.searchinprogressmode": "#007ACC",
+  // "vim.statusBarColors.easymotionmode": "#007ACC",
+  // "vim.statusBarColors.easymotioninputmode": "#007ACC",
+  // "vim.statusBarColors.surroundinputmode": "#007ACC",
+  "vim.easymotion": true,
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-f>": false
+  },
+  "vim.incsearch": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "after": ["<Esc>"],
+      "before": ["j", "j"]
+    }
+  ],
+  "vim.leader": "<space>",
+  "vim.normalModeKeyBindings": [
+    {
+      "before": ["<C-n>"],
+      "commands": [":nohl"]
+    },
+    {
+      "after": ["d", "d"],
+      "before": ["<leader>", "d"]
+    },
+    {
+      "before": ["leader", "w"],
+      "commands": ["workbench.action.files.save"]
+    },
+    {
+      "before": ["leader", "m"],
+      "commands": ["editor.action.commentLine"],
+      "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+      "before": ["u"],
+      "commands": ["undo"]
+    },
+    {
+      "before": ["C-r"],
+      "commands": ["redo"]
+    },
+    {
+      "before": ["leader", "f"],
+      "commands": ["vim.easymotion"]
+    },
+    {
+      "before": ["/"],
+      "commands": ["editor.action.startFindReplaceAction"]
+    }
+    // {
+    //   "before": ["<A-k>"],
+    //   "when": "editorTextFocus && !editorReadonly",
+    //   "commands": ["editor.action.copyLinesUpAction"]
+    // },
+    // {
+    //   "before": ["<A-j>"],
+    //   "when": "editorTextFocus && !editorReadonly",
+    //   "commands": ["editor.action.copyLinesDownAction"]
+    // }
+  ],
+  "vim.statusBarColorControl": true,
+  "vim.statusBarColors.commandlineinprogress": "#007ACC",
+  "vim.statusBarColors.easymotioninputmode": "#007ACC",
+  "vim.statusBarColors.easymotionmode": "#1E6378",
+  "vim.statusBarColors.insert": ["#C6797E", "#151627"],
+  "vim.statusBarColors.normal": ["#151627", "#A2A3AA"],
+  "vim.statusBarColors.replace": "#D08770",
+  "vim.statusBarColors.searchinprogressmode": "#007ACC",
+  "vim.statusBarColors.surroundinputmode": "#007ACC",
+  "vim.statusBarColors.visual": "#2E2F48",
+  "vim.statusBarColors.visualblock": "#2E2F48",
+  "vim.statusBarColors.visualline": "#2E2F48",
+  "vim.useCtrlKeys": true,
+  "vim.useSystemClipboard": true,
+  "vim.vimrc.enable": true,
+  "vim.vimrc.path": "~/.vimrc",
+  "vim.visualModeKeyBindings": [
+    {
+      "before": ["leader", "m"],
+      "commands": ["editor.action.commentLine"],
+      "when": "editorTextFocus && !editorReadonly"
+    }
+  ],
+  // Move tabs to be in a single line with window controls
+  "window.titleBarStyle": "native",
+  // Remove left-side icons
+  "workbench.activityBar.location": "hidden",
+  // "vim.debug.loggingLevelForAlert": "debug",
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#2E2F48",
+    "statusBar.debuggingBackground": "#2E2F48",
+    "statusBar.debuggingForeground": "#A2A3AA",
+    "statusBar.foreground": "#A2A3AA",
+    "statusBar.noFolderBackground": "#2E2F48"
+  },
+  "workbench.colorTheme": "Rouge 2",
+  "workbench.editor.tabActionCloseVisibility": true,
+  "workbench.iconTheme": "file-icons-colourless",
+  "workbench.panel.defaultLocation": "right",
+  "workbench.startupEditor": "welcomePage",
+  // Remove bottom status bar
+  "workbench.statusBar.visible": false
+}
