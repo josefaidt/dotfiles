@@ -26,3 +26,6 @@ success_symbol = "[➜](bold green)" # The "success_symbol" segment is being set
 format = 'with [$symbol($profile )(\($region\) )]($style)'
 style = 'bold yellow'
 symbol = '🅰 '
+
+[directory]
+truncate_to_repo = false

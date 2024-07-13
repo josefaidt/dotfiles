@@ -1,10 +1,10 @@
 alias ay="amplify"
 alias ayd="amplify-dev"
-alias cda="cd ~/Documents/projects/aws-amplify"
+alias cda="cd ~/github.com/aws-amplify"
 alias cpo="cd ~/Documents/projects/aws-amplify/reproductions"
 
-function mkrep
-  set repro ~/Documents/projects/aws-amplify/reproductions/$argv[1]
+function mkrep --argument name
+  set repro ~/Documents/projects/aws-amplify/reproductions/$name
   mkdir $repro
   cd $repro
   code $repro
