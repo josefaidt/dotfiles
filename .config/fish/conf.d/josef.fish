@@ -1,20 +1,6 @@
-if status is-interactive
-  # Commands to run in interactive sessions can go here
-end
-
-if status --is-login
-  fish_add_path ~/.emacs.d/bin
-  fish_add_path ~/bin
-  fish_add_path $HOME/.cargo/bin
-  fish_add_path ~/.local/bin
-end
-
-# test -e (pwd)/.nvmrc && fnm use
-
 alias cat="bat"
 alias nvm="fnm"
 alias vl="vercel"
-alias vn="vite-node"
 alias gp="git push"
 alias cdl="cd ~/Downloads"
 alias t="tmux"
@@ -111,5 +97,5 @@ function r --argument count
 end
 
 function cc --argument repo
-  cd ~/github.com/$repo
-end
+  cd ~/github.com/"$repo"
+endd
