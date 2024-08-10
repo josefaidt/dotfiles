@@ -34,6 +34,7 @@ brew install \
   tree \
   ranger \
   starship \
+  luarocks # for neovim packages
 
 # change default shell to fish
 if ! fgrep -q "/opt/homebrew/bin/fish" /etc/shells; then
