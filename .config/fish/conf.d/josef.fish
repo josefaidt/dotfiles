@@ -43,59 +43,63 @@ set fish_color_user brgreen
 set fish_color_valid_path --underline
 
 function fish_greeting
-  printf "Hello, josef, how are you today?"
+    printf "Hello, josef, how are you today?"
 end
 
 function fish_prompt
-  echo
-  printf '%s%s%s%s%s ' (whoami)
-  set_color $fish_color_cwd
-  echo -n (prompt_pwd)\n
-  set_color normal
-  echo '> '
+    echo
+    printf '%s%s%s%s%s ' (whoami)
+    set_color $fish_color_cwd
+    echo -n (prompt_pwd)\n
+    set_color normal
+    echo '> '
 end
 
 function fish_right_prompt
-#intentionally left blank
+    #intentionally left blank
 end
 
 # kill processes by port
 function kp --argument port
-  set pid (lsof -t -i :$port)
-  if test -z "$pid"
-    echo "nothing running on this port"
-    return 1
-  end
-  command kill -9 
+    set pid (lsof -t -i :$port)
+    if test -z "$pid"
+        echo "nothing running on this port"
+        return 1
+    end
+    command kill -9
 end
 
 function notes
-  code -n ~/Documents/notes
+    code -n ~/Documents/notes
 end
 
 function cpl
-  echo "remember the cc function to go to ~/github.com"
-  cd ~/Documents/playground
+    echo "remember the cc function to go to ~/github.com"
+    cd ~/Documents/playground
 end
 function cpr
-  echo "remember the cc function to go to ~/github.com"
-  cd ~/Documents/projects
+    echo "remember the cc function to go to ~/github.com"
+    cd ~/Documents/projects
 end
 function cdd
-  cd ~/Documents
+    cd ~/Documents
 end
 
 function reload
-  command reset
-  source ~/.config/fish/config.fish
+    command reset
+    source ~/.config/fish/config.fish
 end
 
 function r --argument count
-  set -q count[1]
-  or set count 10
-  command ls -aldt * | head -$count
+    set -q count[1]
+    or set count 10
+    command ls -aldt * | head -$count
 end
 
 function cc --argument repo
-  cd ~/github.com/"$repo"
-endd
+    cd ~/github.com/"$repo"
+end
+
+function ccj --argument repo
+    cd ~/github.com/josefaidt/"$repo"
+end
