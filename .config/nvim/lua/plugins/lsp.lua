@@ -3,19 +3,21 @@ return {
   dependencies = {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     "williamboman/mason-lspconfig.nvim",
+    "b0o/schemastore.nvim"
   },
   config = function()
     -- Setup Mason first
     require("mason").setup()
     require("mason-lspconfig").setup({
       ensure_installed = {
-        "ts_ls",          -- TypeScript/JavaScript
-        "html",           -- HTML
-        "cssls",          -- CSS
-        "tailwindcss",    -- Tailwind
-        "astro",          -- Astro
-        "svelte",         -- Svelte
-        "emmet_ls",       -- Emmet for HTML/CSS
+        "ts_ls",       -- TypeScript/JavaScript
+        "html",        -- HTML
+        "cssls",       -- CSS
+        "tailwindcss", -- Tailwind
+        "astro",       -- Astro
+        "svelte",      -- Svelte
+        "emmet_ls",    -- Emmet for HTML/CSS
+        "jsonls"
       },
     })
     require("mason-tool-installer").setup({
@@ -34,7 +36,7 @@ return {
     -- Common on_attach function for all LSPs
     local on_attach = function(client, bufnr)
       local opts = { buffer = bufnr, silent = true }
-      
+
       -- LSP keybinds
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
@@ -50,11 +52,11 @@ return {
     -- TypeScript/JavaScript
     vim.lsp.config.ts_ls = {
       on_attach = on_attach,
-      filetypes = { 
-        "javascript", 
-        "javascriptreact", 
-        "typescript", 
-        "typescriptreact" 
+      filetypes = {
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
       },
     }
 
@@ -115,7 +117,27 @@ return {
       },
     }
 
+    vim.lsp.config.jsonls = {
+      on_attach = on_attach,
+      filetypes = { "json", "jsonc" },
+      settings = {
+        json = {
+          schemas = require('schemastore').json.schemas(),
+          validate = { enable = true },
+        },
+      },
+    }
+
     -- Enable the LSPs
-    vim.lsp.enable({ 'ts_ls', 'html', 'cssls', 'tailwindcss', 'astro', 'svelte', 'emmet_ls' })
+    vim.lsp.enable({
+      'ts_ls',
+      'html',
+      'cssls',
+      'tailwindcss',
+      'astro',
+      'svelte',
+      'emmet_ls',
+      'jsonls'
+    })
   end,
 }

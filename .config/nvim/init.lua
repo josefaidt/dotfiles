@@ -69,3 +69,23 @@ vim.opt.scrolloff = 10
 
 -- allow switching buffers without saving
 vim.opt.hidden = true
+
+-- Configure diagnostics (errors/warnings/hints)
+vim.diagnostic.config({
+  virtual_text = false, -- Show inline error messages
+  signs = false,        -- Show signs in the gutter
+  underline = true,     -- Enable underlines (squigglies!)
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    source = 'always',
+  },
+})
+
+-- Customize diagnostic signs
+local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
