@@ -1,9 +1,5 @@
 -- use personal keymap
 require("config.keymap")
--- use lazy.nvim for package management
-require("config.lazy")
--- load vscode settings
-require("config.vscode")
 
 -- Make line numbers default
 vim.opt.number = true
@@ -70,22 +66,25 @@ vim.opt.scrolloff = 10
 -- allow switching buffers without saving
 vim.opt.hidden = true
 
--- Configure diagnostics (errors/warnings/hints)
-vim.diagnostic.config({
-  virtual_text = false, -- Show inline error messages
-  signs = false,        -- Show signs in the gutter
-  underline = true,     -- Enable underlines (squigglies!)
-  update_in_insert = false,
-  severity_sort = true,
-  float = {
-    border = 'rounded',
-    source = 'always',
-  },
+-- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
+-- instead raise a dialog asking if you wish to save the current file(s)
+-- See `:help 'confirm'`
+vim.o.confirm = true
+
+-- Highlight when yanking (copying) text
+--  Try it with `yap` in normal mode
+--  See `:help vim.hl.on_yank()`
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.hl.on_yank()
+  end,
 })
 
--- Customize diagnostic signs
-local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-end
+require("config.lazy")
+
+-- @TODO redo lazy config loading, something is awry
+
+-- load vscode settings
+require("config.vscode")
