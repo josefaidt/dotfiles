@@ -30,10 +30,9 @@ brew install \
   fzf \
   gh \
   jq \
-  tmux \
   tree \
-  ranger \
   starship \
+  stow \
   luarocks # for neovim packages
 
 # change default shell to fish
