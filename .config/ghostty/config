@@ -1,0 +1,10 @@
+font-size = 14
+font-family = "Operator Mono Medium"
+cursor-style = "block"
+#theme = Catppuccin Mocha
+theme = Everforest Dark Hard
+#macos-titlebar-style = "tabs"
+macos-titlebar-style = "hidden"
+shell-integration-features = no-cursor
+window-padding-x = 12
+keybind = shift+enter=text:\n
