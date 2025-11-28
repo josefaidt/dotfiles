@@ -18,8 +18,10 @@ vim.opt.rtp:prepend(lazypath)
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
-		-- import your plugins
-		{ import = "plugins" },
+		-- import your plugins from organized subdirectories
+		{ import = "plugins.editor" },
+		{ import = "plugins.lsp" },
+		{ import = "plugins.ui" },
 	},
 	-- Configure any other settings here. See the documentation for more details.
 	-- defaults = { lazy = false }, -- Set to false to load plugins on startup

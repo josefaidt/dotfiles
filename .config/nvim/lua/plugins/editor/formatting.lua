@@ -5,16 +5,7 @@ return {
 	},
 	event = { "BufWritePre" },
 	cmd = { "ConformInfo" },
-	keys = {
-		{
-			"<leader>f",
-			function()
-				require("conform").format({ async = true, lsp_fallback = true })
-			end,
-			mode = "",
-			desc = "[F]ormat buffer",
-		},
-	},
+	-- Keymaps are configured in lua/config/keymaps/plugins.lua
 	opts = function()
 		local function has_biome_config()
 			local root = vim.fs.dirname(vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1])

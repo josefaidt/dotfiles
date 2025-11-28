@@ -2,25 +2,64 @@
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 return {
 	{
+		"nvim-tree/nvim-web-devicons",
+		opts = {
+			color_icons = false,
+		},
+	},
+	{
 		"nvim-neo-tree/neo-tree.nvim",
 		branch = "v3.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
-			"nvim-tree/nvim-web-devicons", -- optional, but recommended
+			"nvim-tree/nvim-web-devicons",
 		},
 		lazy = false, -- neo-tree will lazily load itself
-		keys = {
-			{ "\\", ":Neotree reveal<CR>", desc = "NeoTree reveal", silent = true },
-		},
+		-- Keymaps are configured in lua/config/keymaps/plugins.lua
 		opts = {
 			window = {
 				width = 30, -- Default is 40, try 25-35
+				mappings = {
+					["E"] = function()
+						vim.api.nvim_exec("Neotree focus filesystem left", true)
+					end,
+					["B"] = function()
+						vim.api.nvim_exec("Neotree focus buffers left", true)
+					end,
+					["G"] = function()
+						vim.api.nvim_exec("Neotree focus git_status left", true)
+					end,
+					["O"] = function(state)
+						local node = state.tree:get_node()
+						local path = node:get_id()
+						vim.fn.jobstart({ "open", path }, { detach = true })
+					end,
+					["\\"] = "close_window",
+					["<C-x>"] = function()
+						vim.cmd("Lazy")
+					end,
+				},
 			},
+			enable_diagnostics = false,
+			enable_git_status = true,
+			hide_root_node = true, -- Hide the top level directory name
 			filesystem = {
-				window = {
-					mappings = {
-						["\\"] = "close_window",
+				follow_current_file = {
+					enabled = true, -- Expand folders to reveal current file
+					leave_dirs_open = true, -- Close folders when navigating away
+				},
+				filtered_items = {
+					visible = true, -- Show filtered items dimmed
+					hide_dotfiles = false,
+					hide_gitignored = false,
+					hide_by_name = {
+						-- These will be completely hidden (not even dimmed)
+						".git",
+						".DS_Store",
+					},
+					never_show = {
+						".DS_Store",
 					},
 				},
 			},
@@ -30,22 +69,16 @@ return {
 					padding = 1,
 				},
 			},
+			reveal = true,
+			source_selector = {
+				winbar = true,
+				statusline = false,
+				show_scrolled_off_parent_node = true,
+				tabs_layout = "equal",
+				content_layout = "start",
+				separator = { left = "", right = "" },
+			},
 		},
-		-- config = function(_, opts)
-		--   require("neo-tree").setup(opts)
-
-		--   -- Auto-open neo-tree when opening a directory
-		--   vim.api.nvim_create_autocmd("VimEnter", {
-		--     callback = function()
-		--       if vim.fn.argc() == 0 then
-		--         -- Opened nvim with no arguments
-		--         vim.cmd("Neotree show")
-		--       elseif vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-		--         -- Opened nvim with a directory argument
-		--         vim.cmd("Neotree show")
-		--       end
-		--     end,
-		--   })
-		-- end,
+		event_handlers = {},
 	},
 }

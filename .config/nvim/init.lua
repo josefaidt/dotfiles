@@ -1,5 +1,5 @@
 -- use personal keymap
-require("config.keymap")
+require("config.keymaps")
 
 -- Make line numbers default
 vim.opt.number = true
@@ -26,6 +26,13 @@ end)
 
 -- Enable break indent
 vim.opt.breakindent = true
+
+-- Use spaces instead of tabs
+vim.opt.expandtab = true
+-- Set tab width to 2 spaces
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
 
 -- Save undo history
 vim.opt.undofile = true
@@ -81,6 +88,11 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.hl.on_yank()
 	end,
 })
+
+-- smooth scrolling
+vim.opt.smoothscroll = true
+vim.opt.scrolloff = 8 -- keep 8 lines visible above/below cursor
+vim.opt.sidescrolloff = 8 -- same but horizontallys
 
 require("config.lazy")
 
