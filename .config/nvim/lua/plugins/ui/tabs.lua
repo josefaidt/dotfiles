@@ -86,6 +86,8 @@ return {
 					-- end,
 					-- text_align = "center",
 					-- raw = " %{%v:lua.__get_selector()%} ",
+					text = "", -- Leave empty since Neo-tree's winbar will fill it
+					text_align = "left",
 					separator = true,
 				},
 			},
@@ -105,6 +107,32 @@ return {
 				reveal = { "close" },
 			},
 			sort_by = "insert_after_current", -- | 'insert_after_current' | 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
+		},
+		highlights = {
+			buffer_selected = {
+				italic = false,
+			},
+			buffer_visible = {
+				italic = false,
+			},
+			numbers_selected = {
+				italic = false,
+			},
+			diagnostic_selected = {
+				italic = false,
+			},
+			hint_selected = {
+				italic = false,
+			},
+			info_selected = {
+				italic = false,
+			},
+			warning_selected = {
+				italic = false,
+			},
+			error_selected = {
+				italic = false,
+			},
 		},
 	},
 }

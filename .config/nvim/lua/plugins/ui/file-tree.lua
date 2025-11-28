@@ -66,7 +66,7 @@ return {
 			default_component_configs = {
 				indent = {
 					indent_size = 2,
-					padding = 1,
+					padding = 0,
 				},
 			},
 			reveal = true,
@@ -79,6 +79,5 @@ return {
 				separator = { left = "", right = "" },
 			},
 		},
-		event_handlers = {},
 	},
 }
