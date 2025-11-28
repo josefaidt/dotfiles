@@ -13,6 +13,7 @@ vim.keymap.set("i", "jj", "<Esc>", { desc = "Esc key is too far" })
 vim.keymap.set("n", "<leader>qt", ":bp | bd #<CR>", { desc = "Close buffer" })
 vim.keymap.set("n", "<leader>qk", function()
 	-- Close all buffers except special ones (neo-tree, terminal, etc)
+	-- Then show an empty buffer like VSCode
 	local buffers = vim.api.nvim_list_bufs()
 	for _, buf in ipairs(buffers) do
 		if vim.fn.buflisted(buf) == 1 then
@@ -24,6 +25,8 @@ vim.keymap.set("n", "<leader>qk", function()
 			end
 		end
 	end
+	-- Create empty buffer to prevent neo-tree from maximizing
+	vim.cmd("enew")
 end, { desc = "Close all buffers" })
 vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
 
