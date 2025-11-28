@@ -69,10 +69,6 @@ function kp --argument port
     command kill -9
 end
 
-function notes
-    code -n ~/Documents/notes
-end
-
 function cpl
     echo "remember the cc function to go to ~/github.com"
     cd ~/Documents/playground
@@ -88,16 +84,6 @@ end
 function reload
     command reset
     source ~/.config/fish/config.fish
-end
-
-function r --argument count
-    set -q count[1]
-    or set count 10
-    command ls -aldt * | head -$count
-end
-
-function cc --argument repo
-    cd ~/github.com/"$repo"
 end
 
 function ccj --argument repo
