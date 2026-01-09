@@ -1,4 +1,4 @@
--- Neo-tree is a Neovim plugin to browse the file system
+-- geo-tree is a Neovim plugin to browse the file system
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 return {
 	{
@@ -41,6 +41,7 @@ return {
 					end,
 				},
 			},
+			local_settings = { wrap = true },
 			enable_diagnostics = false,
 			enable_git_status = true,
 			hide_root_node = true, -- Hide the top level directory name

@@ -7,4 +7,13 @@ theme = Everforest Dark Hard
 macos-titlebar-style = "hidden"
 shell-integration-features = no-cursor
 window-padding-x = 12
-keybind = shift+enter=text:\n
+shell-integration = fish
+
+# Anthropic's recommendation for claude code
+keybind = shift+enter=text:"\n"
+
+# Navigate splits (like tmux/zellij)
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+j=goto_split:bottom
+keybind = ctrl+k=goto_split:top
+keybind = ctrl+l=goto_split:right
