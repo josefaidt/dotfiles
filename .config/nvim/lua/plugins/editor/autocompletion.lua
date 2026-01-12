@@ -56,7 +56,29 @@ return { -- Autocompletion
 		completion = {
 			-- By default, you may press `<c-space>` to show the documentation.
 			-- Optionally, set `auto_show = true` to show the documentation after a delay.
-			documentation = { auto_show = false, auto_show_delay_ms = 500 },
+			documentation = {
+				auto_show = false,
+				auto_show_delay_ms = 500,
+				-- Window configuration for documentation popup
+				window = {
+					border = "rounded",
+					max_width = 80,
+					max_height = 20,
+					scrollbar = true,
+				},
+			},
+			-- Menu (completion list) configuration
+			menu = {
+				border = "rounded",
+				max_height = 15,
+				scrollbar = true,
+				-- VSCode-like: draw completion menu with more spacing
+				draw = {
+					padding = 1,
+					gap = 1,
+					columns = { { "kind_icon" }, { "label", "label_description", gap = 1 } },
+				},
+			},
 		},
 
 		sources = {
@@ -78,6 +100,12 @@ return { -- Autocompletion
 		fuzzy = { implementation = "lua" },
 
 		-- Shows a signature help window while you type arguments for a function
-		signature = { enabled = true },
+		signature = {
+			enabled = true,
+			window = {
+				border = "rounded",
+				scrollbar = false,
+			},
+		},
 	},
 }

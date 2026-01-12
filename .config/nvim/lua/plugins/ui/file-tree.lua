@@ -29,15 +29,6 @@ return {
 				window = {
 					width = 30, -- Default is 40, try 25-35
 					mappings = {
-						["E"] = function()
-							vim.api.nvim_exec("Neotree focus filesystem left", true)
-						end,
-						["B"] = function()
-							vim.api.nvim_exec("Neotree focus buffers left", true)
-						end,
-						["G"] = function()
-							vim.api.nvim_exec("Neotree focus git_status left", true)
-						end,
 						["O"] = function(state)
 							local node = state.tree:get_node()
 							local path = node:get_id()
@@ -61,9 +52,9 @@ return {
 							})
 						end,
 						-- Git add all files
-						["gA"] = function()
+						["gA"] = function(state)
 							vim.fn.system("git add .")
-							vim.cmd("Neotree refresh")
+							require("neo-tree.sources.manager").refresh(state.name)
 							vim.notify("Staged all files", vim.log.levels.INFO)
 						end,
 					},
@@ -116,12 +107,8 @@ return {
 				},
 				reveal = true,
 				source_selector = {
-					winbar = true,
+					winbar = false, -- Disable tabs (file/buffer/git) - using DiffView instead
 					statusline = false,
-					show_scrolled_off_parent_node = true,
-					tabs_layout = "equal",
-					content_layout = "start",
-					separator = { left = "", right = "" },
 				},
 			})
 		end,

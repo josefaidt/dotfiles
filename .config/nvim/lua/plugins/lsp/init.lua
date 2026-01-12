@@ -108,7 +108,20 @@ return {
 		-- See :help vim.diagnostic.Opts
 		vim.diagnostic.config({
 			severity_sort = true,
-			float = { border = "rounded", source = "if_many" },
+			float = {
+				border = "rounded",
+				source = "if_many",
+				header = "",
+				prefix = "",
+				suffix = "",
+				-- Add padding for better readability
+				max_width = 80,
+				max_height = 20,
+				focusable = true,
+				focus = false,
+				scope = "cursor",
+				style = "minimal",
+			},
 			-- VSCode-like: Show underlines for all diagnostics (squiggly lines)
 			underline = true,
 			signs = vim.g.have_nerd_font and {
