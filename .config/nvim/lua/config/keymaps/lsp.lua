@@ -1,10 +1,17 @@
--- LSP keymaps
--- These keymaps are set up when an LSP attaches to a buffer
+---@module 'config.keymaps.lsp'
+---LSP keymaps module
+---These keymaps are set up when an LSP attaches to a buffer
 
 local M = {}
 
+---Set up LSP keymaps when LSP attaches to a buffer
+---@param event {buf: integer, data: {client_id: integer}}
 function M.on_attach(event)
-	-- Helper function to define mappings specific for LSP related items
+	---Helper function to define mappings specific for LSP related items
+	---@param keys string|string[] Key mapping
+	---@param func function|string Function to execute or command string
+	---@param desc string Description of the mapping
+	---@param mode? string|string[] Mode(s) for the mapping (default: "n")
 	local map = function(keys, func, desc, mode)
 		mode = mode or "n"
 		vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
@@ -47,10 +54,23 @@ function M.on_attach(event)
 	--  the definition of its *type*, not where it was *defined*.
 	map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
 
+	-- VSCode-like diagnostic keymaps
+	-- Show hover documentation (like hovering in VSCode)
+	map("K", vim.lsp.buf.hover, "Hover Documentation")
+	-- Show diagnostic in floating window
+	map("<leader>e", vim.diagnostic.open_float, "Show Diagnostic")
+	-- Jump to next/previous diagnostic
+	map("[d", vim.diagnostic.goto_prev, "Previous Diagnostic")
+	map("]d", vim.diagnostic.goto_next, "Next Diagnostic")
+
 	-- Toggle inlay hints (if supported by the LSP)
 	local client = vim.lsp.get_client_by_id(event.data.client_id)
 	if client then
-		-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
+		---This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
+		---@param client vim.lsp.Client
+		---@param method string LSP method name
+		---@param bufnr? integer Buffer number
+		---@return boolean
 		local function client_supports_method(client, method, bufnr)
 			if vim.fn.has("nvim-0.11") == 1 then
 				return client:supports_method(method, bufnr)

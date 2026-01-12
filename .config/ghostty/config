@@ -1,5 +1,5 @@
 font-size = 14
-font-family = "Operator Mono Medium"
+font-family = "OperatorMono Nerd Font Book"
 cursor-style = "block"
 #theme = Catppuccin Mocha
 theme = Everforest Dark Hard
@@ -11,6 +11,10 @@ shell-integration = fish
 
 # Anthropic's recommendation for claude code
 keybind = shift+enter=text:"\n"
+
+# Create new splits
+keybind = super+d=new_split:right
+keybind = super+\=new_split:down
 
 # Navigate splits (like tmux/zellij)
 keybind = ctrl+h=goto_split:left

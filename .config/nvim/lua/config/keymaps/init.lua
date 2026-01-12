@@ -1,5 +1,6 @@
--- Main keymap configuration file (barrel file)
--- This file loads all keymap modules from the keymaps/ directory
+---@module 'config.keymaps'
+---Main keymap configuration file (barrel file)
+---This file loads all keymap modules from the keymaps/ directory
 
 -- Load general keymaps (leaders, window navigation, etc.)
 require("config.keymaps.general")

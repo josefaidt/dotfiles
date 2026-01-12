@@ -1,4 +1,5 @@
--- lua/plugins/session.lua
+---@module 'plugins.editor.session'
+---Auto-session configuration for automatic session management
 return {
 	"rmagatti/auto-session",
 	config = function()

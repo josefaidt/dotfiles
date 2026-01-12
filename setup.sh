@@ -43,6 +43,11 @@ if [ "$SHELL" != "/opt/homebrew/bin/fish" ]; then
   chsh -s /opt/homebrew/bin/fish
 fi
 
+# setup global gitignore
+echo "Setting up global gitignore..."
+DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cp "$DOTFILES_DIR/.gitignore_global" ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global
 
 # start copying config files
 TEMP_DIR=$(mktemp -d)

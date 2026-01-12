@@ -1,3 +1,5 @@
+---@module 'plugins.editor.linting'
+---nvim-lint configuration with ESLint and Biome support
 return {
 	"mfussenegger/nvim-lint",
 	event = { "BufReadPre", "BufNewFile" },

@@ -1,3 +1,5 @@
+---@module 'plugins.editor.telescope'
+---Telescope fuzzy finder configuration
 return {
 	"nvim-telescope/telescope.nvim",
 	tag = "0.1.8",
@@ -29,17 +31,36 @@ return {
 			-- Your telescope config here
 			defaults = {
 				layout_strategy = "vertical",
-				-- Custom keymaps for telescope
-				mappings = {
-					i = {
-						-- Use ctrl+j/k to move up and down in insert mode
-						["<C-j>"] = actions.move_selection_next,
-						["<C-k>"] = actions.move_selection_previous,
-					},
-					n = {
-						-- Use ctrl+j/k to move up and down in normal mode too
-						["<C-j>"] = actions.move_selection_next,
-						["<C-k>"] = actions.move_selection_previous,
+				-- Search hidden files (dotfiles) but exclude .git directory
+				file_ignore_patterns = {
+					"^.git/", -- Ignore .git directory
+					"node_modules/",
+					".DS_Store",
+				},
+				vimgrep_arguments = {
+					"rg",
+					"--color=never",
+					"--no-heading",
+					"--with-filename",
+					"--line-number",
+					"--column",
+					"--smart-case",
+					"--hidden", -- Search hidden files/dotfiles
+					"--glob",
+					"!.git/*", -- But exclude .git
+				},
+				-- Use default Telescope keymaps (Ctrl+n/p for navigation)
+			},
+			pickers = {
+				-- Configure find_files to show dotfiles but not .git
+				find_files = {
+					find_command = {
+						"rg",
+						"--files",
+						"--hidden", -- Include hidden files/dotfiles
+						"--no-ignore", -- Shows gitignored files
+						"--glob",
+						"!.git/*", -- Exclude .git directory
 					},
 				},
 			},

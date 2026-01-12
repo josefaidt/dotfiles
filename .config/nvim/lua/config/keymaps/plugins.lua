@@ -1,9 +1,10 @@
--- Plugin-specific keymaps that don't fit in other categories
+---@module 'config.keymaps.plugins'
+---Plugin-specific keymaps that don't fit in other categories
 
 -- Neo-tree (file explorer)
-vim.keymap.set("n", "\\", ":Neotree reveal<CR>", { desc = "NeoTree reveal", silent = true })
+vim.keymap.set("n", "\\", ":Neotree toggle<CR>", { desc = "NeoTree toggle", silent = true })
 
 -- Formatting with conform.nvim
-vim.keymap.set("n", "<leader>f", function()
+vim.keymap.set("n", "<leader>bf", function()
 	require("conform").format({ async = true, lsp_fallback = true })
-end, { desc = "[F]ormat buffer" })
+end, { desc = "Format buffer" })

@@ -1,6 +1,8 @@
-return { -- Useful plugin to show you pending keybinds.
+---@module 'plugins.ui.which-key'
+---Which-key configuration to show pending keybinds
+return {
 	"folke/which-key.nvim",
-	event = "VimEnter", -- Sets the loading event to 'VimEnter'
+	event = "VeryLazy", -- Sets the loading event to 'VimEnter'
 	opts = {
 		-- delay between pressing a key and opening which-key (milliseconds)
 		-- this setting is independent of vim.o.timeoutlen
@@ -48,6 +50,8 @@ return { -- Useful plugin to show you pending keybinds.
 			{ "<leader>t", group = "[T]oggle" },
 			{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 			{ "<leader>q", group = "[Q]uit" },
+			{ "<leader>f", group = "[F]ocus" },
+			{ "<leader>b", group = "[B]uffer" },
 		},
 	},
 }

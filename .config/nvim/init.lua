@@ -1,3 +1,6 @@
+-- Set to true if you have a Nerd Font installed and selected in your terminal
+vim.g.have_nerd_font = true
+
 -- use personal keymap
 require("config.keymaps")
 
@@ -6,6 +9,8 @@ vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
+-- Reduce gutter width for line numbers
+vim.opt.numberwidth = 2
 
 -- Use the system clipboard for all operations
 vim.opt.clipboard = "unnamedplus"
@@ -59,7 +64,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = "split"
@@ -69,6 +74,10 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+-- VSCode-like line spacing for better readability and clickable tabs
+-- Increase for taller tabs that are easier to click
+vim.opt.linespace = 8
 
 -- allow switching buffers without saving
 vim.opt.hidden = true

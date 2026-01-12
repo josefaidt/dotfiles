@@ -1,0 +1,11 @@
+# Global gitignore for all repositories
+# Applied via: git config --global core.excludesfile ~/.gitignore_global
+
+# macOS system files
+.DS_Store
+
+# Personal notes (not committed to any repo)
+notes.md
+
+# no logs
+*.log

@@ -1,3 +1,5 @@
+---@module 'config.lazy'
+---Lazy.nvim bootstrap and plugin configuration
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then

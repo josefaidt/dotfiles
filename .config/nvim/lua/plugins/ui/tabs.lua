@@ -1,8 +1,10 @@
--- bufferline.nvim - VSCode-like tabs for buffers
--- https://github.com/akinsho/bufferline.nvim
+---@module 'plugins.ui.tabs'
+---Bufferline configuration for VSCode-like tabs
+---https://github.com/akinsho/bufferline.nvim
 
 return {
 	"akinsho/bufferline.nvim",
+	enabled = false, -- Disabled in favor of buffer search workflow
 	version = "*",
 	dependencies = "nvim-tree/nvim-web-devicons",
 	event = "VeryLazy",
@@ -67,10 +69,10 @@ return {
 			close_icon = "",
 			left_trunc_marker = "",
 			right_trunc_marker = "",
-			max_name_length = 18,
+			max_name_length = 22, -- Increased for better readability
 			max_prefix_length = 15, -- prefix used when a buffer is de-duplicated
 			truncate_names = true, -- whether or not tab names should be truncated
-			tab_size = 18,
+			tab_size = 24, -- VSCode-like larger tabs
 			diagnostics = "nvim_lsp", -- | "nvim_lsp" | "coc",
 			diagnostics_update_in_insert = false,
 			-- The diagnostics indicator can be set to nil to keep the buffer name highlight but delete the highlighting

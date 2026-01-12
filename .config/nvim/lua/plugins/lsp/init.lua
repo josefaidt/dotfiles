@@ -1,3 +1,5 @@
+---@module 'plugins.lsp'
+---Main LSP Configuration with Mason integration
 return {
 	-- Main LSP Configuration
 	"neovim/nvim-lspconfig",
@@ -51,9 +53,9 @@ return {
 				-- Load LSP keymaps from centralized keymap config
 				require("config.keymaps.lsp").on_attach(event)
 
-				-- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
+				---This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 				---@param client vim.lsp.Client
-				---@param method vim.lsp.protocol.Method
+				---@param method string LSP method name
 				---@param bufnr? integer some lsp support methods only in specific files
 				---@return boolean
 				local function client_supports_method(client, method, bufnr)
@@ -107,7 +109,8 @@ return {
 		vim.diagnostic.config({
 			severity_sort = true,
 			float = { border = "rounded", source = "if_many" },
-			underline = { severity = vim.diagnostic.severity.ERROR },
+			-- VSCode-like: Show underlines for all diagnostics (squiggly lines)
+			underline = true,
 			signs = vim.g.have_nerd_font and {
 				text = {
 					[vim.diagnostic.severity.ERROR] = "󰅚 ",
@@ -116,19 +119,8 @@ return {
 					[vim.diagnostic.severity.HINT] = "󰌶 ",
 				},
 			} or {},
-			virtual_text = {
-				source = "if_many",
-				spacing = 2,
-				format = function(diagnostic)
-					local diagnostic_message = {
-						[vim.diagnostic.severity.ERROR] = diagnostic.message,
-						[vim.diagnostic.severity.WARN] = diagnostic.message,
-						[vim.diagnostic.severity.INFO] = diagnostic.message,
-						[vim.diagnostic.severity.HINT] = diagnostic.message,
-					}
-					return diagnostic_message[diagnostic.severity]
-				end,
-			},
+			-- VSCode-like: Hide inline diagnostic text, use 'gl' keymap to show in popover
+			virtual_text = false,
 		})
 
 		-- LSP servers and clients are able to communicate to each other what features they support.
@@ -137,15 +129,16 @@ return {
 		--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
 		local capabilities = require("blink.cmp").get_lsp_capabilities()
 
-		-- Enable the following language servers
-		--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-		--
-		--  Add any additional override configuration in the following tables. Available keys are:
-		--  - cmd (table): Override the default command used to start the server
-		--  - filetypes (table): Override the default list of associated filetypes for the server
-		--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-		--  - settings (table): Override the default settings passed when initializing the server.
-		--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+		---Enable the following language servers
+		---Feel free to add/remove any LSPs that you want here. They will automatically be installed.
+		---
+		---Add any additional override configuration in the following tables. Available keys are:
+		--- - cmd (table): Override the default command used to start the server
+		--- - filetypes (table): Override the default list of associated filetypes for the server
+		--- - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
+		--- - settings (table): Override the default settings passed when initializing the server.
+		---       For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+		---@type table<string, vim.lsp.ClientConfig>
 		local servers = {
 			-- clangd = {},
 			-- gopls = {},

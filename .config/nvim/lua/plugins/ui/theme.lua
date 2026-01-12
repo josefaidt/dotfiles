@@ -1,3 +1,5 @@
+---@module 'plugins.ui.theme'
+---Theme configuration for Everforest and Catppuccin
 return {
 	-- Everforest theme
 	{
@@ -31,6 +33,18 @@ return {
 
 			-- Load the colorscheme (default theme)
 			vim.cmd.colorscheme("everforest")
+
+			-- Dim shebang lines at the top of executables (use comment theming)
+			vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+				pattern = { "*.sh", "*.bash", "*.zsh", "*.py", "*.rb", "*.pl", "*" },
+				callback = function()
+					-- Create syntax match for shebang lines
+					vim.cmd([[
+						syntax match Shebang /\%^#!.*/
+						highlight link Shebang Comment
+					]])
+				end,
+			})
 		end,
 	},
 	-- Catppuccin theme

@@ -1,8 +1,10 @@
--- Telescope keymaps
--- These keymaps will be set up when Telescope is loaded
+---@module 'config.keymaps.telescope'
+---Telescope keymaps module
+---These keymaps will be set up when Telescope is loaded
 
 local M = {}
 
+---Set up Telescope keymaps
 function M.setup()
 	local builtin = require("telescope.builtin")
 
@@ -14,9 +16,60 @@ function M.setup()
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-	vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 	vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "Find word under cursor" })
+
+	-- Search all files with live grep (ignoring node_modules, .git, etc.)
+	vim.keymap.set("n", "<leader>sa", function()
+		builtin.live_grep({
+			additional_args = function()
+				return {
+					"--hidden", -- Include hidden files
+					"--glob",
+					"!.git/*", -- Exclude .git
+					"--glob",
+					"!node_modules/*", -- Exclude node_modules
+					"--glob",
+					"!.next/*", -- Exclude .next
+					"--glob",
+					"!dist/*", -- Exclude dist
+					"--glob",
+					"!build/*", -- Exclude build
+					"--glob",
+					"!coverage/*", -- Exclude coverage
+				}
+			end,
+		})
+	end, { desc = "[S]earch [A]ll files (grep)" })
+
+	-- Search for visually selected text in all files (prefills search input)
+	vim.keymap.set("v", "<leader>sa", function()
+		-- Get the visual selection
+		vim.cmd('normal! "vy')
+		local selected_text = vim.fn.getreg("v")
+
+		-- Open live_grep with the selected text prefilled
+		builtin.live_grep({
+			default_text = selected_text,
+			additional_args = function()
+				return {
+					"--hidden", -- Include hidden files
+					"--glob",
+					"!.git/*", -- Exclude .git
+					"--glob",
+					"!node_modules/*", -- Exclude node_modules
+					"--glob",
+					"!.next/*", -- Exclude .next
+					"--glob",
+					"!dist/*", -- Exclude dist
+					"--glob",
+					"!build/*", -- Exclude build
+					"--glob",
+					"!coverage/*", -- Exclude coverage
+				}
+			end,
+		})
+	end, { desc = "[S]earch [A]ll files for selection" })
 
 	-- Slightly advanced example of overriding default behavior and theme
 	vim.keymap.set("n", "<leader>/", function()
