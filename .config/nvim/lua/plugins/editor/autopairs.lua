@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.autopairs'
 ---Auto-closing brackets and quotes configuration
+
+---@type LazySpec
 return {
 	"windwp/nvim-autopairs",
 	event = "InsertEnter",

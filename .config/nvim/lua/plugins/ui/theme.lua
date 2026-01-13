@@ -1,5 +1,7 @@
 ---@module 'plugins.ui.theme'
 ---Theme configuration for Everforest and Catppuccin
+
+---@type LazySpec[]
 return {
 	-- Everforest theme
 	{

@@ -1,5 +1,7 @@
 ---@module 'plugins.lsp'
 ---Main LSP Configuration with Mason integration
+
+---@type LazySpec
 return {
 	-- Main LSP Configuration
 	"neovim/nvim-lspconfig",
@@ -10,6 +12,9 @@ return {
 		{ "mason-org/mason.nvim", opts = {} },
 		"mason-org/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
+
+		-- JSON schemas for autocompletion (package.json, tsconfig.json, etc.)
+		"b0o/schemastore.nvim",
 
 		-- Useful status updates for LSP.
 		-- { 'j-hui/fidget.nvim', opts = {} },
@@ -177,6 +182,15 @@ return {
 			astro = {}, -- Astro
 			svelte = {}, -- Svelte
 			emmet_ls = {}, -- Emmet for HTML/CSS
+			jsonls = {
+				-- JSON language server with schema support
+				settings = {
+					json = {
+						schemas = require("schemastore").json.schemas(),
+						validate = { enable = true },
+					},
+				},
+			},
 
 			lua_ls = {
 				-- cmd = { ... },
@@ -187,8 +201,29 @@ return {
 						completion = {
 							callSnippet = "Replace",
 						},
-						-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-						-- diagnostics = { disable = { 'missing-fields' } },
+						-- Most globals (like 'vim') are handled by lazydev with proper types
+						-- Only add globals here that aren't covered by type definitions
+						diagnostics = {
+							-- LuaJIT globals that don't have type defs
+							globals = { "jit" },
+							-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+							-- disable = { 'missing-fields' },
+						},
+						workspace = {
+							checkThirdParty = false,
+						},
+						telemetry = {
+							enable = false,
+						},
+						-- Improve type inference
+						hint = {
+							enable = true,
+							setType = false,
+							paramType = true,
+							paramName = "Disable",
+							semicolon = "Disable",
+							arrayIndex = "Disable",
+						},
 					},
 				},
 			},

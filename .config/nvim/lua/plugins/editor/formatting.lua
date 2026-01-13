@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.formatting'
 ---Conform.nvim formatting configuration with Biome and Prettier support
+
+---@type LazySpec
 return {
 	"stevearc/conform.nvim",
 	dependencies = {

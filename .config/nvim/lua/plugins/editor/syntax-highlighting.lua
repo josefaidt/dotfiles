@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.syntax-highlighting'
 ---Treesitter configuration for syntax highlighting and text objects
+
+---@type LazySpec
 return {
 	"nvim-treesitter/nvim-treesitter",
 	lazy = false,

@@ -1,5 +1,7 @@
 ---@module 'plugins.ui.statusline'
 ---Mini.nvim collection including statusline, surround, and text objects
+
+---@type LazySpec
 return { -- Collection of various small independent plugins/modules
 	"echasnovski/mini.nvim",
 	config = function()

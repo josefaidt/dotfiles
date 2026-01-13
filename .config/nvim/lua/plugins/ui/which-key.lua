@@ -1,9 +1,14 @@
 ---@module 'plugins.ui.which-key'
 ---Which-key configuration to show pending keybinds
+
+---@type LazySpec
 return {
 	"folke/which-key.nvim",
 	event = "VeryLazy", -- Sets the loading event to 'VimEnter'
+	---@module 'which-key'
+	---@type wk.Config
 	opts = {
+		preset = "helix",
 		-- delay between pressing a key and opening which-key (milliseconds)
 		-- this setting is independent of vim.o.timeoutlen
 		delay = 0,
@@ -53,6 +58,10 @@ return {
 			{ "<leader>q", group = "[Q]uit" },
 			{ "<leader>f", group = "[F]ocus" },
 			{ "<leader>b", group = "[B]uffer" },
+		},
+
+		triggers = {
+			{ "<auto>", mode = "nxso" },
 		},
 	},
 }

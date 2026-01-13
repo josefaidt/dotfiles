@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.telescope'
 ---Telescope fuzzy finder configuration
+
+---@type LazySpec
 return {
 	"nvim-telescope/telescope.nvim",
 	tag = "0.1.8",

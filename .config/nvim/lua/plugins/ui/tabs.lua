@@ -2,6 +2,7 @@
 ---Bufferline configuration for VSCode-like tabs
 ---https://github.com/akinsho/bufferline.nvim
 
+---@type LazySpec
 return {
 	"akinsho/bufferline.nvim",
 	enabled = false, -- Disabled in favor of buffer search workflow

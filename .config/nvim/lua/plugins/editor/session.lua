@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.session'
 ---Auto-session configuration for automatic session management
+
+---@type LazySpec
 return {
 	"rmagatti/auto-session",
 	config = function()

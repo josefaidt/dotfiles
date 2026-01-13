@@ -1,5 +1,7 @@
 ---@module 'plugins.ui.git-blame'
 ---Git blame inline annotations
+
+---@type LazySpec
 return {
 	"f-person/git-blame.nvim",
 	event = "VeryLazy",

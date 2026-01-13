@@ -4,12 +4,18 @@
 
 local M = {}
 
+-- Store the initial working directory when Neovim was opened
+-- This ensures Telescope searches stay rooted in the project directory
+local initial_cwd = vim.fn.getcwd()
+
 ---Set up Telescope keymaps
 function M.setup()
 	local builtin = require("telescope.builtin")
 
-	-- Cmd+P
-	vim.keymap.set("n", "<leader>p", builtin.find_files, { desc = "Find files" })
+	-- Cmd+P - search files in initial directory
+	vim.keymap.set("n", "<leader>p", function()
+		builtin.find_files({ cwd = initial_cwd })
+	end, { desc = "Find files" })
 	-- Cmd+Shift+P
 	vim.keymap.set("n", "<leader>P", builtin.commands, { desc = "Command palette" })
 
@@ -22,6 +28,7 @@ function M.setup()
 	-- Search all files with live grep (ignoring node_modules, .git, etc.)
 	vim.keymap.set("n", "<leader>sa", function()
 		builtin.live_grep({
+			cwd = initial_cwd,
 			additional_args = function()
 				return {
 					"--hidden", -- Include hidden files
@@ -50,6 +57,7 @@ function M.setup()
 
 		-- Open live_grep with the selected text prefilled
 		builtin.live_grep({
+			cwd = initial_cwd,
 			default_text = selected_text,
 			additional_args = function()
 				return {

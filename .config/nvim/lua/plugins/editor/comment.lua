@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.comment'
 ---Comment.nvim configuration for code commenting
+
+---@type LazySpec
 return {
   "numToStr/Comment.nvim",
   event = { "BufReadPre", "BufNewFile" },

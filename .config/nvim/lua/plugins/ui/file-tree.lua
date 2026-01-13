@@ -1,6 +1,8 @@
 ---@module 'plugins.ui.file-tree'
 ---Neo-tree file browser configuration with auto-refresh
 ---https://github.com/nvim-neo-tree/neo-tree.nvim
+
+---@type LazySpec[]
 return {
 	{
 		"nvim-tree/nvim-web-devicons",

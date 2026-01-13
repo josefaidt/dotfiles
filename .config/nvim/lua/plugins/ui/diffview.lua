@@ -1,5 +1,7 @@
 ---@module 'plugins.ui.diffview'
 ---DiffView for git diffs and file history
+
+---@type LazySpec
 return {
 	"sindrets/diffview.nvim",
 	dependencies = { "nvim-lua/plenary.nvim" },

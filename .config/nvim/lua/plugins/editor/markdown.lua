@@ -1,5 +1,7 @@
 ---@module 'plugins.editor.markdown'
 ---Markdown enhancements including auto-continuing lists
+
+---@type LazySpec
 return {
 	"dkarter/bullets.vim",
 	ft = { "markdown", "text", "gitcommit" },
