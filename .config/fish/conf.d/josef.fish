@@ -18,7 +18,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 
-set fish_color_autosuggestion 555 brblack
+set fish_color_autosuggestion 555
 set fish_color_cancel -r
 set fish_color_command --bold
 set fish_color_comment red
@@ -66,7 +66,7 @@ function kp --argument port
         echo "nothing running on this port"
         return 1
     end
-    command kill -9
+    command kill -9 $pid
 end
 
 function cpl

@@ -5,9 +5,9 @@ cursor-style = "block"
 theme = Everforest Dark Hard
 #macos-titlebar-style = "tabs"
 macos-titlebar-style = "hidden"
-shell-integration-features = no-cursor
+# shell-integration-features = no-cursor
 window-padding-x = 8
-shell-integration = fish
+shell-integration = none
 
 # Anthropic's recommendation for claude code
 keybind = shift+enter=text:"\n"
