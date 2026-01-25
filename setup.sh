@@ -23,17 +23,8 @@ else
   echo "Homebrew already installed"
 fi
 
-# install the basics
-brew install \
-  fish \
-  fnm \
-  fzf \
-  gh \
-  jq \
-  tree \
-  starship \
-  stow \
-  luarocks # for neovim packages
+# install from Brewfile
+brew bundle
 
 # change default shell to fish
 if ! fgrep -q "/opt/homebrew/bin/fish" /etc/shells; then
@@ -43,15 +34,38 @@ if [ "$SHELL" != "/opt/homebrew/bin/fish" ]; then
   chsh -s /opt/homebrew/bin/fish
 fi
 
+# show the ~/Library folder
+chflags nohidden ~/Library
+
+# show hidden files by default
+defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# show all filename extensions
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# never bounce the dock
+defaults write com.apple.dock no-bouncing -bool TRUE;
+
+# automatically hide and show the Dock
+defaults write com.apple.dock autohide -bool true
+
+# don’t automatically rearrange Spaces based on most recent use
+defaults write com.apple.dock mru-spaces -bool false
+
+# setup directory for github
+mkdir -p ~/github.com/josefaidt
+cd ~/github.com/josefaidt
+gh repo clone dotfiles
+
+cd dotfiles
+
 # setup global gitignore
-echo "Setting up global gitignore..."
-DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cp "$DOTFILES_DIR/.gitignore_global" ~/.gitignore_global
+stow git
 git config --global core.excludesfile ~/.gitignore_global
 
-# start copying config files
-TEMP_DIR=$(mktemp -d)
-# download dotfiles repo
-git clone git@github.com:josefaidt/dotfiles.git $TEMP_DIR
-# copy to ~/.config
-rsync -a $TEMP_DIR/.config/ ~/.config
+xdg-config-stow fish
+xdg-config-stow nvim
+xdg-config-stow ghostty
+xdg-config-stow zellij
+
+ln -s $(pwd)/.config/starship.toml ~/.config/starship.toml
