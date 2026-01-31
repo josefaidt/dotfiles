@@ -13,7 +13,7 @@ vim.keymap.set("i", "jj", "<Esc>", { desc = "Esc key is too far" })
 -- buffer/tab management
 vim.keymap.set("n", "<leader>qt", ":bp | bd #<CR>", { desc = "Close buffer" })
 ---Close all buffers except special ones (neo-tree, terminal, etc)
----Then show an empty buffer like VSCode
+---Then show a non-editable scratch buffer
 vim.keymap.set("n", "<leader>qk", function()
 	local buffers = vim.api.nvim_list_bufs()
 	for _, buf in ipairs(buffers) do
@@ -26,8 +26,13 @@ vim.keymap.set("n", "<leader>qk", function()
 			end
 		end
 	end
-	-- Create empty buffer to prevent neo-tree from maximizing
+	-- Create non-editable scratch buffer to prevent neo-tree from maximizing
 	vim.cmd("enew")
+	vim.bo.buftype = "nofile" -- Not associated with a file
+	vim.bo.bufhidden = "wipe" -- Wipe buffer when hidden
+	vim.bo.swapfile = false -- No swap file
+	vim.bo.modifiable = false -- Make it non-editable
+	vim.bo.buflisted = false -- Don't show in buffer list
 end, { desc = "Close all buffers" })
 vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
 
@@ -35,6 +40,26 @@ vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
 
 -- write file
 vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "write file" })
+
+-- reload current buffer from disk (useful when external tools modify files)
+vim.keymap.set("n", "<leader>br", function()
+	vim.cmd("checktime")
+	vim.notify("Buffer reloaded from disk", vim.log.levels.INFO)
+end, { desc = "[B]uffer [R]eload from disk" })
+
+-- LSP restart commands (useful when diagnostics don't refresh)
+vim.keymap.set("n", "<leader>lr", function()
+	vim.cmd("LspRestart")
+	vim.notify("LSP restarted for current buffer", vim.log.levels.INFO)
+end, { desc = "[L]SP [R]estart" })
+
+vim.keymap.set("n", "<leader>ls", function()
+	vim.cmd("LspStop")
+	vim.schedule(function()
+		vim.cmd("LspStart")
+		vim.notify("All LSP clients restarted", vim.log.levels.INFO)
+	end)
+end, { desc = "[L]SP [S]top and start all" })
 
 -- open lazy with ctrl+x
 vim.keymap.set("n", "<C-x>", ":Lazy<CR>", { desc = "Open Lazy.nvim" })
@@ -52,24 +77,27 @@ vim.keymap.set("n", "<leader>tt", function()
 		"rouge2",
 	}
 
-	vim.ui.select(themes, {
-		prompt = "Select Theme:",
-		---@param item string
-		---@return string
-		format_item = function(item)
-			local current = vim.g.colors_name
-			if item == current then
-				return item .. " (current)"
+	vim.ui.select(
+		themes,
+		{
+			prompt = "Select Theme:",
+			---@param item string
+			---@return string
+			format_item = function(item)
+				local current = vim.g.colors_name
+				if item == current then
+					return item .. " (current)"
+				end
+				return item
+			end,
+		}, ---@param choice? string
+		function(choice)
+			if choice then
+				vim.cmd.colorscheme(choice)
+				vim.notify("Switched to " .. choice, vim.log.levels.INFO)
 			end
-			return item
-		end,
-	}, ---@param choice? string
-	function(choice)
-		if choice then
-			vim.cmd.colorscheme(choice)
-			vim.notify("Switched to " .. choice, vim.log.levels.INFO)
 		end
-	end)
+	)
 end, { desc = "Choose theme" })
 
 -- Clear highlights on search when pressing <Esc> in normal mode

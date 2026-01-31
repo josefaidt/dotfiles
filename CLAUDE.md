@@ -6,6 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal dotfiles repository for macOS development environment. Uses GNU Stow for symlink management (via `xdg-config-stow` and `stow`) to deploy configs from this repo to `~/.config/` and `~`.
 
+**Recent Changes:**
+- Removed VSCode configuration (formerly in `.vscode/`)
+- Reorganized Fish config (moved functions out of `conf.d/` into `functions/`)
+- Added diffview plugin for Git diff viewing in Neovim
+- Expanded Neovim keymaps with more telescope and LSP bindings
+- Added type annotations to Lua configurations
+
 ## Key Components
 
 ### Neovim (`.config/nvim/`)
@@ -13,9 +20,30 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Entry point**: `init.lua` loads config/keymaps → config/lazy → config/vscode
 - **Structure**:
   - `lua/config/` - Core settings and keymaps (split into general, lsp, plugins, telescope)
-  - `lua/plugins/editor/` - Editor features (autocompletion, telescope, formatting, linting, markdown, flash navigation, autopairs, session management, syntax highlighting, comments)
-  - `lua/plugins/lsp/` - Language server configuration (lsp init, lazydev)
-  - `lua/plugins/ui/` - UI components (file-tree/neo-tree, theme, tabs, statusline, which-key, git-blame, diffview)
+  - `lua/plugins/editor/` - Editor features:
+    - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
+    - autopairs.lua - Auto-close brackets/quotes
+    - comment.lua - Smart commenting (Comment.nvim)
+    - flash.lua - Quick navigation with labeled jumps
+    - formatting.lua - Code formatting with conform.nvim
+    - linting.lua - Linting with nvim-lint
+    - markdown.lua - Markdown preview
+    - multiple-cursors.lua - VSCode-like multiple cursors (vim-visual-multi)
+    - session.lua - Session management
+    - syntax-highlighting.lua - Treesitter-based highlighting
+    - telescope.lua - Fuzzy finder
+  - `lua/plugins/lsp/` - Language server configuration:
+    - init.lua - LSP setup and configuration
+    - lazydev.lua - Lua development enhancements
+  - `lua/plugins/ui/` - UI components:
+    - diffview.lua - Git diff viewer
+    - dropbar.lua - IDE-like breadcrumbs winbar with context navigation
+    - file-tree.lua - Neo-tree file explorer
+    - git-blame.lua - Git blame annotations
+    - statusline.lua - Lualine status bar
+    - tabs.lua - Buffer/tab line (barbar.nvim)
+    - theme.lua - Color scheme configuration
+    - which-key.lua - Keybinding hints
   - `colors/` - Custom color schemes (rouge2.lua)
 - **Plugin organization**: Each file in `plugins/` returns a lazy.nvim spec table
 - **Formatting**: Uses `.stylelua.toml` for Lua code formatting
@@ -38,7 +66,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 
 ### Other Configs
 - **ghostty** - Terminal emulator config (`.config/ghostty/config`)
-- **zellij** - Terminal multiplexer (`.config/zellij/`)
+- **zellij** - Terminal multiplexer (`.config/zellij/config.kdl`)
 - **starship** - Cross-shell prompt (`.config/starship.toml`)
 
 ## Dependencies (Brewfile)
@@ -47,6 +75,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Package managers**: homebrew, fnm (Node.js), uv (Python)
 - **Development**: awscli, copilot-cli, git-secrets, luarocks, neovim
 - **Utilities**: bat, fzf, gh, httpie, jq, lazygit, ripgrep, stow, tree
+- **Database**: sqld (libSQL server)
 - **Shells**: fish, starship
 
 ### GUI Applications

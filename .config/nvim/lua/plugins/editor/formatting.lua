@@ -34,6 +34,7 @@ return {
 			end,
 			formatters_by_ft = {
 				lua = { "stylua" },
+				rust = { "rustfmt", lsp_format = "fallback" },
 
 				javascript = function()
 					if has_biome_config() then
@@ -83,7 +84,6 @@ return {
 				astro = { "prettier" }, -- prettierd doesn't support astro
 				svelte = { "prettier" }, -- prettierd doesn't support svelte
 				markdown = { "prettierd", "prettier", stop_after_first = true },
-				lua = { "stylua" },
 			},
 		}
 	end,

@@ -38,6 +38,12 @@ return {
 					"^.git/", -- Ignore .git directory
 					"node_modules/",
 					".DS_Store",
+					".next/",
+					".astro/",
+					".svelte%-kit/", -- Lua pattern: % escapes the hyphen
+					"dist/",
+					"build/",
+					"coverage/",
 				},
 				vimgrep_arguments = {
 					"rg",
@@ -50,6 +56,20 @@ return {
 					"--hidden", -- Search hidden files/dotfiles
 					"--glob",
 					"!.git/*", -- But exclude .git
+					"--glob",
+					"!node_modules/*",
+					"--glob",
+					"!.next/*",
+					"--glob",
+					"!.astro/*",
+					"--glob",
+					"!.svelte-kit/*",
+					"--glob",
+					"!dist/*",
+					"--glob",
+					"!build/*",
+					"--glob",
+					"!coverage/*",
 				},
 				-- Use default Telescope keymaps (Ctrl+n/p for navigation)
 			},
@@ -63,6 +83,20 @@ return {
 						"--no-ignore", -- Shows gitignored files
 						"--glob",
 						"!.git/*", -- Exclude .git directory
+						"--glob",
+						"!node_modules/*",
+						"--glob",
+						"!.next/*",
+						"--glob",
+						"!.astro/*",
+						"--glob",
+						"!.svelte-kit/*",
+						"--glob",
+						"!dist/*",
+						"--glob",
+						"!build/*",
+						"--glob",
+						"!coverage/*",
 					},
 				},
 			},

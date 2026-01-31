@@ -29,8 +29,27 @@ return {
 
 			require("neo-tree").setup({
 				window = {
+					position = "right", -- Position on the right side
 					width = 30, -- Default is 40, try 25-35
 					mappings = {
+						-- Override delete to have "y" pre-filled in confirmation
+						["d"] = function(state)
+							local node = state.tree:get_node()
+							local path = node.path
+							local filename = vim.fn.fnamemodify(path, ":t")
+
+							-- Use vim.ui.input with default "y" so user just needs to press Enter
+							vim.ui.input({
+								prompt = "Delete " .. filename .. "? (y/n): ",
+								default = "y", -- Pre-fill with "y"
+							}, function(input)
+								if input and (input:lower() == "y" or input:lower() == "yes") then
+									vim.fn.system({ "rm", "-rf", path })
+									require("neo-tree.sources.manager").refresh(state.name)
+									vim.notify("Deleted " .. filename, vim.log.levels.INFO)
+								end
+							end)
+						end,
 						["O"] = function(state)
 							local node = state.tree:get_node()
 							local path = node:get_id()
@@ -89,9 +108,21 @@ return {
 				},
 				default_component_configs = {
 					indent = {
-						indent_size = 2,
-						padding = 2,
+						indent_size = 3, -- Increased for more spacing
+						padding = 2, -- Increased horizontal padding
 						with_markers = true,
+					},
+					icon = {
+						folder_closed = "",
+						folder_open = "",
+						folder_empty = "",
+						default = "",
+					},
+					-- Add more vertical spacing between items
+					name = {
+						trailing_slash = false,
+						use_git_status_colors = true,
+						highlight = "NeoTreeFileName",
 					},
 					git_status = {
 						symbols = {

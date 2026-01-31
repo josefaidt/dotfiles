@@ -25,13 +25,24 @@ return {
 			"markdown",
 			"markdown_inline",
 			"toml",
+			"rust",
 		},
 		auto_install = true,
 		highlight = {
 			enable = true,
+			-- Disable treesitter for large files (set by init.lua)
+			disable = function(lang, buf)
+				return vim.b[buf].large_file
+			end,
 			additional_vim_regex_highlighting = false,
 		},
-		indent = { enable = true },
+		indent = {
+			enable = true,
+			-- Disable treesitter indenting for large files
+			disable = function(lang, buf)
+				return vim.b[buf].large_file
+			end,
+		},
 		textobjects = {
 			select = {
 				enable = true,

@@ -77,7 +77,7 @@ vim.opt.scrolloff = 10
 
 -- VSCode-like line spacing for better readability and clickable tabs
 -- Increase for taller tabs that are easier to click
-vim.opt.linespace = 8
+vim.opt.linespace = 12
 
 -- allow switching buffers without saving
 vim.opt.hidden = true
@@ -86,6 +86,34 @@ vim.opt.hidden = true
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
+
+-- Automatically reload files when changed outside of Neovim
+-- This is useful when external tools (like Claude Code) modify files
+vim.opt.autoread = true
+
+-- Automatically check for file changes when:
+-- - Gaining focus (switching back to the terminal)
+-- - Entering a buffer
+-- - After terminal job finishes
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
+	desc = "Check for external file changes",
+	group = vim.api.nvim_create_augroup("auto-reload-files", { clear = true }),
+	callback = function()
+		-- Only check if the buffer is not modified
+		if vim.bo.buftype == "" and not vim.bo.modified then
+			vim.cmd("checktime")
+		end
+	end,
+})
+
+-- Show a notification when a file is reloaded
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+	desc = "Notify when file is changed outside of Neovim",
+	group = vim.api.nvim_create_augroup("file-changed-notification", { clear = true }),
+	callback = function()
+		vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.WARN)
+	end,
+})
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -102,6 +130,44 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.opt.smoothscroll = true
 vim.opt.scrolloff = 8 -- keep 8 lines visible above/below cursor
 vim.opt.sidescrolloff = 8 -- same but horizontallys
+
+-- Disable heavy features for large files to prevent freezing
+-- Useful when inspecting large build files
+local large_file_group = vim.api.nvim_create_augroup("large-file-optimizations", { clear = true })
+
+vim.api.nvim_create_autocmd("BufReadPre", {
+	desc = "Disable expensive features for large files",
+	group = large_file_group,
+	callback = function(ev)
+		local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(ev.buf))
+		if ok and stats and stats.size > 1000000 then -- 1MB threshold
+			vim.notify("Large file detected. Disabling heavy features for better performance.", vim.log.levels.WARN)
+
+			-- Disable syntax highlighting
+			vim.cmd("syntax off")
+
+			-- Disable treesitter for this buffer
+			vim.b[ev.buf].large_file = true
+
+			-- Disable LSP
+			vim.api.nvim_create_autocmd("LspAttach", {
+				buffer = ev.buf,
+				callback = function(args)
+					vim.schedule(function()
+						vim.lsp.buf_detach_client(ev.buf, args.data.client_id)
+					end)
+				end,
+			})
+
+			-- Disable other expensive options
+			vim.opt_local.swapfile = false
+			vim.opt_local.foldmethod = "manual"
+			vim.opt_local.undolevels = -1
+			vim.opt_local.undoreload = 0
+			vim.opt_local.list = false -- disable showing whitespace chars
+		end
+	end,
+})
 
 require("config.lazy")
 

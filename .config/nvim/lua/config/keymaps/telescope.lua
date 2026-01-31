@@ -39,6 +39,10 @@ function M.setup()
 					"--glob",
 					"!.next/*", -- Exclude .next
 					"--glob",
+					"!.astro/*", -- Exclude .astro
+					"--glob",
+					"!.svelte-kit/*", -- Exclude .svelte-kit
+					"--glob",
 					"!dist/*", -- Exclude dist
 					"--glob",
 					"!build/*", -- Exclude build
@@ -68,6 +72,10 @@ function M.setup()
 					"!node_modules/*", -- Exclude node_modules
 					"--glob",
 					"!.next/*", -- Exclude .next
+					"--glob",
+					"!.astro/*", -- Exclude .astro
+					"--glob",
+					"!.svelte-kit/*", -- Exclude .svelte-kit
 					"--glob",
 					"!dist/*", -- Exclude dist
 					"--glob",

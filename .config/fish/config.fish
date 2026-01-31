@@ -1,3 +1,5 @@
+/opt/homebrew/bin/brew shellenv | source
+
 if status is-interactive
   # initialize starship prompt
   starship init fish | source
@@ -6,21 +8,23 @@ if status is-interactive
   fnm env --corepack-enabled --use-on-cd | source
 
   # personal aliases
-  alias p="pnpm"
   alias ..="cd .."
   alias ...="cd ../.."
   alias ....="cd ../../.."
 
+  abbr --add --position command ga git add
   abbr --add --position command gp git push
   abbr --add --position command gco git checkout
   abbr --add --position command gs git status
   abbr --add --position command lg lazygit
+
+  abbr --add --position command p pnpm
+  abbr --add --position command pi pnpm install
 end
 
 set --export JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
 set --export BUN_INSTALL "$HOME/.bun"
 
-/opt/homebrew/bin/brew shellenv | source
 fish_add_path $JAVA_HOME
 fish_add_path "$BUN_INSTALL/bin"
 fish_add_path ~/.local/bin
