@@ -108,8 +108,8 @@ return {
 				},
 				default_component_configs = {
 					indent = {
-						indent_size = 3, -- Increased for more spacing
-						padding = 2, -- Increased horizontal padding
+						indent_size = 2,
+						padding = 1,
 						with_markers = true,
 					},
 					icon = {

@@ -11,7 +11,40 @@ vim.keymap.set("n", "<SPACE>", "<NOP>", { noremap = true })
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Esc key is too far" })
 
 -- buffer/tab management
-vim.keymap.set("n", "<leader>qt", ":bp | bd #<CR>", { desc = "Close buffer" })
+---Close current buffer intelligently
+---If multiple buffers exist, go to previous buffer then close
+---If it's the last buffer, create a scratch buffer first
+vim.keymap.set("n", "<leader>qt", function()
+	local current_buf = vim.api.nvim_get_current_buf()
+	local buffers = vim.api.nvim_list_bufs()
+
+	-- Count listed buffers (exclude special buffers)
+	local listed_count = 0
+	for _, buf in ipairs(buffers) do
+		if vim.fn.buflisted(buf) == 1 then
+			local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
+			if buftype == "" then
+				listed_count = listed_count + 1
+			end
+		end
+	end
+
+	-- If this is the last buffer, create a scratch buffer first
+	if listed_count <= 1 then
+		vim.cmd("enew")
+		vim.bo.buftype = "nofile"
+		vim.bo.bufhidden = "wipe"
+		vim.bo.swapfile = false
+		vim.bo.modifiable = false
+		vim.bo.buflisted = false
+	else
+		-- Multiple buffers exist, go to previous
+		vim.cmd("bprevious")
+	end
+
+	-- Delete the original buffer
+	vim.api.nvim_buf_delete(current_buf, { force = false })
+end, { desc = "Close buffer" })
 ---Close all buffers except special ones (neo-tree, terminal, etc)
 ---Then show a non-editable scratch buffer
 vim.keymap.set("n", "<leader>qk", function()
@@ -19,14 +52,13 @@ vim.keymap.set("n", "<leader>qk", function()
 	for _, buf in ipairs(buffers) do
 		if vim.fn.buflisted(buf) == 1 then
 			local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-			local filetype = vim.api.nvim_get_option_value("filetype", { buf = buf })
 			-- Skip special buffers
-			if buftype == "" and filetype ~= "neo-tree" then
+			if buftype == "" then
 				vim.api.nvim_buf_delete(buf, { force = false })
 			end
 		end
 	end
-	-- Create non-editable scratch buffer to prevent neo-tree from maximizing
+	-- Create non-editable scratch buffer
 	vim.cmd("enew")
 	vim.bo.buftype = "nofile" -- Not associated with a file
 	vim.bo.bufhidden = "wipe" -- Wipe buffer when hidden
@@ -110,19 +142,8 @@ vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
 
 -- Window navigation removed - use Ctrl+h/j/k/l in Ghostty for pane navigation
--- Focus neo-tree or editor window
+-- Focus neo-tree
 vim.keymap.set("n", "<leader>fe", ":Neotree focus<CR>", { desc = "Focus explorer" })
-vim.keymap.set("n", "<leader>fd", function()
-	-- Find the first non-neo-tree window and focus it
-	for _, win in ipairs(vim.api.nvim_list_wins()) do
-		local buf = vim.api.nvim_win_get_buf(win)
-		local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-		if ft ~= "neo-tree" then
-			vim.api.nvim_set_current_win(win)
-			return
-		end
-	end
-end, { desc = "Focus editor" })
 
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 

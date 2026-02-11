@@ -37,8 +37,12 @@ return {
 			-- Load the colorscheme (default theme)
 			vim.cmd.colorscheme("everforest")
 
-			-- Configure italics for comments globally
-			vim.api.nvim_set_hl(0, "Comment", { italic = true })
+			-- Configure italics for comments while preserving color
+			local comment_hl = vim.api.nvim_get_hl(0, { name = "Comment", link = false })
+			if comment_hl then
+				comment_hl.italic = true
+				vim.api.nvim_set_hl(0, "Comment", comment_hl)
+			end
 
 			-- Configure language-specific keyword italics
 			-- Only apply italics to actual language keywords in JS/TS files
