@@ -20,11 +20,6 @@ return {
 			end,
 			desc = "Focus editor",
 		},
-		{
-			"<leader>fe",
-			":Neotree focus<CR>",
-			desc = "Go to file tree",
-		},
 	},
 	opts = {
 		---@type (Edgy.View.Opts|string)[]

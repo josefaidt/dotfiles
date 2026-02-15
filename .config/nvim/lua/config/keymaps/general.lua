@@ -101,8 +101,6 @@ vim.keymap.set("n", "<up>", '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set("n", "<down>", '<cmd>echo "Use j to move!!"<CR>')
 
 -- Window navigation removed - use Ctrl+h/j/k/l in Ghostty for pane navigation
--- Focus neo-tree
-vim.keymap.set("n", "<leader>fe", ":Neotree focus<CR>", { desc = "Focus explorer" })
 
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
