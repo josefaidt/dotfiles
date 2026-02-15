@@ -8,6 +8,27 @@ local M = {}
 -- This ensures Telescope searches stay rooted in the project directory
 local initial_cwd = vim.fn.getcwd()
 
+---Find the nearest package.json directory by searching upward from current file
+---@return string|nil The directory containing package.json, or nil if not found
+local function find_package_root()
+	local current_file = vim.api.nvim_buf_get_name(0)
+	if current_file == "" then
+		return nil
+	end
+
+	local current_dir = vim.fn.fnamemodify(current_file, ":h")
+	local root = vim.fs.find("package.json", {
+		path = current_dir,
+		upward = true,
+		stop = vim.fn.expand("~"),
+	})[1]
+
+	if root then
+		return vim.fn.fnamemodify(root, ":h")
+	end
+	return nil
+end
+
 ---Set up Telescope keymaps
 function M.setup()
 	local builtin = require("telescope.builtin")
@@ -100,6 +121,45 @@ function M.setup()
 	vim.keymap.set("n", "<leader>sn", function()
 		builtin.find_files({ cwd = vim.fn.stdpath("config") })
 	end, { desc = "[S]earch [N]eovim files" })
+
+	-- Search files within the current npm package
+	vim.keymap.set("n", "<leader>sp", function()
+		local package_root = find_package_root()
+		if package_root then
+			builtin.find_files({
+				cwd = package_root,
+				prompt_title = "Find Files in Package: " .. vim.fn.fnamemodify(package_root, ":t"),
+			})
+		else
+			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
+		end
+	end, { desc = "[S]earch files in current [P]ackage" })
+
+	-- Search text within the current npm package (live grep)
+	vim.keymap.set("n", "<leader>sg", function()
+		local package_root = find_package_root()
+		if package_root then
+			builtin.live_grep({
+				cwd = package_root,
+				prompt_title = "Search in Package: " .. vim.fn.fnamemodify(package_root, ":t"),
+				additional_args = function()
+					return {
+						"--hidden",
+						"--glob",
+						"!node_modules/*",
+						"--glob",
+						"!.git/*",
+						"--glob",
+						"!dist/*",
+						"--glob",
+						"!build/*",
+					}
+				end,
+			})
+		else
+			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
+		end
+	end, { desc = "[S]earch text in current package (live [G]rep)" })
 end
 
 return M

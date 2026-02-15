@@ -141,6 +141,23 @@ return {
 			virtual_text = false,
 		})
 
+		-- Auto-show diagnostics when cursor sits on a line/word with an error
+		vim.api.nvim_create_autocmd({ "CursorHold" }, {
+			group = vim.api.nvim_create_augroup("auto-show-diagnostics", { clear = true }),
+			callback = function()
+				-- Only show if there's a diagnostic under the cursor
+				local opts = {
+					focusable = false,
+					close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+					border = "rounded",
+					source = "if_many",
+					prefix = " ",
+					scope = "cursor",
+				}
+				vim.diagnostic.open_float(nil, opts)
+			end,
+		})
+
 		-- LSP servers and clients are able to communicate to each other what features they support.
 		--  By default, Neovim doesn't support everything that is in the LSP specification.
 		--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.

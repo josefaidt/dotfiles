@@ -10,65 +10,24 @@ vim.keymap.set("n", "<SPACE>", "<NOP>", { noremap = true })
 -- set `jj` to escape from insert to normal
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Esc key is too far" })
 
--- buffer/tab management
----Close current buffer intelligently
----If multiple buffers exist, go to previous buffer then close
----If it's the last buffer, create a scratch buffer first
+-- buffer/tab management (using snacks.nvim for smart buffer deletion)
 vim.keymap.set("n", "<leader>qt", function()
-	local current_buf = vim.api.nvim_get_current_buf()
-	local buffers = vim.api.nvim_list_bufs()
-
-	-- Count listed buffers (exclude special buffers)
-	local listed_count = 0
-	for _, buf in ipairs(buffers) do
-		if vim.fn.buflisted(buf) == 1 then
-			local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-			if buftype == "" then
-				listed_count = listed_count + 1
-			end
-		end
-	end
-
-	-- If this is the last buffer, create a scratch buffer first
-	if listed_count <= 1 then
-		vim.cmd("enew")
-		vim.bo.buftype = "nofile"
-		vim.bo.bufhidden = "wipe"
-		vim.bo.swapfile = false
-		vim.bo.modifiable = false
-		vim.bo.buflisted = false
-	else
-		-- Multiple buffers exist, go to previous
-		vim.cmd("bprevious")
-	end
-
-	-- Delete the original buffer
-	vim.api.nvim_buf_delete(current_buf, { force = false })
+	Snacks.bufdelete()
 end, { desc = "Close buffer" })
----Close all buffers except special ones (neo-tree, terminal, etc)
----Then show a non-editable scratch buffer
+
 vim.keymap.set("n", "<leader>qk", function()
-	local buffers = vim.api.nvim_list_bufs()
-	for _, buf in ipairs(buffers) do
-		if vim.fn.buflisted(buf) == 1 then
-			local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
-			-- Skip special buffers
-			if buftype == "" then
-				vim.api.nvim_buf_delete(buf, { force = false })
-			end
-		end
-	end
-	-- Create non-editable scratch buffer
-	vim.cmd("enew")
-	vim.bo.buftype = "nofile" -- Not associated with a file
-	vim.bo.bufhidden = "wipe" -- Wipe buffer when hidden
-	vim.bo.swapfile = false -- No swap file
-	vim.bo.modifiable = false -- Make it non-editable
-	vim.bo.buflisted = false -- Don't show in buffer list
+	Snacks.bufdelete.all()
 end, { desc = "Close all buffers" })
+
 vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
 
--- buffer navigation removed - use Telescope <leader><leader> to find buffers
+-- buffer navigation
+-- Jump to last buffer (like Alt+Tab in other editors)
+vim.keymap.set("n", "<leader>bb", "<C-^>", { desc = "Jump to last buffer" })
+-- Jump back to last position in jumplist (like Ctrl+- in VSCode)
+vim.keymap.set("n", "<C-->", "<C-o>", { desc = "Jump to previous position" })
+-- Jump forward in jumplist
+vim.keymap.set("n", "<C-=>", "<C-i>", { desc = "Jump to next position" })
 
 -- write file
 vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "write file" })

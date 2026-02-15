@@ -28,28 +28,13 @@ return {
 			vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" }) -- purple/magenta
 
 			require("neo-tree").setup({
+				-- Use vim.ui for all prompts (noice will intercept and center them)
+				use_popups_for_input = false,
 				window = {
 					position = "right", -- Position on the right side
 					width = 30, -- Default is 40, try 25-35
 					mappings = {
-						-- Override delete to have "y" pre-filled in confirmation
-						["d"] = function(state)
-							local node = state.tree:get_node()
-							local path = node.path
-							local filename = vim.fn.fnamemodify(path, ":t")
-
-							-- Use vim.ui.input with default "y" so user just needs to press Enter
-							vim.ui.input({
-								prompt = "Delete " .. filename .. "? (y/n): ",
-								default = "y", -- Pre-fill with "y"
-							}, function(input)
-								if input and (input:lower() == "y" or input:lower() == "yes") then
-									vim.fn.system({ "rm", "-rf", path })
-									require("neo-tree.sources.manager").refresh(state.name)
-									vim.notify("Deleted " .. filename, vim.log.levels.INFO)
-								end
-							end)
-						end,
+						-- Use native neotree delete (will use popup near sidebar)
 						["O"] = function(state)
 							local node = state.tree:get_node()
 							local path = node:get_id()
@@ -91,6 +76,9 @@ return {
 					},
 					-- Auto-refresh when files are created externally (e.g., by Claude, bun init)
 					use_libuv_file_watcher = true,
+					-- Add event handler configuration
+					async_directory_scan = "auto",
+					scan_mode = "shallow",
 					filtered_items = {
 						visible = true, -- Show filtered items dimmed
 						hide_dotfiles = false,

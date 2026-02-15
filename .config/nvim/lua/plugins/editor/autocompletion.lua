@@ -88,6 +88,23 @@ return { -- Autocompletion
 			},
 		},
 
+		-- Enable cmdline completion for : and / commands
+		cmdline = {
+			enabled = true,
+			sources = function()
+				local type = vim.fn.getcmdtype()
+				-- For search commands (/ and ?)
+				if type == "/" or type == "?" then
+					return { "buffer" }
+				end
+				-- For ex commands (:)
+				if type == ":" then
+					return { "cmdline" }
+				end
+				return {}
+			end,
+		},
+
 		snippets = { preset = "luasnip" },
 
 		-- Blink.cmp includes an optional, recommended rust fuzzy matcher,
