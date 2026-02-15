@@ -144,3 +144,8 @@ stow git                    # Deploy git config to ~
 - Edit `Brewfile` to add/remove packages
 - Run `brew bundle` to install new dependencies
 - Run `brew bundle cleanup` to remove unlisted packages
+
+### When working through notes.md items:
+- When addressing items line by line from `notes.md`, mark each item as complete by changing `[ ]` to `[x]` after successfully implementing/addressing it
+- If asked to skip or ignore an item, use strikethrough formatting (e.g., `~~- [ ] item text~~`) to indicate it should be skipped
+- This keeps the notes file as an accurate tracking document of what's been accomplished vs. what's pending
