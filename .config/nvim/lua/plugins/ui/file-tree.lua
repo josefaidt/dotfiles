@@ -40,6 +40,54 @@ return {
 							local path = node:get_id()
 							vim.fn.jobstart({ "open", path }, { detach = true })
 						end,
+						-- Custom rename that uses git mv when in a git repo
+						["r"] = function(state)
+							local node = state.tree:get_node()
+							local old_path = node:get_id()
+							local old_name = vim.fn.fnamemodify(old_path, ":t")
+
+							-- Prompt for new name
+							vim.ui.input({
+								prompt = "Rename to: ",
+								default = old_name,
+							}, function(new_name)
+								if not new_name or new_name == "" or new_name == old_name then
+									return
+								end
+
+								-- Get the directory and construct new path
+								local dir = vim.fn.fnamemodify(old_path, ":h")
+								local new_path = dir .. "/" .. new_name
+
+								-- Check if we're in a git repo
+								local in_git_repo = vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
+
+								local success
+								if in_git_repo then
+									-- Use git mv
+									local result = vim.fn.system({ "git", "mv", old_path, new_path })
+									success = vim.v.shell_error == 0
+									if not success then
+										vim.notify("git mv failed: " .. result, vim.log.levels.ERROR)
+									else
+										vim.notify("Renamed with git mv: " .. old_name .. " → " .. new_name, vim.log.levels.INFO)
+									end
+								else
+									-- Use regular rename
+									success = vim.loop.fs_rename(old_path, new_path)
+									if not success then
+										vim.notify("Rename failed", vim.log.levels.ERROR)
+									else
+										vim.notify("Renamed: " .. old_name .. " → " .. new_name, vim.log.levels.INFO)
+									end
+								end
+
+								if success then
+									-- Refresh neo-tree
+									require("neo-tree.sources.manager").refresh(state.name)
+								end
+							end)
+						end,
 						["<C-x>"] = function()
 							vim.cmd("Lazy")
 						end,
