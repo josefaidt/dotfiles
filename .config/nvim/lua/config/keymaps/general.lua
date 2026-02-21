@@ -11,13 +11,13 @@ vim.keymap.set("n", "<SPACE>", "<NOP>", { noremap = true })
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Esc key is too far" })
 
 -- buffer/tab management (using snacks.nvim for smart buffer deletion)
-vim.keymap.set("n", "<leader>qt", function()
+vim.keymap.set("n", "<leader>bd", function()
 	Snacks.bufdelete()
-end, { desc = "Close buffer" })
+end, { desc = "[B]uffer [D]elete" })
 
-vim.keymap.set("n", "<leader>qk", function()
+vim.keymap.set("n", "<leader>bD", function()
 	Snacks.bufdelete.all()
-end, { desc = "Close all buffers" })
+end, { desc = "[B]uffer [D]elete all" })
 
 vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
 
