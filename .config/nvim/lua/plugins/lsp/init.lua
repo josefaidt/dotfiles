@@ -226,8 +226,21 @@ return {
 			astro = {}, -- Astro
 			svelte = {}, -- Svelte
 			emmet_ls = {}, -- Emmet for HTML/CSS
+			biome = {
+				-- Use project-local biome when available, fallback to Mason-installed version
+				cmd = {
+					vim.fn.filereadable("node_modules/.bin/biome") == 1 and "node_modules/.bin/biome"
+						or vim.fn.exepath("biome"),
+					"lsp-proxy",
+				},
+			},
 			jsonls = {
 				-- JSON language server with schema support
+				-- Disable formatting since we use biome/prettier via conform.nvim
+				on_attach = function(client, bufnr)
+					client.server_capabilities.documentFormattingProvider = false
+					client.server_capabilities.documentRangeFormattingProvider = false
+				end,
 				settings = {
 					json = {
 						schemas = require("schemastore").json.schemas(),
@@ -308,6 +321,26 @@ return {
 					require("lspconfig")[server_name].setup(server)
 				end,
 			},
+		})
+
+		-- Auto-restart jsonls when $schema is updated in JSON files
+		vim.api.nvim_create_autocmd("BufWritePost", {
+			group = vim.api.nvim_create_augroup("json-schema-reload", { clear = true }),
+			pattern = "*.json",
+			callback = function(args)
+				local clients = vim.lsp.get_clients({ bufnr = args.buf, name = "jsonls" })
+				if #clients > 0 then
+					-- Check first 10 lines for $schema
+					local lines = vim.api.nvim_buf_get_lines(args.buf, 0, 10, false)
+					for _, line in ipairs(lines) do
+						if line:match('"$schema"') then
+							vim.cmd("LspRestart jsonls")
+							vim.notify("Restarted jsonls", vim.log.levels.INFO)
+							break
+						end
+					end
+				end
+			end,
 		})
 	end,
 }
