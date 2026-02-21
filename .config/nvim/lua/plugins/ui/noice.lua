@@ -174,6 +174,15 @@ return {
 				},
 				view = "confirm",
 			},
+			{
+				-- Show LSP progress messages (like "initializing js/ts features") as notifications
+				filter = {
+					event = "lsp",
+					kind = "progress",
+				},
+				opts = { skip = false },
+				view = "notify",
+			},
 		},
 	},
 }
