@@ -22,6 +22,7 @@ if status is-interactive
   abbr --add --position command pi pnpm install
 end
 
+set --export EDITOR nvim
 set --export JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
 set --export BUN_INSTALL "$HOME/.bun"
 
