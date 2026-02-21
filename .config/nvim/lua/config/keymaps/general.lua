@@ -30,7 +30,7 @@ vim.keymap.set("n", "<C-->", "<C-o>", { desc = "Jump to previous position" })
 vim.keymap.set("n", "<C-=>", "<C-i>", { desc = "Jump to next position" })
 
 -- write file
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "write file" })
+vim.keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "write file" })
 
 -- reload current buffer from disk (useful when external tools modify files)
 vim.keymap.set("n", "<leader>br", function()
