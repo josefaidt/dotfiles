@@ -175,13 +175,12 @@ return {
 				view = "confirm",
 			},
 			{
-				-- Show LSP progress messages (like "initializing js/ts features") as notifications
+				-- Skip LSP progress messages to avoid spam from spinner animations
 				filter = {
 					event = "lsp",
 					kind = "progress",
 				},
-				opts = { skip = false },
-				view = "notify",
+				opts = { skip = true },
 			},
 		},
 	},
