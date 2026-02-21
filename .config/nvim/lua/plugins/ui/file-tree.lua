@@ -124,6 +124,8 @@ return {
 								end
 							end)
 						end,
+						-- Override Neo-tree's default <C-x> (fuzzy finder clear) to match global behavior
+						-- We don't use Neo-tree's fuzzy finder, so this ensures <C-x> always opens Lazy
 						["<C-x>"] = function()
 							vim.cmd("Lazy")
 						end,

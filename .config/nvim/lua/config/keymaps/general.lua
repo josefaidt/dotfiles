@@ -56,7 +56,7 @@ end, { desc = "[L]SP [S]top and start all" })
 vim.keymap.set("n", "<C-x>", ":Lazy<CR>", { desc = "Open Lazy.nvim" })
 
 ---Theme picker using vim.ui.select
-vim.keymap.set("n", "<leader>tt", function()
+vim.keymap.set("n", "<leader>uc", function()
 	---@type string[]
 	local themes = {
 		"everforest",
@@ -89,7 +89,7 @@ vim.keymap.set("n", "<leader>tt", function()
 			end
 		end
 	)
-end, { desc = "Choose theme" })
+end, { desc = "[U]I: [C]hoose colorscheme/theme" })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
