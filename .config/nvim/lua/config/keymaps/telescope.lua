@@ -33,21 +33,26 @@ end
 function M.setup()
 	local builtin = require("telescope.builtin")
 
-	-- Cmd+P - search files in initial directory
+	-- File finding (VSCode-like + vim convention)
+	-- <leader>p for VSCode muscle memory (Cmd+P)
 	vim.keymap.set("n", "<leader>p", function()
 		builtin.find_files({ cwd = initial_cwd })
 	end, { desc = "Find files" })
-	-- Cmd+Shift+P
+	-- <leader>ff for vim users' expectation
+	vim.keymap.set("n", "<leader>ff", function()
+		builtin.find_files({ cwd = initial_cwd })
+	end, { desc = "[F]ind [F]iles" })
+	-- Cmd+Shift+P - command palette
 	vim.keymap.set("n", "<leader>P", builtin.commands, { desc = "Command palette" })
 
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
-	vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "Find word under cursor" })
+	vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch [W]ord under cursor" })
 
-	-- Search all files with live grep (ignoring node_modules, .git, etc.)
-	vim.keymap.set("n", "<leader>sa", function()
+	-- Search/grep all text in project (ignoring node_modules, .git, etc.)
+	vim.keymap.set("n", "<leader>sg", function()
 		builtin.live_grep({
 			cwd = initial_cwd,
 			additional_args = function()
@@ -72,10 +77,10 @@ function M.setup()
 				}
 			end,
 		})
-	end, { desc = "[S]earch [A]ll files (grep)" })
+	end, { desc = "[S]earch/[G]rep all text" })
 
 	-- Search for visually selected text in all files (prefills search input)
-	vim.keymap.set("v", "<leader>sa", function()
+	vim.keymap.set("v", "<leader>sg", function()
 		-- Get the visual selection
 		vim.cmd('normal! "vy')
 		local selected_text = vim.fn.getreg("v")
@@ -106,7 +111,7 @@ function M.setup()
 				}
 			end,
 		})
-	end, { desc = "[S]earch [A]ll files for selection" })
+	end, { desc = "[S]earch/[G]rep selection in all text" })
 
 	-- Slightly advanced example of overriding default behavior and theme
 	vim.keymap.set("n", "<leader>/", function()
@@ -122,8 +127,8 @@ function M.setup()
 		builtin.find_files({ cwd = vim.fn.stdpath("config") })
 	end, { desc = "[S]earch [N]eovim files" })
 
-	-- Search files within the current npm package
-	vim.keymap.set("n", "<leader>sp", function()
+	-- Find files within the current npm package
+	vim.keymap.set("n", "<leader>fp", function()
 		local package_root = find_package_root()
 		if package_root then
 			builtin.find_files({
@@ -133,10 +138,10 @@ function M.setup()
 		else
 			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 		end
-	end, { desc = "[S]earch files in current [P]ackage" })
+	end, { desc = "[F]ind files in current [P]ackage" })
 
-	-- Search text within the current npm package (live grep)
-	vim.keymap.set("n", "<leader>sg", function()
+	-- Search/grep text within the current npm package (live grep)
+	vim.keymap.set("n", "<leader>sp", function()
 		local package_root = find_package_root()
 		if package_root then
 			builtin.live_grep({
@@ -159,7 +164,7 @@ function M.setup()
 		else
 			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 		end
-	end, { desc = "[S]earch text in current package (live [G]rep)" })
+	end, { desc = "[S]earch/grep text in current [P]ackage" })
 end
 
 return M
