@@ -29,8 +29,12 @@ vim.schedule(function()
 	vim.opt.clipboard = "unnamedplus"
 end)
 
--- Enable break indent
+-- Enable break indent and better text wrapping
 vim.opt.breakindent = true
+-- Only wrap at word boundaries (spaces, punctuation) not in the middle of words
+vim.opt.linebreak = true
+-- When wrapping, continue at the same indent level
+vim.opt.breakindentopt = "shift:2"
 
 -- Use spaces instead of tabs
 vim.opt.expandtab = true
