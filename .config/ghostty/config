@@ -12,7 +12,7 @@ window-padding-x = 8
 # shell-integration = fish
 
 # Anthropic's recommendation for claude code
-keybind = shift+enter=text:"\n"
+keybind = shift+enter=text:\n
 
 # Create new splits
 keybind = super+d=new_split:right
