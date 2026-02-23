@@ -214,12 +214,7 @@ return {
 			-- But for many setups, the LSP (`ts_ls`) will work just fine
 			-- ts_ls = {},
 			--
-			ts_ls = {
-				-- Disable semantic tokens to prevent conflicts with Treesitter
-				on_attach = function(client, bufnr)
-					client.server_capabilities.semanticTokensProvider = nil
-				end,
-			},
+			ts_ls = {},
 			html = {}, -- HTML
 			cssls = {}, -- CSS
 			tailwindcss = {}, -- Tailwind
