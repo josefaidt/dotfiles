@@ -34,3 +34,60 @@ vim.keymap.set("n", "<C-\\>", ":Neotree toggle<CR>", { desc = "Toggle NeoTree vi
 vim.keymap.set("n", "<leader>bf", function()
 	require("conform").format({ async = true, lsp_fallback = true })
 end, { desc = "Format buffer" })
+
+-- Format with formatter picker
+vim.keymap.set("n", "<leader>bF", function()
+	local conform = require("conform")
+	local ft = vim.bo.filetype
+	local formatters = conform.list_formatters_by_ft(ft)
+
+	-- Build a list of available formatters
+	local available = {}
+	for _, formatter in ipairs(formatters) do
+		if type(formatter) == "string" then
+			table.insert(available, formatter)
+		elseif type(formatter) == "table" and formatter.name then
+			table.insert(available, formatter.name)
+		end
+	end
+
+	-- Add LSP formatting as an option if available
+	local lsp_clients = vim.lsp.get_clients({ bufnr = 0 })
+	local has_lsp_formatter = false
+	for _, client in ipairs(lsp_clients) do
+		if client.server_capabilities.documentFormattingProvider then
+			has_lsp_formatter = true
+			break
+		end
+	end
+	if has_lsp_formatter then
+		table.insert(available, "LSP")
+	end
+
+	if #available == 0 then
+		vim.notify("No formatters available for filetype: " .. ft, vim.log.levels.WARN)
+		return
+	end
+
+	-- Show picker
+	vim.ui.select(available, {
+		prompt = "Select formatter:",
+		format_item = function(item)
+			return item
+		end,
+	}, function(choice)
+		if not choice then
+			return
+		end
+
+		if choice == "LSP" then
+			vim.lsp.buf.format({ async = true })
+		else
+			conform.format({
+				async = true,
+				formatters = { choice },
+			})
+		end
+		vim.notify("Formatted with " .. choice, vim.log.levels.INFO)
+	end)
+end, { desc = "Format buffer (choose formatter)" })
