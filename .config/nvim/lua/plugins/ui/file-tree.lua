@@ -47,34 +47,32 @@ return {
 							local name = vim.fn.fnamemodify(path, ":t")
 							local type_str = node.type == "directory" and "directory" or "file"
 
-							-- Use vim.ui.select for a nicer confirmation (like discard changes prompt)
-							vim.ui.select(
-								{ "Yes", "No" },
-								{
-									prompt = string.format("Delete %s '%s'?", type_str, name),
-								},
-								function(choice)
-									if choice == "Yes" then
-										local success, err
-										if node.type == "directory" then
-											-- Use vim.fn.delete with 'rf' flag for recursive directory deletion
-											success = vim.fn.delete(path, "rf") == 0
-										else
-											success = vim.fn.delete(path) == 0
-										end
-
-										if success then
-											require("neo-tree.sources.manager").refresh(state.name)
-											vim.notify(string.format("Deleted %s: %s", type_str, name), vim.log.levels.INFO)
-										else
-											vim.notify(
-												string.format("Failed to delete %s: %s", type_str, name),
-												vim.log.levels.ERROR
-											)
-										end
-									end
-								end
+							-- Use vim.fn.confirm for consistent noice UI
+							local choice = vim.fn.confirm(
+								string.format("Delete %s '%s'?", type_str, name),
+								"&Yes\n&No",
+								2 -- default to No
 							)
+
+							if choice == 1 then -- Yes
+								local success
+								if node.type == "directory" then
+									-- Use vim.fn.delete with 'rf' flag for recursive directory deletion
+									success = vim.fn.delete(path, "rf") == 0
+								else
+									success = vim.fn.delete(path) == 0
+								end
+
+								if success then
+									require("neo-tree.sources.manager").refresh(state.name)
+									vim.notify(string.format("Deleted %s: %s", type_str, name), vim.log.levels.INFO)
+								else
+									vim.notify(
+										string.format("Failed to delete %s: %s", type_str, name),
+										vim.log.levels.ERROR
+									)
+								end
+							end
 						end,
 						-- Custom rename that uses git mv when in a git repo
 						["r"] = function(state)

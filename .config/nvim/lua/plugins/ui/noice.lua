@@ -112,6 +112,9 @@ return {
 				border = {
 					style = "rounded",
 					padding = { 0, 1 },
+					text = {
+						top = false, -- Hide title text like "neo-tree input"
+					},
 				},
 				win_options = {
 					winblend = 0,
