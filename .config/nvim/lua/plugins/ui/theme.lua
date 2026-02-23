@@ -3,6 +3,15 @@
 
 ---@type LazySpec[]
 return {
+	-- Mellow theme
+	{
+		"mellow-theme/mellow.nvim",
+		priority = 1001, -- Highest priority to make it default
+		lazy = false,
+		config = function()
+			vim.cmd.colorscheme("mellow")
+		end,
+	},
 	-- Everforest theme
 	{
 		"sainnhe/everforest",
@@ -16,9 +25,8 @@ return {
 			-- For better performance
 			vim.g.everforest_better_performance = 1
 
-			-- Enable italic for comments only (not all keywords)
-			-- We'll configure language-specific keyword italics below
-			vim.g.everforest_enable_italic = 0
+			-- Enable italic for keywords and comments
+			vim.g.everforest_enable_italic = 1
 
 			-- Transparent background (set to 1 if you want transparency)
 			vim.g.everforest_transparent_background = 0
@@ -35,58 +43,66 @@ return {
 			vim.g.everforest_diagnostic_virtual_text = "colored"
 
 			-- Load the colorscheme (default theme)
-			vim.cmd.colorscheme("everforest")
+			-- vim.cmd.colorscheme("everforest") -- Disabled, using Mellow instead
 
-			-- Configure italics for comments while preserving color
-			local comment_hl = vim.api.nvim_get_hl(0, { name = "Comment", link = false })
-			if comment_hl then
-				comment_hl.italic = true
-				vim.api.nvim_set_hl(0, "Comment", comment_hl)
-			end
+			-- CUSTOMIZATIONS COMMENTED OUT FOR TESTING
+			-- Uncomment incrementally to identify what's causing issues
 
-			-- Configure language-specific keyword italics
-			-- Only apply italics to actual language keywords in JS/TS files
-			local keyword_groups = {
-				"@keyword.conditional", -- if, else, switch
-				"@keyword.repeat", -- for, while, do
-				"@keyword.import", -- import, export
-				"@keyword.return",
-				"@keyword.function", -- function, async (when it's a keyword)
-				"@keyword.operator", -- typeof, instanceof
-				"@keyword.modifier", -- const, let, var, static
-			}
+			-- -- Configure italics for comments while preserving color
+			-- local comment_hl = vim.api.nvim_get_hl(0, { name = "Comment", link = false })
+			-- if comment_hl then
+			-- 	comment_hl.italic = true
+			-- 	vim.api.nvim_set_hl(0, "Comment", comment_hl)
+			-- end
 
-			-- Apply italic only to these specific treesitter groups
-			for _, group in ipairs(keyword_groups) do
-				vim.api.nvim_set_hl(0, group, { italic = true })
-			end
+			-- -- Configure language-specific keyword italics
+			-- -- Only apply italics to actual language keywords in JS/TS files
+			-- local keyword_groups = {
+			-- 	"@keyword.conditional", -- if, else, switch
+			-- 	"@keyword.repeat", -- for, while, do
+			-- 	"@keyword.import", -- import, export
+			-- 	"@keyword.return",
+			-- 	"@keyword.function", -- function, async (when it's a keyword)
+			-- 	"@keyword.operator", -- typeof, instanceof
+			-- 	"@keyword.modifier", -- const, let, var, static
+			-- }
 
-			-- Ensure @lsp.type.keyword does NOT get italics (this affects JSON and other contexts)
-			vim.api.nvim_set_hl(0, "@lsp.type.keyword", { italic = false })
+			-- -- Apply italic only to these specific treesitter groups
+			-- -- Preserve existing colors while adding italic
+			-- for _, group in ipairs(keyword_groups) do
+			-- 	local keyword_hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+			-- 	if keyword_hl and next(keyword_hl) ~= nil then
+			-- 		keyword_hl.italic = true
+			-- 		vim.api.nvim_set_hl(0, group, keyword_hl)
+			-- 	end
+			-- end
 
-			-- Normalize function colors - use the same color for all function types
-			-- This addresses the Vitest vs builtin function color issue
-			local function_color = vim.api.nvim_get_hl(0, { name = "@function", link = false })
-			if function_color then
-				vim.api.nvim_set_hl(0, "@function.builtin", function_color)
-				vim.api.nvim_set_hl(0, "@function.call", function_color)
-				vim.api.nvim_set_hl(0, "@function.method", function_color)
-				vim.api.nvim_set_hl(0, "@function.method.call", function_color)
-				vim.api.nvim_set_hl(0, "@lsp.type.function", function_color)
-				vim.api.nvim_set_hl(0, "@lsp.type.method", function_color)
-			end
+			-- -- Ensure @lsp.type.keyword does NOT get italics (this affects JSON and other contexts)
+			-- vim.api.nvim_set_hl(0, "@lsp.type.keyword", { italic = false })
 
-			-- Dim shebang lines at the top of executables (use comment theming)
-			vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-				pattern = { "*.sh", "*.bash", "*.zsh", "*.py", "*.rb", "*.pl", "*" },
-				callback = function()
-					-- Create syntax match for shebang lines
-					vim.cmd([[
-						syntax match Shebang /\%^#!.*/
-						highlight link Shebang Comment
-					]])
-				end,
-			})
+			-- -- Normalize function colors - use the same color for all function types
+			-- -- This addresses the Vitest vs builtin function color issue
+			-- local function_color = vim.api.nvim_get_hl(0, { name = "@function", link = false })
+			-- if function_color then
+			-- 	vim.api.nvim_set_hl(0, "@function.builtin", function_color)
+			-- 	vim.api.nvim_set_hl(0, "@function.call", function_color)
+			-- 	vim.api.nvim_set_hl(0, "@function.method", function_color)
+			-- 	vim.api.nvim_set_hl(0, "@function.method.call", function_color)
+			-- 	vim.api.nvim_set_hl(0, "@lsp.type.function", function_color)
+			-- 	vim.api.nvim_set_hl(0, "@lsp.type.method", function_color)
+			-- end
+
+			-- -- Dim shebang lines at the top of executables (use comment theming)
+			-- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+			-- 	pattern = { "*.sh", "*.bash", "*.zsh", "*.py", "*.rb", "*.pl", "*" },
+			-- 	callback = function()
+			-- 		-- Create syntax match for shebang lines
+			-- 		vim.cmd([[
+			-- 			syntax match Shebang /\%^#!.*/
+			-- 			highlight link Shebang Comment
+			-- 		]])
+			-- 	end,
+			-- })
 		end,
 	},
 	-- Catppuccin theme
