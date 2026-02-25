@@ -4,9 +4,19 @@
 
 local M = {}
 
+---Find the git repository root by searching upward from current directory
+---@return string The git root directory, or initial cwd if not in a git repo
+local function find_git_root()
+	local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+	if vim.v.shell_error == 0 and git_root then
+		return git_root
+	end
+	return vim.fn.getcwd()
+end
+
 -- Store the initial working directory when Neovim was opened
--- This ensures Telescope searches stay rooted in the project directory
-local initial_cwd = vim.fn.getcwd()
+-- Prefer git root if we're in a git repository, otherwise use current directory
+local initial_cwd = find_git_root()
 
 ---Find the nearest package.json directory by searching upward from current file
 ---@return string|nil The directory containing package.json, or nil if not found
@@ -61,19 +71,21 @@ function M.setup()
 					"--glob",
 					"!.git/*", -- Exclude .git
 					"--glob",
-					"!node_modules/*", -- Exclude node_modules
+					"!**/node_modules/*",
 					"--glob",
-					"!.next/*", -- Exclude .next
+					"!**/.next/*",
 					"--glob",
-					"!.astro/*", -- Exclude .astro
+					"!**/.astro/*",
 					"--glob",
-					"!.svelte-kit/*", -- Exclude .svelte-kit
+					"!**/.svelte-kit/*",
 					"--glob",
-					"!dist/*", -- Exclude dist
+					"!**/dist/*",
 					"--glob",
-					"!build/*", -- Exclude build
+					"!**/build/*",
 					"--glob",
-					"!coverage/*", -- Exclude coverage
+					"!**/coverage/*",
+					"--glob",
+					"!**/.amplify-hosting/*",
 				}
 			end,
 		})
@@ -95,19 +107,21 @@ function M.setup()
 					"--glob",
 					"!.git/*", -- Exclude .git
 					"--glob",
-					"!node_modules/*", -- Exclude node_modules
+					"!**/node_modules/*",
 					"--glob",
-					"!.next/*", -- Exclude .next
+					"!**/.next/*",
 					"--glob",
-					"!.astro/*", -- Exclude .astro
+					"!**/.astro/*",
 					"--glob",
-					"!.svelte-kit/*", -- Exclude .svelte-kit
+					"!**/.svelte-kit/*",
 					"--glob",
-					"!dist/*", -- Exclude dist
+					"!**/dist/*",
 					"--glob",
-					"!build/*", -- Exclude build
+					"!**/build/*",
 					"--glob",
-					"!coverage/*", -- Exclude coverage
+					"!**/coverage/*",
+					"--glob",
+					"!**/.amplify-hosting/*",
 				}
 			end,
 		})
