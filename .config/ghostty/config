@@ -6,7 +6,7 @@ cursor-style = block
 # Theme options (uncomment to switch):
 #theme = Catppuccin Mocha
 #theme = Everforest Dark Hard
-theme = mellow
+theme = Mellow
 macos-titlebar-style = "tabs"
 # macos-titlebar-style = hidden
 shell-integration-features = no-cursor
