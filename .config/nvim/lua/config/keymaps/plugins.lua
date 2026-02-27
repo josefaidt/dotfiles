@@ -38,69 +38,37 @@ end, { desc = "Format buffer" })
 -- Format with formatter picker
 vim.keymap.set("n", "<leader>bF", function()
 	local conform = require("conform")
-	local ft = vim.bo.filetype
 
-	-- Get formatters configured for this filetype
-	local formatters_by_ft = conform.formatters_by_ft or {}
-	local configured_formatters = formatters_by_ft[ft]
-
-	-- Handle function-based formatter configs
-	if type(configured_formatters) == "function" then
-		configured_formatters = configured_formatters(0)
-	end
-
-	-- Build a list of available formatters
+	-- Use the public API to get available formatters for current buffer
 	local available = {}
-
-	if configured_formatters then
-		for _, formatter in ipairs(configured_formatters) do
-			if type(formatter) == "string" then
-				-- Check if formatter is actually available
-				local info = conform.get_formatter_info(formatter, ft)
-				if info and info.available then
-					table.insert(available, formatter)
-				end
-			end
+	for _, formatter in ipairs(conform.list_formatters(0)) do
+		if formatter.available then
+			table.insert(available, formatter.name)
 		end
 	end
 
-	-- Add LSP formatting as an option if available
-	local lsp_clients = vim.lsp.get_clients({ bufnr = 0 })
-	local has_lsp_formatter = false
-	for _, client in ipairs(lsp_clients) do
+	-- Add LSP formatting as an option if any attached client supports it
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
 		if client.server_capabilities.documentFormattingProvider then
-			has_lsp_formatter = true
+			table.insert(available, "LSP")
 			break
 		end
 	end
-	if has_lsp_formatter then
-		table.insert(available, "LSP")
-	end
 
 	if #available == 0 then
-		vim.notify("No formatters available for filetype: " .. ft, vim.log.levels.WARN)
+		vim.notify("No formatters available for filetype: " .. vim.bo.filetype, vim.log.levels.WARN)
 		return
 	end
 
-	-- Show picker using vim.ui.select (telescope will provide the UI)
-	vim.ui.select(available, {
-		prompt = "Select formatter:",
-		format_item = function(item)
-			return item
-		end,
-	}, function(choice)
+	vim.ui.select(available, { prompt = "Select formatter:" }, function(choice)
 		if not choice then
 			return
 		end
-
 		if choice == "LSP" then
 			vim.lsp.buf.format({ async = true })
-			vim.notify("Formatted with " .. choice, vim.log.levels.INFO)
+			vim.notify("Formatted with LSP", vim.log.levels.INFO)
 		else
-			conform.format({
-				async = true,
-				formatters = { choice },
-			}, function(err)
+			conform.format({ async = true, formatters = { choice } }, function(err)
 				if err then
 					vim.notify("Format failed: " .. err, vim.log.levels.ERROR)
 				else
