@@ -128,6 +128,13 @@ stow git                    # Deploy git config to ~
 - lazy.nvim auto-imports from `plugins.editor`, `plugins.lsp`, `plugins.ui`
 - Format Lua code with stylua using the provided `.stylelua.toml` config
 
+### When building UI elements or dialogs in Neovim config:
+- **Always use `vim.ui.select` and `vim.ui.input`** — these are enhanced by the noice/nui stack (telescope-ui-select provides the dropdown, noice styles inputs/confirms)
+- Never build raw floating windows or custom pickers from scratch — the existing UI stack handles styling automatically
+- For pickers: `vim.ui.select(items, { prompt = "..." }, callback)`
+- For text input: `vim.ui.input({ prompt = "..." }, callback)`
+- For notifications: `vim.notify(msg, vim.log.levels.INFO|WARN|ERROR)` (nvim-notify handles display)
+
 ### When modifying configs:
 - All configs live in `.config/` directory
 - Git config lives in `git/` directory (stowed to home)
