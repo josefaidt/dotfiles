@@ -39,15 +39,28 @@ end, { desc = "Format buffer" })
 vim.keymap.set("n", "<leader>bF", function()
 	local conform = require("conform")
 	local ft = vim.bo.filetype
-	local formatters = conform.list_formatters_by_ft(ft)
+
+	-- Get formatters configured for this filetype
+	local formatters_by_ft = conform.formatters_by_ft or {}
+	local configured_formatters = formatters_by_ft[ft]
+
+	-- Handle function-based formatter configs
+	if type(configured_formatters) == "function" then
+		configured_formatters = configured_formatters(0)
+	end
 
 	-- Build a list of available formatters
 	local available = {}
-	for _, formatter in ipairs(formatters) do
-		if type(formatter) == "string" then
-			table.insert(available, formatter)
-		elseif type(formatter) == "table" and formatter.name then
-			table.insert(available, formatter.name)
+
+	if configured_formatters then
+		for _, formatter in ipairs(configured_formatters) do
+			if type(formatter) == "string" then
+				-- Check if formatter is actually available
+				local info = conform.get_formatter_info(formatter, ft)
+				if info and info.available then
+					table.insert(available, formatter)
+				end
+			end
 		end
 	end
 
@@ -69,7 +82,7 @@ vim.keymap.set("n", "<leader>bF", function()
 		return
 	end
 
-	-- Show picker
+	-- Show picker using vim.ui.select (telescope will provide the UI)
 	vim.ui.select(available, {
 		prompt = "Select formatter:",
 		format_item = function(item)
@@ -82,12 +95,18 @@ vim.keymap.set("n", "<leader>bF", function()
 
 		if choice == "LSP" then
 			vim.lsp.buf.format({ async = true })
+			vim.notify("Formatted with " .. choice, vim.log.levels.INFO)
 		else
 			conform.format({
 				async = true,
 				formatters = { choice },
-			})
+			}, function(err)
+				if err then
+					vim.notify("Format failed: " .. err, vim.log.levels.ERROR)
+				else
+					vim.notify("Formatted with " .. choice, vim.log.levels.INFO)
+				end
+			end)
 		end
-		vim.notify("Formatted with " .. choice, vim.log.levels.INFO)
 	end)
 end, { desc = "Format buffer (choose formatter)" })
