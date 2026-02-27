@@ -141,20 +141,25 @@ return {
 			virtual_text = false,
 		})
 
-		-- Auto-show diagnostics when cursor sits on a line/word with an error
+		-- Auto-show diagnostics or hover info when cursor rests on a symbol
 		vim.api.nvim_create_autocmd({ "CursorHold" }, {
 			group = vim.api.nvim_create_augroup("auto-show-diagnostics", { clear = true }),
 			callback = function()
-				-- Only show if there's a diagnostic under the cursor
-				local opts = {
-					focusable = false,
-					close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-					border = "rounded",
-					source = "if_many",
-					prefix = " ",
-					scope = "cursor",
-				}
-				vim.diagnostic.open_float(nil, opts)
+				local cursor = vim.api.nvim_win_get_cursor(0)
+				local diagnostics = vim.diagnostic.get(0, { lnum = cursor[1] - 1 })
+				if #diagnostics > 0 then
+					local opts = {
+						focusable = false,
+						close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+						border = "rounded",
+						source = "if_many",
+						prefix = " ",
+						scope = "cursor",
+					}
+					vim.diagnostic.open_float(nil, opts)
+				else
+					vim.lsp.buf.hover()
+				end
 			end,
 		})
 
