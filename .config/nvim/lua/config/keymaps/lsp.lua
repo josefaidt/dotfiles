@@ -57,8 +57,13 @@ function M.on_attach(event)
 	-- VSCode-like diagnostic keymaps
 	-- Show hover documentation (like hovering in VSCode)
 	map("K", vim.lsp.buf.hover, "Hover Documentation")
-	-- Show diagnostic in floating window
-	map("<leader>e", vim.diagnostic.open_float, "Show Diagnostic")
+	-- Show diagnostic in floating window (focused so you can scroll)
+	map("<leader>e", function()
+		local winid = vim.diagnostic.open_float()
+		if winid then
+			vim.api.nvim_set_current_win(winid)
+		end
+	end, "Show Diagnostic")
 	-- Jump to next/previous diagnostic
 	map("[d", vim.diagnostic.goto_prev, "Previous Diagnostic")
 	map("]d", vim.diagnostic.goto_next, "Next Diagnostic")
