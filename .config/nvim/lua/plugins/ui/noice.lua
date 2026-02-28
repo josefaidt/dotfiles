@@ -52,6 +52,9 @@ return {
 			},
 		},
 	},
+	keys = {
+		{ "<leader>nl", "<cmd>Noice last<cr>", desc = "[N]oice: [L]ast notification" },
+	},
 	---@module 'noice'
 	---@type NoiceConfig
 	opts = {
