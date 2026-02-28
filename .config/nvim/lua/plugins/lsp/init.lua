@@ -239,8 +239,65 @@ return {
 			ts_ls = {},
 			html = {}, -- HTML
 			cssls = {}, -- CSS
-			tailwindcss = {}, -- Tailwind
-			astro = {}, -- Astro
+			tailwindcss = {
+			-- Only attach when tailwindcss is actually a project dependency.
+			-- Detects the package manager from lock files and queries it directly.
+			root_dir = function(fname)
+				local util = require("lspconfig.util")
+				local pkg_root = util.root_pattern("package.json")(fname)
+				if not pkg_root then
+					return nil
+				end
+
+				local pm = "npm"
+				if vim.fn.filereadable(pkg_root .. "/pnpm-lock.yaml") == 1 then
+					pm = "pnpm"
+				elseif
+					vim.fn.filereadable(pkg_root .. "/bun.lock") == 1
+					or vim.fn.filereadable(pkg_root .. "/bun.lockb") == 1
+				then
+					pm = "bun"
+				elseif vim.fn.filereadable(pkg_root .. "/yarn.lock") == 1 then
+					pm = "yarn"
+				end
+
+				local cmds = {
+					npm = "npm list tailwindcss --depth=0 2>/dev/null",
+					pnpm = "pnpm list tailwindcss 2>/dev/null",
+					yarn = "yarn list --pattern tailwindcss 2>/dev/null",
+					bun = "bun pm ls 2>/dev/null",
+				}
+
+				local output = vim.fn.system(
+					string.format("cd %s && %s", vim.fn.shellescape(pkg_root), cmds[pm])
+				)
+				if output:match("tailwindcss") then
+					return pkg_root
+				end
+
+				return nil
+			end,
+		}, -- Tailwind
+			astro = {
+				-- Point the Astro LSP at the project-local TypeScript SDK so it can
+				-- resolve component usage in templates from the start, preventing
+				-- false "unused variable" warnings on frontmatter imports.
+				init_options = {
+					typescript = {
+						tsdk = (function()
+							local project_ts =
+								vim.fn.finddir("node_modules/typescript/lib", vim.fn.getcwd() .. ";")
+							if project_ts ~= "" then
+								return project_ts
+							end
+							-- fallback to Mason-installed typescript-language-server's bundled tsc
+							local mason_ts = vim.fn.stdpath("data")
+								.. "/mason/packages/typescript-language-server/node_modules/typescript/lib"
+							return mason_ts
+						end)(),
+					},
+				},
+			}, -- Astro
 			svelte = {}, -- Svelte
 			emmet_ls = {}, -- Emmet for HTML/CSS
 			biome = {
