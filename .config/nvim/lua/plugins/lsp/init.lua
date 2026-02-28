@@ -163,7 +163,19 @@ return {
 					}
 					vim.diagnostic.open_float(nil, opts)
 				else
-					vim.lsp.buf.hover()
+					-- Silently request hover — suppress "No information available" spam
+					-- (vim.lsp.buf.hover() notifies once per attached client that returns nothing)
+					vim.lsp.buf_request(
+						0,
+						"textDocument/hover",
+						vim.lsp.util.make_position_params(),
+						function(err, result, ctx, config)
+							if err or not result or not result.contents then
+								return
+							end
+							vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+						end
+					)
 				end
 			end,
 		})
