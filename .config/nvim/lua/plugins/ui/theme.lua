@@ -10,6 +10,30 @@ return {
 		lazy = false,
 		config = function()
 			vim.cmd.colorscheme("mellow")
+
+			-- Italicize JS/TS keywords, preserving the theme's colors.
+			-- Uses treesitter groups (@keyword.*) for granular keyword categories.
+			-- Also covers @lsp.mod.async since LSP semantic tokens have higher priority
+			-- and would otherwise override the treesitter italic for async/await.
+			local keyword_groups = {
+				-- treesitter groups
+				"@keyword.import", -- import, export, from, as
+				"@keyword.modifier", -- const, let, var, static, readonly
+				"@keyword.function", -- function
+				"@keyword.coroutine", -- async, await
+				"@keyword.type", -- type, interface (TypeScript)
+				"@keyword.return", -- return
+				-- LSP semantic modifier (higher priority than treesitter)
+				"@lsp.mod.async", -- async/await via LSP
+			}
+
+			for _, group in ipairs(keyword_groups) do
+				local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+				if hl and next(hl) ~= nil then
+					hl.italic = true
+					vim.api.nvim_set_hl(0, group, hl)
+				end
+			end
 		end,
 	},
 	-- Everforest theme
