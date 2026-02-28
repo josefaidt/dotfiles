@@ -1,9 +1,10 @@
 ---@module 'plugins.ui.statusline'
----Mini.nvim collection including statusline, surround, and text objects
+---Mini.nvim collection including statusline, surround, text objects, and starter
 
 ---@type LazySpec
 return { -- Collection of various small independent plugins/modules
 	"echasnovski/mini.nvim",
+	lazy = false, -- must load at startup for mini.starter VimEnter hook
 	config = function()
 		-- Better Around/Inside textobjects
 		--
@@ -34,6 +35,30 @@ return { -- Collection of various small independent plugins/modules
 		statusline.section_location = function()
 			return "%2l:%-2v"
 		end
+
+		-- Starter screen shown when opening Neovim with no files
+		local starter = require("mini.starter")
+		starter.setup({
+			autoopen = true,
+			items = {
+				starter.sections.telescope(),
+				starter.sections.recent_files(7, false, false),
+				starter.sections.builtin_actions(),
+			},
+			header = table.concat({
+				"██████╗ ███████╗███╗   ██╗ █████╗ ██╗     ██╗",
+				"██╔══██╗██╔════╝████╗  ██║██╔══██╗██║     ██║",
+				"██║  ██║█████╗  ██╔██╗ ██║███████║██║     ██║",
+				"██║  ██║██╔══╝  ██║╚██╗██║██╔══██║██║     ██║",
+				"██████╔╝███████╗██║ ╚████║██║  ██║███████╗██║",
+				"╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝",
+			}, "\n"),
+			footer = "",
+			content_hooks = {
+				starter.gen_hook.adding_bullet("  "),
+				starter.gen_hook.aligning("center", "center"),
+			},
+		})
 
 		-- ... and there is more!
 		--  Check out: https://github.com/echasnovski/mini.nvim
