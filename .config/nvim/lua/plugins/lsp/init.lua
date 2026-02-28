@@ -109,6 +109,10 @@ return {
 			end,
 		})
 
+		-- Highlight groups for float window borders (distinct colors per window type)
+		vim.api.nvim_set_hl(0, "LspHoverBorder", { link = "DiagnosticInfo" })
+		vim.api.nvim_set_hl(0, "LspDiagnosticFloatBorder", { link = "DiagnosticWarn" })
+
 		-- Diagnostic Config
 		-- See :help vim.diagnostic.Opts
 		vim.diagnostic.config({
@@ -117,15 +121,15 @@ return {
 				border = "rounded",
 				source = "if_many",
 				header = "",
-				prefix = "",
+				prefix = " ",
 				suffix = "",
-				-- Add padding for better readability
 				max_width = 80,
 				max_height = 20,
 				focusable = true,
 				focus = false,
 				scope = "cursor",
 				style = "minimal",
+				winhighlight = "Normal:Normal,FloatBorder:LspDiagnosticFloatBorder",
 			},
 			-- VSCode-like: Show underlines for all diagnostics (squiggly lines)
 			underline = true,
@@ -155,6 +159,7 @@ return {
 						source = "if_many",
 						prefix = " ",
 						scope = "cursor",
+						winhighlight = "Normal:Normal,FloatBorder:LspDiagnosticFloatBorder",
 					}
 					vim.diagnostic.open_float(nil, opts)
 				else
@@ -302,9 +307,6 @@ return {
 		local ensure_installed = vim.tbl_keys(servers or {})
 		vim.list_extend(ensure_installed, {
 			"stylua", -- Used to format Lua code
-			"prettier",
-			"prettierd",
-			"biome",
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

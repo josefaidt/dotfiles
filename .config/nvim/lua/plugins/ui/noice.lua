@@ -53,7 +53,7 @@ return {
 		},
 	},
 	keys = {
-		{ "<leader>nl", "<cmd>Noice last<cr>", desc = "[N]oice: [L]ast notification" },
+		{ "<leader>ul", "<cmd>Noice last<cr>", desc = "[U]I: [L]ast notification" },
 	},
 	---@module 'noice'
 	---@type NoiceConfig
@@ -72,10 +72,22 @@ return {
 			command_palette = false, -- disable to use custom centered views
 			long_message_to_split = true, -- long messages will be sent to a split
 			inc_rename = false, -- enables an input dialog for inc-rename.nvim
-			lsp_doc_border = false, -- add a border to hover docs and signature help
+			lsp_doc_border = false, -- managed manually via views.hover below
 		},
 		-- Configure the display for various UI elements
 		views = {
+			hover = {
+				border = {
+					style = "rounded",
+					padding = { 0, 1 },
+				},
+				win_options = {
+					winhighlight = {
+						Normal = "Normal",
+						FloatBorder = "LspHoverBorder",
+					},
+				},
+			},
 			-- Center the cmdline popup
 			cmdline_popup = {
 				backend = "popup",
