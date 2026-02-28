@@ -1,0 +1,8 @@
+{
+  "name": "npm-global",
+  "private": true,
+  "dependencies": {
+    "@biomejs/biome": "latest",
+    "prettier": "latest"
+  }
+}
