@@ -60,7 +60,7 @@ function M.on_attach(event)
 	-- Show diagnostic in floating window (focused so you can scroll)
 	map("<leader>e", function()
 		local winid = vim.diagnostic.open_float()
-		if winid then
+		if winid and vim.api.nvim_win_is_valid(winid) then
 			vim.api.nvim_set_current_win(winid)
 		end
 	end, "Show Diagnostic")
