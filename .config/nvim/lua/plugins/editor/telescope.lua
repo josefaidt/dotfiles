@@ -115,6 +115,7 @@ return {
 		-- Enable Telescope extensions if they are installed
 		pcall(require("telescope").load_extension, "fzf")
 		pcall(require("telescope").load_extension, "ui-select")
+		pcall(require("telescope").load_extension, "noice")
 
 		-- Load Telescope keymaps from centralized keymap config
 		-- Wrap in pcall to catch any errors

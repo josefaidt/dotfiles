@@ -58,6 +58,9 @@ function M.setup()
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
+	vim.keymap.set("n", "<leader>sN", function()
+		require("telescope").extensions.noice.noice()
+	end, { desc = "[S]earch [N]otifications" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 	vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch [W]ord under cursor" })
 
