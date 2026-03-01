@@ -183,6 +183,25 @@ return {
 			-- This is a current Neovim limitation.
 			enabled = true,
 		},
+		-- Override :Noice last to use a small centered popup matching other dialogs
+		commands = {
+			last = {
+				view = "popup",
+				opts = {
+					enter = true,
+					format = "details",
+					relative = "editor",
+					position = { row = "50%", col = "50%" },
+					size = { width = 60, height = "auto", max_height = 20 },
+					border = { style = "rounded", padding = { 0, 1 } },
+					win_options = {
+						wrap = true,
+						linebreak = true,
+						winblend = 0,
+					},
+				},
+			},
+		},
 		-- Configure routes to handle specific message patterns
 		routes = {
 			{
