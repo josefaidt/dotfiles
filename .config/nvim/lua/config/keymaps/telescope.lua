@@ -165,7 +165,7 @@ function M.setup()
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-	vim.keymap.set("n", "<leader>sN", function()
+	vim.keymap.set("n", "<leader>sn", function()
 		require("telescope").extensions.noice.noice()
 	end, { desc = "[S]earch [N]otifications" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
@@ -245,11 +245,6 @@ function M.setup()
 			previewer = false,
 		}))
 	end, { desc = "[/] Fuzzily search in current buffer" })
-
-	-- Shortcut for searching your Neovim configuration files
-	vim.keymap.set("n", "<leader>sn", function()
-		builtin.find_files({ cwd = vim.fn.stdpath("config") })
-	end, { desc = "[S]earch [N]eovim files" })
 
 	-- Git worktree picker — open selected worktree in a new tab
 	vim.keymap.set("n", "<leader>gw", pick_worktree, { desc = "[G]it [W]orktrees" })
