@@ -9,3 +9,6 @@ notes.md
 
 # no logs
 *.log
+
+# no claude worktrees
+.claude/worktrees/
