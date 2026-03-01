@@ -59,6 +59,10 @@ return {
 	---@type NoiceConfig
 	opts = {
 		lsp = {
+			-- Route LSP hover through noice so the views.hover config below is applied
+			hover = {
+				enabled = true,
+			},
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {
 				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
