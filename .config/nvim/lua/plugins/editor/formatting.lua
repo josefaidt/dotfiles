@@ -13,11 +13,16 @@ return {
 	opts = function()
 		local function has_biome_config()
 			local root = vim.fs.dirname(vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1])
-			return root ~= nil
+			if not root then
+				return false
+			end
+			-- Also verify biome is actually installed, otherwise fall through to prettier
+			return vim.fn.filereadable(root .. "/node_modules/.bin/biome") == 1
+				or vim.fn.exepath("biome") ~= ""
 		end
 
 		return {
-			notify_on_error = false,
+			notify_on_error = true,
 			format_on_save = function(bufnr)
 				-- Disable "format_on_save lsp_fallback" for languages that don't
 				-- have a well standardized coding style. You can add additional
@@ -27,7 +32,7 @@ return {
 					return nil
 				else
 					return {
-						timeout_ms = 500,
+						timeout_ms = 2000,
 						lsp_format = "fallback",
 					}
 				end
@@ -81,8 +86,8 @@ return {
 				html = { "prettierd", "prettier", stop_after_first = true },
 				css = { "prettierd", "prettier", stop_after_first = true },
 				scss = { "prettierd", "prettier", stop_after_first = true },
-				astro = { "prettier" }, -- prettierd doesn't support astro
-				svelte = { "prettier" }, -- prettierd doesn't support svelte
+				astro = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-astro
+				svelte = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-svelte
 				markdown = { "prettierd", "prettier", stop_after_first = true },
 			},
 		}
