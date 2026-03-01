@@ -1,3 +1,17 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SubagentStop": [
+      {
+        "matcher": "neovim",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/subagent-stop-neovim.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
 }

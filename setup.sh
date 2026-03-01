@@ -101,6 +101,9 @@ xdg-config-stow nvim
 xdg-config-stow ghostty
 xdg-config-stow zellij
 
+# setup global claude
+stow claude
+
 # Symlink starship config
 if [ -f ~/.config/starship.toml ]; then
   echo "Starship config already exists, skipping..."
