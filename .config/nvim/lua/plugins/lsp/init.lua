@@ -165,10 +165,14 @@ return {
 				else
 					-- Silently request hover — suppress "No information available" spam
 					-- (vim.lsp.buf.hover() notifies once per attached client that returns nothing)
+					local clients = vim.lsp.get_clients({ bufnr = 0 })
+					if #clients == 0 then
+						return
+					end
 					vim.lsp.buf_request(
 						0,
 						"textDocument/hover",
-						vim.lsp.util.make_position_params(),
+						vim.lsp.util.make_position_params(0, clients[1].offset_encoding),
 						function(err, result, ctx, config)
 							if err or not result or not result.contents then
 								return
@@ -317,17 +321,7 @@ return {
 				end,
 				settings = {
 					json = {
-						schemas = require("schemastore").json.schemas({
-							extra = {
-								-- Always associate package.json with the npm schema,
-								-- no $schema key required in the file
-								{
-									description = "NPM package.json",
-									fileMatch = { "package.json" },
-									url = "https://json.schemastore.org/package.json",
-								},
-							},
-						}),
+						schemas = require("schemastore").json.schemas(),
 						validate = { enable = true },
 					},
 				},

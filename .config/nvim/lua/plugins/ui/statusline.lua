@@ -36,10 +36,12 @@ return { -- Collection of various small independent plugins/modules
 			return "%2l:%-2v"
 		end
 
-		-- Starter screen shown when opening Neovim with no files
+		-- Starter screen shown when opening Neovim with no files.
+		-- Disable autoopen — auto-session handles session restore on VimEnter and
+		-- races with mini.starter, breaking NeoTree/edgy layout. Open manually instead.
 		local starter = require("mini.starter")
 		starter.setup({
-			autoopen = true,
+			autoopen = false,
 			items = {
 				starter.sections.telescope(),
 				starter.sections.recent_files(7, false, false),
