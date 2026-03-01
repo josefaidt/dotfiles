@@ -1,36 +1,49 @@
 ---@module 'plugins.editor.session'
----Auto-session configuration for automatic session management
+---Saves the last open buffer to a state file on exit and restores it on startup.
+---Uses a virtual lazy spec so no external plugin is needed.
+
+local state_file = vim.fn.stdpath("state") .. "/lastbuf"
 
 ---@type LazySpec
 return {
-	"rmagatti/auto-session",
+	virtual = true,
+	name = "last-buffer",
 	lazy = false,
-	config = function()
-		-- Extend sessionoptions so the active buffer, window positions, and
-		-- local options are all captured and restored correctly.
-		-- localoptions excluded: it saves the winbar string (%{v:lua.dropbar()}) which
-		-- Neovim evaluates on restore before dropbar has loaded, causing a nil error.
-		vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
+	init = function()
+		vim.api.nvim_create_autocmd("VimLeavePre", {
+			callback = function()
+				local file = vim.fn.expand("%:p")
+				if file ~= "" and vim.fn.filereadable(file) == 1 then
+					local f = io.open(state_file, "w")
+					if f then
+						f:write(file)
+						f:close()
+					end
+				end
+			end,
+		})
 
-		require("auto-session").setup({
-			log_level = "error",
-			suppressed_dirs = { "~/", "~/Downloads", "/" },
-			-- Open mini.starter only when there is no session to restore
-			no_restore_cmds = { "lua require('mini.starter').open()" },
-			-- Before saving, wipe buffers whose files no longer exist so they
-			-- aren't restored into the next session.
-			pre_save_cmds = {
-				function()
-					for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-						if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
-							local name = vim.api.nvim_buf_get_name(buf)
-							if name ~= "" and vim.fn.filereadable(name) == 0 then
-								vim.api.nvim_buf_delete(buf, { force = true })
-							end
+		vim.api.nvim_create_autocmd("VimEnter", {
+			nested = true,
+			callback = function()
+				-- Skip if a file was passed on the command line
+				if vim.fn.argc() > 0 then
+					return
+				end
+				vim.schedule(function()
+					local f = io.open(state_file, "r")
+					if f then
+						local file = f:read("*l")
+						f:close()
+						if file and vim.fn.filereadable(file) == 1 then
+							vim.cmd("edit " .. vim.fn.fnameescape(file))
+							return
 						end
 					end
-				end,
-			},
+					-- No saved file — fall back to starter
+					require("mini.starter").open()
+				end)
+			end,
 		})
 	end,
 }
