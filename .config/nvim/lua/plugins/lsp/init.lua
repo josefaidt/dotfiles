@@ -317,7 +317,17 @@ return {
 				end,
 				settings = {
 					json = {
-						schemas = require("schemastore").json.schemas(),
+						schemas = require("schemastore").json.schemas({
+							extra = {
+								-- Always associate package.json with the npm schema,
+								-- no $schema key required in the file
+								{
+									description = "NPM package.json",
+									fileMatch = { "package.json" },
+									url = "https://json.schemastore.org/package.json",
+								},
+							},
+						}),
 						validate = { enable = true },
 					},
 				},
