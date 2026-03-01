@@ -1,0 +1,14 @@
+[init]
+  defaultBranch = main
+[pull]
+  rebase = true
+[push]
+  default = current
+[remote]
+  pushDefault = origin
+[submodule]
+  recurse = true
+[core]
+  excludesfile = ~/.gitignore_global
+[include]
+  path = ~/.gitconfig.local
