@@ -177,7 +177,13 @@ return {
 							if err or not result or not result.contents then
 								return
 							end
-							vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+							-- Provide explicit config to prevent width calculation errors
+							local hover_config = vim.tbl_extend("force", config or {}, {
+								border = "rounded",
+								max_width = math.floor(vim.o.columns * 0.8),
+								max_height = math.floor(vim.o.lines * 0.5),
+							})
+							vim.lsp.handlers["textDocument/hover"](err, result, ctx, hover_config)
 						end
 					)
 				end
