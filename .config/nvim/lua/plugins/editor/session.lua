@@ -6,8 +6,8 @@ local state_file = vim.fn.stdpath("state") .. "/lastbuf"
 
 ---@type LazySpec
 return {
-	virtual = true,
 	name = "last-buffer",
+	dir = vim.fn.stdpath("config"),
 	lazy = false,
 	init = function()
 		vim.api.nvim_create_autocmd("VimLeavePre", {
