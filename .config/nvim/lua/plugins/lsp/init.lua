@@ -497,7 +497,7 @@ return {
 					for _, line in ipairs(lines) do
 						if line:match('"$schema"') then
 							vim.cmd("LspRestart jsonls")
-							vim.notify("Restarted jsonls", vim.log.levels.INFO)
+							-- Silently restart without notification
 							break
 						end
 					end
