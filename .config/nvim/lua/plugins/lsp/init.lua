@@ -172,6 +172,26 @@ return {
 			return original_hover_handler(err, result, ctx, config)
 		end
 
+		-- Add keybindings to close floating windows with Esc
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "lspinfo", "lsp-installer", "null-ls-info" },
+			callback = function(event)
+				vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = event.buf, silent = true })
+			end,
+		})
+
+		-- Add keybindings for hover and diagnostic floating windows
+		vim.api.nvim_create_autocmd("WinEnter", {
+			callback = function()
+				local win = vim.api.nvim_get_current_win()
+				local config = vim.api.nvim_win_get_config(win)
+				-- Check if this is a floating window
+				if config.relative ~= "" then
+					vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = 0, silent = true })
+				end
+			end,
+		})
+
 		-- Diagnostic Config
 		-- See :help vim.diagnostic.Opts
 		vim.diagnostic.config({
