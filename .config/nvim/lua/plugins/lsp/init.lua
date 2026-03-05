@@ -326,7 +326,15 @@ return {
 			-- But for many setups, the LSP (`ts_ls`) will work just fine
 			-- ts_ls = {},
 			--
-			ts_ls = {},
+			ts_ls = {
+				-- Handle monorepo setups with symlinked node_modules
+				root_dir = function(fname)
+					local util = require("lspconfig.util")
+					-- Look for package.json or tsconfig.json in current or parent directories
+					return util.root_pattern("tsconfig.json", "package.json")(fname)
+				end,
+				single_file_support = false, -- Require a project root
+			},
 			html = {}, -- HTML
 			cssls = {}, -- CSS
 			tailwindcss = {
