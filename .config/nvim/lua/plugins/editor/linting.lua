@@ -53,6 +53,8 @@ return {
 			-- Return empty array to prevent any fallback to jsonlint
 			json = {},
 			jsonc = {},
+			-- Python linting with ruff
+			python = { "ruff" },
 		}
 
 		-- Auto-lint on save and edit

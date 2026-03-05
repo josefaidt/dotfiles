@@ -40,6 +40,7 @@ return {
 			formatters_by_ft = {
 				lua = { "stylua" },
 				rust = { "rustfmt", lsp_format = "fallback" },
+				python = { "ruff_format", "ruff_organize_imports" },
 
 				javascript = function()
 					if has_biome_config() then
