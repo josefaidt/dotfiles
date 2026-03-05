@@ -91,8 +91,18 @@ vim.keymap.set("n", "<leader>uc", function()
 	)
 end, { desc = "[U]I: [C]hoose colorscheme/theme" })
 
--- Clear highlights on search when pressing <Esc> in normal mode
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+-- Clear highlights on search and close floating windows when pressing <Esc> in normal mode
+vim.keymap.set("n", "<Esc>", function()
+	-- Clear search highlights
+	vim.cmd("nohlsearch")
+	-- Close all floating windows
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local config = vim.api.nvim_win_get_config(win)
+		if config.relative ~= "" then
+			vim.api.nvim_win_close(win, false)
+		end
+	end
+end)
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set("n", "<left>", '<cmd>echo "Use h to move!!"<CR>')
