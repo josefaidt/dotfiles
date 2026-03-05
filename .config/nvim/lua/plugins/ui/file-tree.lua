@@ -209,6 +209,9 @@ return {
 							conflict = "C",
 						},
 					},
+					symlink_target = {
+						enabled = false, -- Hide the "link:" prefix for symlinks
+					},
 				},
 				reveal = true,
 				source_selector = {
