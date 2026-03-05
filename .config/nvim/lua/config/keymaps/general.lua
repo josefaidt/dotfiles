@@ -19,7 +19,7 @@ vim.keymap.set("n", "<leader>bD", function()
 	Snacks.bufdelete.all()
 end, { desc = "[B]uffer [D]elete all" })
 
-vim.keymap.set("n", "<leader>qq", ":qa<CR>", { desc = "Quit Neovim" })
+vim.keymap.set("n", "<leader>qq", "<cmd>qa<CR>", { desc = "Quit Neovim" })
 
 -- buffer navigation
 -- Jump to last buffer (like Alt+Tab in other editors)
@@ -53,7 +53,7 @@ vim.keymap.set("n", "<leader>ls", function()
 end, { desc = "[L]SP [S]top and start all" })
 
 -- open lazy with ctrl+x
-vim.keymap.set("n", "<C-x>", ":Lazy<CR>", { desc = "Open Lazy.nvim" })
+vim.keymap.set("n", "<C-x>", "<cmd>Lazy<CR>", { desc = "Open Lazy.nvim" })
 
 ---Theme picker using vim.ui.select
 vim.keymap.set("n", "<leader>uc", function()

@@ -28,7 +28,7 @@ vim.keymap.set("n", "\\", function()
 end, { desc = "Toggle focus between NeoTree and editor", silent = true })
 
 -- Ctrl+\ toggles neotree visibility (open/close)
-vim.keymap.set("n", "<C-\\>", ":Neotree toggle<CR>", { desc = "Toggle NeoTree visibility", silent = true })
+vim.keymap.set("n", "<C-\\>", "<cmd>Neotree toggle<CR>", { desc = "Toggle NeoTree visibility", silent = true })
 
 -- Formatting with conform.nvim
 vim.keymap.set("n", "<leader>bf", function()
