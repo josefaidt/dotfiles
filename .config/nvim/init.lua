@@ -143,8 +143,12 @@ vim.api.nvim_create_autocmd("SwapExists", {
 	callback = function(args)
 		local filename = vim.fn.fnamemodify(args.file, ":t")
 		local swap_file = vim.v.swapname
+		local bufnr = args.buf
 
-		-- Schedule the UI prompt to avoid issues with vim's swap detection
+		-- Default to edit mode to allow the file to load
+		vim.v.swapchoice = "e"
+
+		-- Schedule the UI prompt after the file has loaded
 		vim.schedule(function()
 			local choices = {
 				"Reload from disk (discard my changes)",
@@ -161,44 +165,45 @@ vim.api.nvim_create_autocmd("SwapExists", {
 				),
 			}, function(choice)
 				if not choice then
-					-- User cancelled, abort
-					vim.v.swapchoice = "q"
+					-- User cancelled, close the buffer
+					vim.api.nvim_buf_delete(bufnr, { force = true })
 					return
 				end
 
 				if choice == choices[1] then
-					-- Reload from disk (delete swap, edit file)
-					vim.v.swapchoice = "e"
+					-- Reload from disk (delete swap, reload buffer)
+					-- Delete the swap file first
+					pcall(vim.fn.delete, swap_file)
+					-- Reload the buffer
 					vim.cmd("edit!")
+					vim.notify("Reloaded from disk", vim.log.levels.INFO)
 				elseif choice == choices[2] then
-					-- Keep my version (delete swap file, keep buffer)
-					vim.v.swapchoice = "d"
+					-- Keep my version (delete swap file, keep current buffer)
+					pcall(vim.fn.delete, swap_file)
+					vim.notify("Kept your version", vim.log.levels.INFO)
 				elseif choice == choices[3] then
 					-- Open read-only
-					vim.v.swapchoice = "o"
+					vim.bo[bufnr].readonly = true
+					vim.notify("Opened read-only", vim.log.levels.INFO)
 				elseif choice == choices[4] then
-					-- Quit
-					vim.v.swapchoice = "q"
+					-- Quit - close the buffer
+					vim.api.nvim_buf_delete(bufnr, { force = true })
 				elseif choice == choices[5] then
-					-- Show diff using diffview or vim's built-in diff
-					vim.v.swapchoice = "e"
-					vim.schedule(function()
-						-- First, save current buffer content to a temp file
-						local temp_file = vim.fn.tempname()
-						local current_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-						vim.fn.writefile(current_content, temp_file)
+					-- Show diff - save current to temp and show diff
+					local temp_file = vim.fn.tempname()
+					local current_content = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+					vim.fn.writefile(current_content, temp_file)
 
-						-- Open vertical split with diff
-						vim.cmd("vertical diffsplit " .. temp_file)
-						vim.notify("Left: Your version | Right: Disk version", vim.log.levels.INFO)
-					end)
+					-- Delete swap and reload to get disk version
+					pcall(vim.fn.delete, swap_file)
+					vim.cmd("edit!")
+
+					-- Open vertical split with diff
+					vim.cmd("vertical diffsplit " .. temp_file)
+					vim.notify("Left: Disk version | Right: Your version", vim.log.levels.INFO)
 				end
 			end)
 		end)
-
-		-- Tell vim to wait for our async choice
-		-- We'll set v:swapchoice in the callback
-		return true
 	end,
 })
 
