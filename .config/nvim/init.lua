@@ -119,6 +119,89 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
 	end,
 })
 
+-- Better handling for file changes when buffer has unsaved modifications
+-- Detects when external changes conflict with local edits
+vim.api.nvim_create_autocmd("FileChangedShell", {
+	desc = "Prompt for action when file changed externally with local modifications",
+	group = vim.api.nvim_create_augroup("file-conflict-handler", { clear = true }),
+	callback = function()
+		-- If buffer has modifications, notify but don't auto-reload
+		if vim.bo.modified then
+			vim.notify(
+				"Warning: File changed on disk and you have unsaved changes.\nUse :e to reload or :w to overwrite.",
+				vim.log.levels.WARN
+			)
+		end
+	end,
+})
+
+-- Handle swap file conflicts with a better UI
+-- This replaces the default vim swap file dialog with vim.ui.select
+vim.api.nvim_create_autocmd("SwapExists", {
+	desc = "Custom swap file handler with better UI",
+	group = vim.api.nvim_create_augroup("swap-file-handler", { clear = true }),
+	callback = function(args)
+		local filename = vim.fn.fnamemodify(args.file, ":t")
+		local swap_file = vim.v.swapname
+
+		-- Schedule the UI prompt to avoid issues with vim's swap detection
+		vim.schedule(function()
+			local choices = {
+				"Reload from disk (discard my changes)",
+				"Keep my version (ignore disk changes)",
+				"Open read-only",
+				"Quit without loading",
+				"Show diff before deciding",
+			}
+
+			vim.ui.select(choices, {
+				prompt = string.format(
+					"Swap file exists for '%s'\nAnother instance may be editing this file, or it has external changes.",
+					filename
+				),
+			}, function(choice)
+				if not choice then
+					-- User cancelled, abort
+					vim.v.swapchoice = "q"
+					return
+				end
+
+				if choice == choices[1] then
+					-- Reload from disk (delete swap, edit file)
+					vim.v.swapchoice = "e"
+					vim.cmd("edit!")
+				elseif choice == choices[2] then
+					-- Keep my version (delete swap file, keep buffer)
+					vim.v.swapchoice = "d"
+				elseif choice == choices[3] then
+					-- Open read-only
+					vim.v.swapchoice = "o"
+				elseif choice == choices[4] then
+					-- Quit
+					vim.v.swapchoice = "q"
+				elseif choice == choices[5] then
+					-- Show diff using diffview or vim's built-in diff
+					vim.v.swapchoice = "e"
+					vim.schedule(function()
+						-- First, save current buffer content to a temp file
+						local temp_file = vim.fn.tempname()
+						local current_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+						vim.fn.writefile(current_content, temp_file)
+
+						-- Open vertical split with diff
+						vim.cmd("vertical diffsplit " .. temp_file)
+						vim.notify("Left: Your version | Right: Disk version", vim.log.levels.INFO)
+					end)
+				end
+			end)
+		end)
+
+		-- Tell vim to wait for our async choice
+		-- We'll set v:swapchoice in the callback
+		return true
+	end,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
