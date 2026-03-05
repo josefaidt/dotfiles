@@ -113,6 +113,65 @@ return {
 		vim.api.nvim_set_hl(0, "LspHoverBorder", { link = "DiagnosticInfo" })
 		vim.api.nvim_set_hl(0, "LspDiagnosticFloatBorder", { link = "DiagnosticWarn" })
 
+		-- Custom hover handler that cleans up markdown content
+		-- This fixes issues with escaped characters and extra blank lines in LSP hover
+		local original_hover_handler = vim.lsp.handlers["textDocument/hover"]
+		vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+			if not result or not result.contents then
+				return original_hover_handler(err, result, ctx, config)
+			end
+
+			-- Clean up markdown content by removing unnecessary escape sequences and blank lines
+			local function clean_markdown(content)
+				if type(content) == "string" then
+					-- Remove unnecessary escape sequences common in JSON schema descriptions
+					content = content:gsub("\\%.", ".") -- \. -> .
+					content = content:gsub("\\%-", "-") -- \- -> -
+					content = content:gsub("\\%*", "*") -- \* -> *
+					content = content:gsub("\\%_", "_") -- \_ -> _
+					content = content:gsub("\\%(", "(") -- \( -> (
+					content = content:gsub("\\%)", ")") -- \) -> )
+					content = content:gsub("\\%[", "[") -- \[ -> [
+					content = content:gsub("\\%]", "]") -- \] -> ]
+					content = content:gsub("\\%/", "/") -- \/ -> /
+
+					-- Remove excessive blank lines (3+ consecutive newlines -> 2)
+					content = content:gsub("\n\n\n+", "\n\n")
+
+					return content
+				elseif type(content) == "table" then
+					-- Handle MarkedString[] format
+					if content.kind == "markdown" and content.value then
+						content.value = clean_markdown(content.value)
+					elseif content.language and content.value then
+						-- MarkupContent with language field (code blocks)
+						-- Don't clean code blocks
+						return content
+					end
+					return content
+				end
+				return content
+			end
+
+			-- Clean the contents
+			if type(result.contents) == "string" then
+				result.contents = clean_markdown(result.contents)
+			elseif type(result.contents) == "table" then
+				if result.contents.kind == "markdown" then
+					result.contents.value = clean_markdown(result.contents.value)
+				elseif result.contents.kind == "plaintext" then
+					result.contents.value = clean_markdown(result.contents.value)
+				elseif vim.islist(result.contents) then
+					-- Handle array of MarkedString
+					for i, item in ipairs(result.contents) do
+						result.contents[i] = clean_markdown(item)
+					end
+				end
+			end
+
+			return original_hover_handler(err, result, ctx, config)
+		end
+
 		-- Diagnostic Config
 		-- See :help vim.diagnostic.Opts
 		vim.diagnostic.config({
