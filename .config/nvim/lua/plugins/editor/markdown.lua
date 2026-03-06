@@ -26,10 +26,15 @@ return {
 		vim.g.bullets_mapping_leader = ""
 	end,
 	config = function()
-		-- Markdown-specific keybindings
+		-- Markdown-specific settings and keybindings
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = { "markdown", "text", "gitcommit" },
 			callback = function()
+				-- Disable breakindent shift for prose - wrapped lines should align with start of line
+				-- This keeps breakindent enabled (wrapped lines still respect base indent of lists)
+				-- but removes the extra 2-space shift that looks weird in paragraphs
+				vim.opt_local.breakindentopt = ""
+
 				local opts = { buffer = true, silent = true }
 
 				-- Toggle checkbox: <leader>x or <C-Space> in normal mode
