@@ -90,6 +90,9 @@ return {
 						Normal = "Normal",
 						FloatBorder = "LspHoverBorder",
 					},
+					-- Enable conceal to hide markdown syntax
+					conceallevel = 3,
+					concealcursor = "",
 				},
 			},
 			-- Center the cmdline popup
