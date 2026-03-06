@@ -30,11 +30,9 @@ return {
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = { "markdown", "text", "gitcommit" },
 			callback = function()
-				-- Keep breakindent for list alignment, but remove the extra shift
-				-- This makes wrapped lines align with the text content in lists
-				-- while not adding weird indentation to prose paragraphs
-				vim.opt_local.breakindent = true
-				vim.opt_local.breakindentopt = "shift:0"
+				-- Disable breakindent entirely for markdown to avoid wrapping issues
+				-- Lists will still wrap properly based on their natural indentation
+				vim.opt_local.breakindent = false
 
 				local opts = { buffer = true, silent = true }
 
