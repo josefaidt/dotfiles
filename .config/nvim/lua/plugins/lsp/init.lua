@@ -204,11 +204,28 @@ return {
 			virtual_text = false,
 		})
 
+		-- Track cursor position where we manually dismissed a float
+		local suppressed_position = nil
+
 		-- Auto-show diagnostics or hover info when cursor rests on a symbol
+		local auto_show_group = vim.api.nvim_create_augroup("auto-show-diagnostics", { clear = true })
 		vim.api.nvim_create_autocmd({ "CursorHold" }, {
-			group = vim.api.nvim_create_augroup("auto-show-diagnostics", { clear = true }),
+			group = auto_show_group,
 			callback = function()
 				local cursor = vim.api.nvim_win_get_cursor(0)
+				local bufnr = vim.api.nvim_get_current_buf()
+
+				-- Don't auto-show if cursor is at the position where we dismissed
+				if suppressed_position then
+					if
+						suppressed_position.bufnr == bufnr
+						and suppressed_position.line == cursor[1]
+						and suppressed_position.col == cursor[2]
+					then
+						return
+					end
+				end
+
 				local diagnostics = vim.diagnostic.get(0, { lnum = cursor[1] - 1 })
 				if #diagnostics > 0 then
 					local opts = {
@@ -249,6 +266,25 @@ return {
 				end
 			end,
 		})
+
+		-- Clear suppression when cursor moves
+		vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+			group = auto_show_group,
+			callback = function()
+				suppressed_position = nil
+			end,
+		})
+
+		-- Expose function to suppress auto-show at current position (called from Esc keymap)
+		_G.suppress_lsp_auto_show = function()
+			local cursor = vim.api.nvim_win_get_cursor(0)
+			local bufnr = vim.api.nvim_get_current_buf()
+			suppressed_position = {
+				bufnr = bufnr,
+				line = cursor[1],
+				col = cursor[2],
+			}
+		end
 
 		-- LSP servers and clients are able to communicate to each other what features they support.
 		--  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -318,44 +354,42 @@ return {
 			html = {}, -- HTML
 			cssls = {}, -- CSS
 			tailwindcss = {
-			-- Only attach when tailwindcss is actually a project dependency.
-			-- Detects the package manager from lock files and queries it directly.
-			root_dir = function(fname)
-				local util = require("lspconfig.util")
-				local pkg_root = util.root_pattern("package.json")(fname)
-				if not pkg_root then
+				-- Only attach when tailwindcss is actually a project dependency.
+				-- Detects the package manager from lock files and queries it directly.
+				root_dir = function(fname)
+					local util = require("lspconfig.util")
+					local pkg_root = util.root_pattern("package.json")(fname)
+					if not pkg_root then
+						return nil
+					end
+
+					local pm = "npm"
+					if vim.fn.filereadable(pkg_root .. "/pnpm-lock.yaml") == 1 then
+						pm = "pnpm"
+					elseif
+						vim.fn.filereadable(pkg_root .. "/bun.lock") == 1
+						or vim.fn.filereadable(pkg_root .. "/bun.lockb") == 1
+					then
+						pm = "bun"
+					elseif vim.fn.filereadable(pkg_root .. "/yarn.lock") == 1 then
+						pm = "yarn"
+					end
+
+					local cmds = {
+						npm = "npm list tailwindcss --depth=0 2>/dev/null",
+						pnpm = "pnpm list tailwindcss 2>/dev/null",
+						yarn = "yarn list --pattern tailwindcss 2>/dev/null",
+						bun = "bun pm ls 2>/dev/null",
+					}
+
+					local output = vim.fn.system(string.format("cd %s && %s", vim.fn.shellescape(pkg_root), cmds[pm]))
+					if output:match("tailwindcss") then
+						return pkg_root
+					end
+
 					return nil
-				end
-
-				local pm = "npm"
-				if vim.fn.filereadable(pkg_root .. "/pnpm-lock.yaml") == 1 then
-					pm = "pnpm"
-				elseif
-					vim.fn.filereadable(pkg_root .. "/bun.lock") == 1
-					or vim.fn.filereadable(pkg_root .. "/bun.lockb") == 1
-				then
-					pm = "bun"
-				elseif vim.fn.filereadable(pkg_root .. "/yarn.lock") == 1 then
-					pm = "yarn"
-				end
-
-				local cmds = {
-					npm = "npm list tailwindcss --depth=0 2>/dev/null",
-					pnpm = "pnpm list tailwindcss 2>/dev/null",
-					yarn = "yarn list --pattern tailwindcss 2>/dev/null",
-					bun = "bun pm ls 2>/dev/null",
-				}
-
-				local output = vim.fn.system(
-					string.format("cd %s && %s", vim.fn.shellescape(pkg_root), cmds[pm])
-				)
-				if output:match("tailwindcss") then
-					return pkg_root
-				end
-
-				return nil
-			end,
-		}, -- Tailwind
+				end,
+			}, -- Tailwind
 			astro = {
 				-- Point the Astro LSP at the project-local TypeScript SDK so it can
 				-- resolve component usage in templates from the start, preventing
@@ -363,8 +397,7 @@ return {
 				init_options = {
 					typescript = {
 						tsdk = (function()
-							local project_ts =
-								vim.fn.finddir("node_modules/typescript/lib", vim.fn.getcwd() .. ";")
+							local project_ts = vim.fn.finddir("node_modules/typescript/lib", vim.fn.getcwd() .. ";")
 							if project_ts ~= "" then
 								return project_ts
 							end

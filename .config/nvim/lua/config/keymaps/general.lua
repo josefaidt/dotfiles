@@ -102,6 +102,10 @@ vim.keymap.set("n", "<Esc>", function()
 			vim.api.nvim_win_close(win, false)
 		end
 	end
+	-- Suppress auto-show at current cursor position
+	if _G.suppress_lsp_auto_show then
+		_G.suppress_lsp_auto_show()
+	end
 end)
 
 -- TIP: Disable arrow keys in normal mode
