@@ -26,6 +26,21 @@ keybind = ctrl+j=goto_split:bottom
 keybind = ctrl+k=goto_split:top
 keybind = ctrl+l=goto_split:right
 
+# Developer layout
+keybind = cmd+e=new_split:left
+keybind = chain=resize_split:left,400
+keybind = chain=new_split:down
+keybind = chain=resize_split:down,400
+
 # Zoom split
 keybind = ctrl+o=toggle_split_zoom
 
+# Resize key table
+keybind = resize/k=resize_split:up,10
+keybind = resize/j=resize_split:down,10
+keybind = resize/h=resize_split:left,10
+keybind = resize/l=resize_split:right,10
+keybind = resize/escape=deactivate_key_table
+keybind = resize/catch_all=ignore
+
+keybind = ctrl+a=activate_key_table:resize
