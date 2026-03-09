@@ -28,9 +28,11 @@ keybind = ctrl+l=goto_split:right
 
 # Developer layout
 keybind = cmd+e=new_split:left
+keybind = chain=text:nvim .\n
 keybind = chain=resize_split:left,400
 keybind = chain=new_split:down
 keybind = chain=resize_split:down,400
+keybind = chain=goto_split:left
 
 # Zoom split
 keybind = ctrl+o=toggle_split_zoom
