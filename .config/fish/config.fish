@@ -20,6 +20,9 @@ if status is-interactive
 
   abbr --add --position command p pnpm
   abbr --add --position command pi pnpm install
+
+  abbr --add --position command c claude
+  abbr --add --position command kc kiro-cli chat
 end
 
 set --export EDITOR nvim
@@ -29,6 +32,8 @@ set --export BUN_INSTALL "$HOME/.bun"
 fish_add_path $JAVA_HOME
 fish_add_path "$BUN_INSTALL/bin"
 fish_add_path ~/.local/bin
+# opencode
+fish_add_path $HOME/.opencode/bin
 
 # just aws things
 set --export --global AWS_PROFILE josef
@@ -47,3 +52,6 @@ source ~/.orbstack/shell/init2.fish 2>/dev/null || :
 # load rust
 source "$HOME/.cargo/env.fish"
 
+
+# Vite+ bin (https://viteplus.dev)
+source "$HOME/.vite-plus/env.fish"
