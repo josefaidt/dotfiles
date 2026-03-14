@@ -45,6 +45,7 @@ return {
 					"/build/",
 					"/coverage/",
 					"%.amplify%-hosting/", -- Exclude amplify build artifacts
+					"%.venv/", -- Exclude Python virtual environments
 				},
 				vimgrep_arguments = {
 					"rg",
@@ -73,6 +74,8 @@ return {
 					"!**/coverage/*",
 					"--glob",
 					"!**/.amplify-hosting/*",
+					"--glob",
+					"!**/.venv/*",
 				},
 				-- Use default Telescope keymaps (Ctrl+n/p for navigation)
 			},
@@ -102,6 +105,8 @@ return {
 						"!**/coverage/*",
 						"--glob",
 						"!**/.amplify-hosting/*",
+						"--glob",
+						"!**/.venv/*",
 					},
 				},
 			},

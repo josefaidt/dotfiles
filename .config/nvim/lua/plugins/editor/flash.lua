@@ -7,7 +7,7 @@ return {
 		-- Enable jump labels during regular search
 		search = {
 			mode = "search",
-			incremental = true,
+			incremental = false,
 		},
 		-- Jump to exact matches during search
 		label = {
