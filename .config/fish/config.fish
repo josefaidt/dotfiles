@@ -14,6 +14,7 @@ if status is-interactive
 
   abbr --add --position command ga git add
   abbr --add --position command gp git push
+  abbr --add --position command gl git pull
   abbr --add --position command gco git checkout
   abbr --add --position command gs git status
   abbr --add --position command lg lazygit
