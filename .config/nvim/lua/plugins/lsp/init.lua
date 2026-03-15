@@ -434,7 +434,24 @@ return {
 				},
 			},
 
-			lua_ls = {
+			yamlls = {
+			-- YAML language server with schema support
+			settings = {
+				yaml = {
+					schemaStore = {
+						-- Disable built-in schemaStore so schemastore.nvim can provide schemas
+						enable = false,
+						url = "",
+					},
+					schemas = require("schemastore").yaml.schemas(),
+					validate = true,
+					hover = true,
+					completion = true,
+				},
+			},
+		},
+
+		lua_ls = {
 				-- cmd = { ... },
 				-- filetypes = { ... },
 				-- capabilities = {},

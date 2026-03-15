@@ -28,6 +28,7 @@ return {
 			"markdown",
 			"markdown_inline",
 			"toml",
+			"yaml",
 			"rust",
 		},
 		auto_install = true,

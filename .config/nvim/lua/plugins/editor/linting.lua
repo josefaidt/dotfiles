@@ -55,6 +55,8 @@ return {
 			jsonc = {},
 			-- Python linting with ruff
 			python = { "ruff" },
+			-- YAML linting with yamllint
+			yaml = { "yamllint" },
 		}
 
 		-- Auto-lint on save and edit

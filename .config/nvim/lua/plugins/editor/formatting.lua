@@ -107,6 +107,7 @@ return {
 				astro = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-astro
 				svelte = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-svelte
 				markdown = { "prettierd", "prettier", stop_after_first = true },
+				yaml = { "prettierd", "prettier", stop_after_first = true },
 			},
 		}
 	end,
