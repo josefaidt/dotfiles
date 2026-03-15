@@ -21,6 +21,20 @@ return {
 		lazy = false, -- neo-tree will lazily load itself
 		-- Keymaps are configured in lua/config/keymaps/plugins.lua
 		config = function()
+			-- Strip the "Neo-tree Popup\n" prefix that Neo-tree prepends to prompts when
+			-- cmdheight=0 and use_popups_for_input=false (see neo-tree/ui/inputs.lua).
+			-- Without this, noice renders "Neo-tree Popup" as a visible title line in
+			-- the input dialog.
+			local orig_ui_input = vim.ui.input
+			vim.ui.input = function(opts, on_confirm)
+				if opts and type(opts.prompt) == "string" then
+					opts = vim.tbl_extend("force", opts, {
+						prompt = opts.prompt:gsub("^Neo%-tree Popup\n", ""),
+					})
+				end
+				return orig_ui_input(opts, on_confirm)
+			end
+
 			-- Define custom highlight groups for git status using theme colors
 			vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" }) -- green
 			vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" }) -- yellow
@@ -94,7 +108,8 @@ return {
 								local new_path = dir .. "/" .. new_name
 
 								-- Check if we're in a git repo
-								local in_git_repo = vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
+								local in_git_repo =
+									vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
 
 								local success
 								if in_git_repo then
@@ -104,7 +119,10 @@ return {
 									if not success then
 										vim.notify("git mv failed: " .. result, vim.log.levels.ERROR)
 									else
-										vim.notify("Renamed with git mv: " .. old_name .. " → " .. new_name, vim.log.levels.INFO)
+										vim.notify(
+											"Renamed with git mv: " .. old_name .. " → " .. new_name,
+											vim.log.levels.INFO
+										)
 									end
 								else
 									-- Use regular rename
