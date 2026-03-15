@@ -343,6 +343,16 @@ return {
 			-- ts_ls = {},
 			--
 			ts_ls = {
+				-- Explicitly exclude astro — astro-ls provides its own TS support via
+				-- its TypeScript plugin. Having ts_ls also attach causes false "unused
+				-- import" diagnostics because ts_ls only sees the frontmatter script
+				-- block and not the template.
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+				},
 				-- Handle monorepo setups with symlinked node_modules
 				root_dir = function(fname)
 					local util = require("lspconfig.util")
