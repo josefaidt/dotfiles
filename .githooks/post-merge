@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Re-stow only the config directories that changed after a merge (git pull).
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD \
+  | bash "$REPO_ROOT/.githooks/restow"

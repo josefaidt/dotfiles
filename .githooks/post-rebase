@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Re-stow only the config directories that changed after a rebase (git pull --rebase).
+# ORIG_HEAD is set by git before the rebase begins, so we diff against it.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Collect every file touched across all rebased commits.
+git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD \
+  | bash "$REPO_ROOT/.githooks/restow"

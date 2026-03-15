@@ -108,9 +108,10 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 # 4. Configures macOS defaults (show hidden files, dock settings, etc.)
 # 5. Creates ~/github.com/josefaidt directory
 # 6. Clones dotfiles repo
-# 7. Stows git config
-# 8. Stows fish, nvim, ghostty, zellij configs using xdg-config-stow
-# 9. Symlinks starship.toml
+# 7. Activates version-controlled git hooks (git config core.hooksPath .githooks)
+# 8. Stows git config
+# 9. Stows fish, nvim, ghostty, zellij configs using xdg-config-stow
+# 10. Symlinks starship.toml
 
 # Manual deployment of specific configs
 xdg-config-stow fish        # Deploy fish config
@@ -118,7 +119,23 @@ xdg-config-stow nvim        # Deploy neovim config
 xdg-config-stow ghostty     # Deploy ghostty config
 xdg-config-stow zellij      # Deploy zellij config
 stow git                    # Deploy git config to ~
+
+# Activate git hooks (run once after a fresh clone if not using setup.sh)
+git config core.hooksPath .githooks
 ```
+
+## Git Hooks (`.githooks/`)
+
+Version-controlled hooks live in `.githooks/` and are activated via `git config core.hooksPath .githooks` (done automatically by `setup.sh`).
+
+- **`post-merge`** — fires after `git pull` (fast-forward merge)
+- **`post-rebase`** — fires after `git pull --rebase` (used when `pull.rebase = true`)
+- **`restow`** — shared helper called by both hooks; diffs `ORIG_HEAD..HEAD`, detects which top-level directories changed, and runs the appropriate stow command for each:
+  - `.config/<name>/` changes → `xdg-config-stow <name>`
+  - `git/` changes → `stow git`
+  - `claude/` changes → `stow claude`
+
+Only the directories that actually changed are re-stowed; unrelated configs are left untouched.
 
 ## Common Tasks
 

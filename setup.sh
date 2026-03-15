@@ -89,6 +89,10 @@ defaults write com.apple.dock autohide -bool true
 # don't automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
+# Activate version-controlled git hooks
+echo "Activating git hooks..."
+git config core.hooksPath .githooks
+
 # Stow configuration files
 echo "Deploying configuration files..."
 

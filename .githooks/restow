@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Shared helper: re-stow only the config directories that changed.
+# Called by post-merge and post-rebase with the list of changed files on stdin
+# or via the CHANGED_FILES env variable (newline-separated).
+#
+# Usage (from another hook):
+#   git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | bash .githooks/restow
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Collect changed files — accept piped input or CHANGED_FILES env var.
+if [ -n "${CHANGED_FILES:-}" ]; then
+  changed="$CHANGED_FILES"
+else
+  changed="$(cat)"
+fi
+
+if [ -z "$changed" ]; then
+  exit 0
+fi
+
+stowed=()
+
+# .config/<name>/ → xdg-config-stow <name>
+while IFS= read -r file; do
+  if [[ "$file" == .config/* ]]; then
+    # Extract the top-level name under .config/
+    name="$(echo "$file" | cut -d/ -f2)"
+    if [ -n "$name" ] && [ -d "$REPO_ROOT/.config/$name" ]; then
+      stowed+=("xdg-config-stow:$name")
+    fi
+  elif [[ "$file" == git/* ]]; then
+    stowed+=("stow:git")
+  elif [[ "$file" == claude/* ]]; then
+    stowed+=("stow:claude")
+  fi
+done <<< "$changed"
+
+if [ ${#stowed[@]} -eq 0 ]; then
+  exit 0
+fi
+
+# De-duplicate while preserving order, then execute.
+cd "$REPO_ROOT"
+
+seen=""
+for entry in "${stowed[@]}"; do
+  # Skip if already processed (simple substring check on a sentinel-delimited string).
+  if [[ ":$seen:" == *":$entry:"* ]]; then
+    continue
+  fi
+  seen="${seen}:${entry}"
+  cmd="${entry%%:*}"
+  name="${entry##*:}"
+  echo "[dotfiles] re-stowing: $cmd $name"
+  "$cmd" "$name"
+done
