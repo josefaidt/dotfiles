@@ -1,5 +1,5 @@
 ---@module 'plugins.editor.formatting'
----Conform.nvim formatting configuration with Biome and Prettier support
+---Conform.nvim formatting configuration with Prettier and Biome support
 
 ---@type LazySpec
 return {
@@ -12,17 +12,23 @@ return {
 	-- Keymaps are configured in lua/config/keymaps/plugins.lua
 	init = function()
 		local disable_filetypes = { c = true, cpp = true }
+		-- Filetypes where the LSP must never be used as a fallback formatter.
+		-- Without this, the biome LSP proxy attached to JSON buffers can trigger
+		-- stylua (which errors on non-Lua input) when no conform formatter resolves.
+		local no_lsp_fallback_filetypes = { json = true, jsonc = true }
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			callback = function(args)
-				if disable_filetypes[vim.bo[args.buf].filetype] then
+				local ft = vim.bo[args.buf].filetype
+				if disable_filetypes[ft] then
 					return
 				end
+				local lsp_format = no_lsp_fallback_filetypes[ft] and "never" or "fallback"
 				local done = false
 				local format_err = nil
 				require("conform").format({
 					bufnr = args.buf,
 					timeout_ms = 2000,
-					lsp_format = "fallback",
+					lsp_format = lsp_format,
 				}, function(err, _did_edit)
 					format_err = err
 					done = true
@@ -84,14 +90,13 @@ return {
 
 				json = function()
 					if has_biome_config() then
-						return { "biome" }
+						return { "biome", stop_after_first = true }
 					end
 					return { "prettierd", "prettier", stop_after_first = true }
 				end,
-
 				jsonc = function()
 					if has_biome_config() then
-						return { "biome" }
+						return { "biome", stop_after_first = true }
 					end
 					return { "prettierd", "prettier", stop_after_first = true }
 				end,
