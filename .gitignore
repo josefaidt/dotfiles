@@ -1,8 +1,6 @@
 .claude/*.local.json
 .claude/worktrees/
 
-notes.md
-
 # no aws stuff
 .config/fish/conf.d/aws.fish
 
