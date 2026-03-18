@@ -56,7 +56,28 @@ function M.on_attach(event)
 
 	-- VSCode-like diagnostic keymaps
 	-- Show hover documentation (like hovering in VSCode)
-	map("K", vim.lsp.buf.hover, "Hover Documentation")
+	-- Custom hover that suppresses "No information available" when another client
+	-- already returned content (e.g. ts_ls + biome both attached to the same buffer)
+	map("K", function()
+		local clients = vim.lsp.get_clients({ bufnr = 0 })
+		if #clients == 0 then
+			return
+		end
+		local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
+		local got_content = false
+		local pending = #clients
+		for _, client in ipairs(clients) do
+			client:request("textDocument/hover", params, function(err, result, ctx, config)
+				pending = pending - 1
+				if not err and result and result.contents then
+					got_content = true
+					vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+				elseif pending == 0 and not got_content then
+					vim.notify("No information available", vim.log.levels.INFO)
+				end
+			end, 0)
+		end
+	end, "Hover Documentation")
 	-- Show diagnostic in floating window (focused so you can scroll)
 	map("<leader>e", function()
 		local winid = vim.diagnostic.open_float()
