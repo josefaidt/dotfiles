@@ -140,7 +140,89 @@ return {
 								end
 							end)
 						end,
-						-- Override Neo-tree's default <C-x> (fuzzy finder clear) to match global behavior
+						-- Show file info (name, size, permissions, owner, dates)
+					["K"] = function(state)
+						local node = state.tree:get_node()
+						local path = node:get_id()
+
+						local stat = vim.uv.fs_stat(path)
+						if not stat then
+							vim.notify("Could not stat: " .. path, vim.log.levels.ERROR)
+							return
+						end
+
+						-- Format bytes into human-readable size
+						local function fmt_size(bytes)
+							if bytes < 1024 then
+								return bytes .. " B"
+							elseif bytes < 1024 * 1024 then
+								return string.format("%.1f KB", bytes / 1024)
+							elseif bytes < 1024 * 1024 * 1024 then
+								return string.format("%.1f MB", bytes / (1024 * 1024))
+							else
+								return string.format("%.1f GB", bytes / (1024 * 1024 * 1024))
+							end
+						end
+
+						-- Format unix timestamp as local datetime string
+						local function fmt_time(ts)
+							return ts and os.date("%Y-%m-%d %H:%M:%S", ts) or "unknown"
+						end
+
+						-- Get owner via `stat` shell command (uv doesn't expose uid->name)
+						local owner = vim.fn.system("stat -f '%Su' " .. vim.fn.shellescape(path)):gsub("\n", "")
+
+						-- Build permission string (rwxrwxrwx style) from mode bits
+						local function fmt_mode(mode)
+							local perms = { "---", "--x", "-w-", "-wx", "r--", "r-x", "rw-", "rwx" }
+							local function bits(shift)
+								return perms[math.floor(mode / (2 ^ shift)) % 8 + 1]
+							end
+							local prefix = stat.type == "directory" and "d" or "-"
+							return prefix .. bits(6) .. bits(3) .. bits(0)
+						end
+
+						local lines = {
+							"  " .. vim.fn.fnamemodify(path, ":t"),
+							"",
+							"  Path    " .. vim.fn.fnamemodify(path, ":~"),
+							"  Type    " .. stat.type,
+							"  Size    " .. fmt_size(stat.size),
+							"  Mode    " .. fmt_mode(stat.mode),
+							"  Owner   " .. owner,
+							"  Modified " .. fmt_time(stat.mtime and stat.mtime.sec),
+							"  Created  " .. fmt_time(stat.birthtime and stat.birthtime.sec),
+						}
+
+						local width = 0
+						for _, l in ipairs(lines) do
+							width = math.max(width, #l + 2)
+						end
+						local height = #lines
+
+						local buf = vim.api.nvim_create_buf(false, true)
+						vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+						vim.bo[buf].modifiable = false
+
+						local win = vim.api.nvim_open_win(buf, true, {
+							relative = "editor",
+							width = width,
+							height = height,
+							row = math.floor((vim.o.lines - height) / 2),
+							col = math.floor((vim.o.columns - width) / 2),
+							style = "minimal",
+							border = "rounded",
+							title = " File Info ",
+							title_pos = "center",
+						})
+						vim.wo[win].cursorline = false
+
+						-- Close on any key
+						vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = buf, silent = true })
+						vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = buf, silent = true })
+						vim.keymap.set("n", "K", "<cmd>close<CR>", { buffer = buf, silent = true })
+					end,
+					-- Override Neo-tree's default <C-x> (fuzzy finder clear) to match global behavior
 						-- We don't use Neo-tree's fuzzy finder, so this ensures <C-x> always opens Lazy
 						["<C-x>"] = function()
 							vim.cmd("Lazy")
