@@ -1,6 +1,13 @@
 ---@module 'plugins.editor.syntax-highlighting'
 ---Treesitter configuration for syntax highlighting and text objects
 
+-- MDX has no Treesitter parser, so treat it as markdown for highlighting purposes
+vim.filetype.add({
+	extension = {
+		mdx = "markdown",
+	},
+})
+
 ---@type LazySpec
 return {
 	"nvim-treesitter/nvim-treesitter",
