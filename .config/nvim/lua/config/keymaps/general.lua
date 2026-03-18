@@ -91,6 +91,29 @@ vim.keymap.set("n", "<leader>uc", function()
 	)
 end, { desc = "[U]I: [C]hoose colorscheme/theme" })
 
+-- Set filetype/language for current buffer (for syntax highlighting of non-standard files)
+vim.keymap.set("n", "<leader>uL", function()
+	-- Collect installed Treesitter parsers as the language list
+	local parsers = require("nvim-treesitter.parsers")
+	local langs = vim.tbl_keys(parsers.get_parser_configs())
+	table.sort(langs)
+
+	vim.ui.select(langs, {
+		prompt = "Set language:",
+		format_item = function(item)
+			if item == vim.bo.filetype then
+				return item .. " (current)"
+			end
+			return item
+		end,
+	}, function(choice)
+		if choice then
+			vim.bo.filetype = choice
+			vim.notify("Filetype set to " .. choice, vim.log.levels.INFO)
+		end
+	end)
+end, { desc = "[U]I: Set buffer [L]anguage/filetype" })
+
 -- Clear highlights on search and close floating windows when pressing <Esc> in normal mode
 vim.keymap.set("n", "<Esc>", function()
 	-- Clear search highlights
