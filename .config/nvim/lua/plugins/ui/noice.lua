@@ -155,7 +155,7 @@ return {
 					col = "50%",
 				},
 				size = {
-					width = math.min(math.floor(vim.o.columns * 0.8), 100),
+					width = 50,
 					height = "auto",
 				},
 				border = {
