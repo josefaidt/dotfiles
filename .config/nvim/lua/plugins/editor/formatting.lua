@@ -37,7 +37,7 @@ return {
 					return done
 				end, 10)
 				if format_err then
-					vim.notify(format_err, vim.log.levels.ERROR, { title = "conform.nvim" })
+					vim.notify(format_err, vim.log.levels.ERROR)
 				end
 			end,
 		})

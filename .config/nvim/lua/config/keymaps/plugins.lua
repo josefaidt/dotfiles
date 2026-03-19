@@ -56,7 +56,7 @@ vim.keymap.set("n", "<leader>bF", function()
 	end
 
 	if #available == 0 then
-		vim.notify("No formatters available for filetype: " .. vim.bo.filetype, vim.log.levels.WARN)
+		vim.notify("No formatters available for " .. vim.bo.filetype, vim.log.levels.WARN)
 		return
 	end
 
