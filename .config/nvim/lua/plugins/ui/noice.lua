@@ -155,7 +155,7 @@ return {
 					col = "50%",
 				},
 				size = {
-					width = 50,
+					width = math.min(math.floor(vim.o.columns * 0.8), 100),
 					height = "auto",
 				},
 				border = {
@@ -164,6 +164,8 @@ return {
 				},
 				win_options = {
 					winblend = 0,
+					wrap = true,
+					linebreak = true,
 					winhighlight = {
 						Normal = "NoiceConfirm",
 						FloatBorder = "NoiceConfirmBorder",
