@@ -428,6 +428,10 @@ return {
 						or vim.fn.exepath("biome"),
 					"lsp-proxy",
 				},
+				-- Only attach when a biome config exists in the project tree.
+				-- Without this guard, biome attaches to every JSON file and may error
+				-- when no config exists or the global config version doesn't match the CLI.
+				root_dir = require("lspconfig.util").root_pattern("biome.json", "biome.jsonc"),
 			},
 			jsonls = {
 				-- JSON language server with schema support
