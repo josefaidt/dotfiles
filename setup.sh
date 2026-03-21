@@ -104,6 +104,7 @@ xdg-config-stow fish
 xdg-config-stow nvim
 xdg-config-stow ghostty
 xdg-config-stow zellij
+xdg-config-stow oxfmt
 
 # setup global claude
 stow claude
@@ -114,6 +115,13 @@ if [ -f ~/.config/starship.toml ]; then
 else
   ln -s $(pwd)/.config/starship.toml ~/.config/starship.toml
 fi
+
+# install bun
+echo "Installing bun..."
+curl -fsSL https://bun.com/install | bash
+echo "Installing oxc tools..."
+bun install --global oxfmt
+bun install --global oxlint
 
 echo ""
 echo "✅ Setup complete!"

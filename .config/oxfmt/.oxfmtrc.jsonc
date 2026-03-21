@@ -1,5 +1,5 @@
 {
+  // this config location isn't officially supported by oxfmt
+  "$schema": "~/.bun/install/global/node_modules/oxfmt/configuration_schema.json",
   "semi": false,
-  "singleQuote": true,
-  "trailingComma": "es5"
 }
