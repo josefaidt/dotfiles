@@ -12,3 +12,6 @@ notes.md
 
 # no claude worktrees
 .claude/worktrees/
+
+# no claude locals
+.claude/settings.local.json
