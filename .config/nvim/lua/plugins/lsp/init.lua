@@ -292,6 +292,9 @@ return {
 		--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
 		local capabilities = require("blink.cmp").get_lsp_capabilities()
 
+		-- Set global capabilities for all servers using the new vim.lsp.config API
+		vim.lsp.config("*", { capabilities = capabilities })
+
 		---Enable the following language servers
 		---Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 		---
@@ -301,7 +304,8 @@ return {
 		--- - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
 		--- - settings (table): Override the default settings passed when initializing the server.
 		---       For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-		---@type table<string, vim.lsp.ClientConfig>
+		--- - root_markers (table): Files/directories to search for when determining project root (replaces root_dir patterns)
+		---@type table<string, vim.lsp.Config>
 		local servers = {
 			-- clangd = {},
 			-- gopls = {},
@@ -354,12 +358,8 @@ return {
 					"typescriptreact",
 				},
 				-- Handle monorepo setups with symlinked node_modules
-				root_dir = function(fname)
-					local util = require("lspconfig.util")
-					-- Look for package.json or tsconfig.json in current or parent directories
-					return util.root_pattern("tsconfig.json", "package.json")(fname)
-				end,
-				single_file_support = false, -- Require a project root
+				-- Use root_markers instead of root_dir function for simple pattern matching
+				root_markers = { "tsconfig.json", "package.json" },
 			},
 			html = {}, -- HTML
 			cssls = {}, -- CSS
@@ -367,8 +367,8 @@ return {
 				-- Only attach when tailwindcss is actually a project dependency.
 				-- Detects the package manager from lock files and queries it directly.
 				root_dir = function(fname)
-					local util = require("lspconfig.util")
-					local pkg_root = util.root_pattern("package.json")(fname)
+					-- Use vim.fs.root for finding package.json (replaces lspconfig.util)
+					local pkg_root = vim.fs.root(fname, { "package.json" })
 					if not pkg_root then
 						return nil
 					end
@@ -431,7 +431,8 @@ return {
 				-- Only attach when a biome config exists in the project tree.
 				-- Without this guard, biome attaches to every JSON file and may error
 				-- when no config exists or the global config version doesn't match the CLI.
-				root_dir = require("lspconfig.util").root_pattern("biome.json", "biome.jsonc"),
+				-- Use root_markers instead of root_dir function for simple pattern matching
+				root_markers = { "biome.json", "biome.jsonc" },
 			},
 			jsonls = {
 				-- JSON language server with schema support
@@ -522,19 +523,16 @@ return {
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
+		-- Configure all servers using the new vim.lsp.config API
+		for server_name, server in pairs(servers) do
+			vim.lsp.config(server_name, server)
+		end
+
+		-- Setup mason-lspconfig with automatic_enable to auto-start configured servers
 		require("mason-lspconfig").setup({
 			ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
 			automatic_installation = false,
-			handlers = {
-				function(server_name)
-					local server = servers[server_name] or {}
-					-- This handles overriding only values explicitly passed
-					-- by the server configuration above. Useful when disabling
-					-- certain features of an LSP (for example, turning off formatting for ts_ls)
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
-				end,
-			},
+			automatic_enable = true,
 		})
 
 		-- Auto-restart jsonls when $schema is updated in JSON files
