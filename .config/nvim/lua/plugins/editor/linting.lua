@@ -1,5 +1,5 @@
 ---@module 'plugins.editor.linting'
----nvim-lint configuration with ESLint and Biome support
+---nvim-lint configuration with oxlint, ESLint, and Biome support
 
 ---@type LazySpec
 return {
@@ -11,15 +11,12 @@ return {
 		-- Disable jsonlint explicitly - we don't want it
 		lint.linters.jsonlint = nil
 
-		-- Helper function to check if biome config exists
-		local function has_biome_config()
-			local root = vim.fs.dirname(vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1])
-			return root ~= nil
+		local function has_oxlint_config()
+			return vim.fs.find({ "oxlintrc.json", ".oxlintrc.json" }, { upward = true })[1] ~= nil
 		end
 
-		-- Helper function to check if eslint config exists
 		local function has_eslint_config()
-			local root = vim.fs.dirname(vim.fs.find({
+			return vim.fs.find({
 				".eslintrc",
 				".eslintrc.js",
 				".eslintrc.cjs",
@@ -29,27 +26,32 @@ return {
 				"eslint.config.js",
 				"eslint.config.mjs",
 				"eslint.config.cjs",
-			}, { upward = true })[1])
-			return root ~= nil
+			}, { upward = true })[1] ~= nil
 		end
 
-		-- Dynamically choose linter based on project config
+		local function has_biome_config()
+			return vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1] ~= nil
+		end
+
+		-- Dynamically choose linter based on project config.
+		-- Priority: eslint (if config) > biome (if config) > oxlint (default)
 		local function get_js_linters()
 			if has_eslint_config() then
 				return { "eslint" }
 			elseif has_biome_config() then
 				return { "biomejs" }
+			elseif has_oxlint_config() then
+				return { "oxlint" }
 			end
-			return {} -- No linting if no config found
+			return { "oxlint" } -- default to oxlint even without config
 		end
 
-		-- Setup linters
+		-- linters_by_filetype uses functions so detection runs per-buffer
 		lint.linters_by_filetype = {
-			javascript = get_js_linters(),
-			javascriptreact = get_js_linters(),
-			typescript = get_js_linters(),
-			typescriptreact = get_js_linters(),
-			-- Use biome for JSON, but only if it exists
+			javascript = get_js_linters,
+			javascriptreact = get_js_linters,
+			typescript = get_js_linters,
+			typescriptreact = get_js_linters,
 			-- Return empty array to prevent any fallback to jsonlint
 			json = {},
 			jsonc = {},
@@ -64,12 +66,7 @@ return {
 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 			group = lint_augroup,
 			callback = function()
-				local ft = vim.bo.filetype
-				-- Only lint if we have a linter configured for this filetype
-				local linters = lint.linters_by_filetype[ft]
-				if linters and #linters > 0 then
-					pcall(lint.try_lint)
-				end
+				pcall(lint.try_lint)
 			end,
 		})
 	end,

@@ -1,5 +1,5 @@
 ---@module 'plugins.editor.formatting'
----Conform.nvim formatting configuration with Prettier and Biome support
+---Conform.nvim formatting configuration with oxfmt, Biome, and Prettier support
 
 ---@type LazySpec
 return {
@@ -36,7 +36,7 @@ return {
 				vim.wait(2500, function()
 					return done
 				end, 10)
-				if format_err then
+				if format_err and not format_err:match("No formatters available") then
 					vim.notify(format_err, vim.log.levels.ERROR)
 				end
 			end,
@@ -53,6 +53,34 @@ return {
 				or vim.fn.exepath("biome") ~= ""
 		end
 
+		local function has_prettier_config()
+			return vim.fs.find({
+				".prettierrc",
+				".prettierrc.js",
+				".prettierrc.cjs",
+				".prettierrc.mjs",
+				".prettierrc.json",
+				".prettierrc.json5",
+				".prettierrc.yaml",
+				".prettierrc.yml",
+				".prettierrc.toml",
+				"prettier.config.js",
+				"prettier.config.cjs",
+				"prettier.config.mjs",
+			}, { upward = true })[1] ~= nil
+		end
+
+		-- Choose formatter for JS/TS filetypes.
+		-- Priority: biome (if config) > prettier (if config) > oxfmt (default)
+		local function get_js_formatter()
+			if has_biome_config() then
+				return { "biome", stop_after_first = true }
+			elseif has_prettier_config() then
+				return { "prettierd", "prettier", stop_after_first = true }
+			end
+			return { "oxfmt" }
+		end
+
 		return {
 			notify_on_error = false,
 			formatters_by_ft = {
@@ -60,33 +88,10 @@ return {
 				rust = { "rustfmt", lsp_format = "fallback" },
 				python = { "ruff_format", "ruff_organize_imports" },
 
-				javascript = function()
-					if has_biome_config() then
-						return { "biome" }
-					end
-					return { "prettierd", "prettier", stop_after_first = true }
-				end,
-
-				javascriptreact = function()
-					if has_biome_config() then
-						return { "biome" }
-					end
-					return { "prettierd", "prettier", stop_after_first = true }
-				end,
-
-				typescript = function()
-					if has_biome_config() then
-						return { "biome" }
-					end
-					return { "prettierd", "prettier", stop_after_first = true }
-				end,
-
-				typescriptreact = function()
-					if has_biome_config() then
-						return { "biome" }
-					end
-					return { "prettierd", "prettier", stop_after_first = true }
-				end,
+				javascript = get_js_formatter,
+				javascriptreact = get_js_formatter,
+				typescript = get_js_formatter,
+				typescriptreact = get_js_formatter,
 
 				json = function()
 					if has_biome_config() then
