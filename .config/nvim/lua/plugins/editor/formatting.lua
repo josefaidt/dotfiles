@@ -85,7 +85,7 @@ return {
 		-- and singleQuote=true are always applied. If a project-local oxfmt config
 		-- exists in or above the file's directory, skip --config so the project
 		-- config takes precedence (checked at format time via ctx.dirname).
-		local oxfmt_default_config = vim.fn.expand("$HOME/.config/oxfmt/.oxfmtrc.json")
+		local oxfmt_default_config = vim.fn.expand("$HOME/.config/oxfmt/.oxfmtrc.jsonc")
 
 		return {
 			notify_on_error = false,
