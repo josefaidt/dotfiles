@@ -91,6 +91,12 @@ vim.keymap.set("n", "<leader>uc", function()
 	)
 end, { desc = "[U]I: [C]hoose colorscheme/theme" })
 
+-- Settings toggles (<leader>us)
+vim.keymap.set("n", "<leader>ush", function()
+	vim.g.lsp_auto_hover = not vim.g.lsp_auto_hover
+	vim.notify("LSP auto-hover " .. (vim.g.lsp_auto_hover and "enabled" or "disabled"), vim.log.levels.INFO)
+end, { desc = "[U]I [S]ettings: toggle LSP auto-[h]over" })
+
 -- Set filetype/language for current buffer (for syntax highlighting of non-standard files)
 vim.keymap.set("n", "<leader>uL", function()
 	-- Collect installed Treesitter parsers as the language list

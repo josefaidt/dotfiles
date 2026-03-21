@@ -207,11 +207,16 @@ return {
 		-- Track cursor position where we manually dismissed a float
 		local suppressed_position = nil
 
-		-- Auto-show diagnostics or hover info when cursor rests on a symbol
+		-- Auto-show diagnostics or hover info when cursor rests on a symbol.
+		-- Gated by vim.g.lsp_auto_hover (default off; toggle with <leader>ush).
+		vim.g.lsp_auto_hover = false
 		local auto_show_group = vim.api.nvim_create_augroup("auto-show-diagnostics", { clear = true })
 		vim.api.nvim_create_autocmd({ "CursorHold" }, {
 			group = auto_show_group,
 			callback = function()
+				if not vim.g.lsp_auto_hover then
+					return
+				end
 				local cursor = vim.api.nvim_win_get_cursor(0)
 				local bufnr = vim.api.nvim_get_current_buf()
 

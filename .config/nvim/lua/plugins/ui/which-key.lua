@@ -59,6 +59,8 @@ return {
 			{ "<leader>b", group = "[B]uffer" },
 			{ "<leader>d", group = "[D]ropbar" },
 			{ "<leader>l", group = "[L]SP" },
+			{ "<leader>u", group = "[U]I" },
+			{ "<leader>us", group = "[U]I [S]ettings" },
 		},
 
 		triggers = {
