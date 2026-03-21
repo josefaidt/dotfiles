@@ -40,10 +40,8 @@ return {
 				return { "eslint" }
 			elseif has_biome_config() then
 				return { "biomejs" }
-			elseif has_oxlint_config() then
-				return { "oxlint" }
 			end
-			return { "oxlint" } -- default to oxlint even without config
+			return { "oxlint" }
 		end
 
 		-- linters_by_filetype uses functions so detection runs per-buffer
