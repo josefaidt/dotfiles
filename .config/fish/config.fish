@@ -21,6 +21,8 @@ if status is-interactive
 
   abbr --add --position command p pnpm
   abbr --add --position command pi pnpm install
+  abbr --add --position command b bun
+  abbr --add --position command bi bun install
 
   abbr --add --position command c claude
   abbr --add --position command kc kiro-cli chat
@@ -52,7 +54,6 @@ source ~/.orbstack/shell/init2.fish 2>/dev/null || :
 
 # load rust
 source "$HOME/.cargo/env.fish"
-
 
 # Vite+ bin (https://viteplus.dev)
 source "$HOME/.vite-plus/env.fish"
