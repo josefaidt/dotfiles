@@ -43,19 +43,6 @@ return {
 		})
 	end,
 	opts = function()
-		local function has_oxfmt_config()
-			return vim.fs.find({
-				".oxfmtrc.json",
-				".oxfmtrc.jsonc",
-				".oxfmtrc.js",
-				".oxfmtrc.mjs",
-				".oxfmtrc.cjs",
-				".oxfmtrc.ts",
-				".oxfmtrc.mts",
-				".oxfmtrc.cts",
-			}, { upward = true })[1] ~= nil
-		end
-
 		local function has_biome_config()
 			local root = vim.fs.dirname(vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1])
 			if not root then
@@ -94,16 +81,34 @@ return {
 			return { "oxfmt" }
 		end
 
-		-- When no project-local oxfmt config exists, point at the dotfile default
-		-- so settings like semi=false and singleQuote=true are always applied.
-		local oxfmt_default_config = vim.fn.expand("~/.config/oxfmt/.oxfmtrc.json")
-		local oxfmt_formatter = has_oxfmt_config() and {} -- project config found; use defaults
-			or { inherit = true, prepend_args = { "--config", oxfmt_default_config } }
+		-- Point oxfmt at the dotfile default config so settings like semi=false
+		-- and singleQuote=true are always applied. If a project-local oxfmt config
+		-- exists in or above the file's directory, skip --config so the project
+		-- config takes precedence (checked at format time via ctx.dirname).
+		local oxfmt_default_config = vim.fn.expand("$HOME/.config/oxfmt/.oxfmtrc.json")
 
 		return {
 			notify_on_error = false,
 			formatters = {
-				oxfmt = oxfmt_formatter,
+				oxfmt = {
+					inherit = true,
+					prepend_args = function(_, ctx)
+						local project_config = vim.fs.find({
+							".oxfmtrc.json",
+							".oxfmtrc.jsonc",
+							".oxfmtrc.js",
+							".oxfmtrc.mjs",
+							".oxfmtrc.cjs",
+							".oxfmtrc.ts",
+							".oxfmtrc.mts",
+							".oxfmtrc.cts",
+						}, { upward = true, path = ctx.dirname })[1]
+						if project_config then
+							return {}
+						end
+						return { "--config", oxfmt_default_config }
+					end,
+				},
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
