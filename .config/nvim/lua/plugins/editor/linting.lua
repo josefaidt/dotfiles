@@ -29,6 +29,26 @@ return {
 			}, { upward = true })[1] ~= nil
 		end
 
+		-- Point markdownlint-cli2 at the dotfile default config when no project
+		-- config exists, so noisy rules (MD013, MD033, MD041) are always disabled.
+		-- Project configs (.markdownlint.json etc.) take precedence when present.
+		local markdownlint_project_config = vim.fs.find({
+			".markdownlint.json",
+			".markdownlint.jsonc",
+			".markdownlint.yaml",
+			".markdownlint.yml",
+			".markdownlint-cli2.jsonc",
+			".markdownlint-cli2.yaml",
+			".markdownlint-cli2.cjs",
+			".markdownlint-cli2.mjs",
+		}, { upward = true })[1]
+		if not markdownlint_project_config then
+			local default = vim.fn.expand("$HOME/.config/markdownlint/.markdownlint.json")
+			if vim.fn.filereadable(default) == 1 then
+				lint.linters["markdownlint-cli2"].args = { "--config", default, "-" }
+			end
+		end
+
 		local function has_biome_config()
 			return vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1] ~= nil
 		end
@@ -57,6 +77,8 @@ return {
 			python = { "ruff" },
 			-- YAML linting with yamllint
 			yaml = { "yamllint" },
+			-- Markdown linting with GFM support
+			markdown = { "markdownlint-cli2" },
 		}
 
 		-- Auto-lint on save and edit.

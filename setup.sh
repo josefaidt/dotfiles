@@ -105,6 +105,7 @@ xdg-config-stow nvim
 xdg-config-stow ghostty
 xdg-config-stow zellij
 xdg-config-stow oxfmt
+xdg-config-stow markdownlint
 
 # setup global claude
 stow claude
