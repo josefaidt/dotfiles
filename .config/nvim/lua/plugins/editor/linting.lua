@@ -60,14 +60,14 @@ return {
 		}
 
 		-- Auto-lint on save and edit.
-		-- Skip json/jsonc entirely — nvim-lint's built-in defaults include jsonlint
-		-- and setting linters_by_filetype json={} isn't sufficient to suppress it.
-		local no_lint_filetypes = { json = true, jsonc = true }
+		-- Use an allowlist of configured filetypes so nvim-lint's built-in defaults
+		-- (jsonlint, vale, etc.) never fire for unconfigured filetypes.
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 			group = lint_augroup,
 			callback = function()
-				if no_lint_filetypes[vim.bo.filetype] then
+				local ft = vim.bo.filetype
+				if not lint.linters_by_filetype[ft] then
 					return
 				end
 				pcall(lint.try_lint)
