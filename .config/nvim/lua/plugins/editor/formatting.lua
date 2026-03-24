@@ -124,13 +124,13 @@ return {
 					if has_biome_config() then
 						return { "biome", stop_after_first = true }
 					end
-					return { "prettierd", "prettier", stop_after_first = true }
+					return { "oxfmt" }
 				end,
 				jsonc = function()
 					if has_biome_config() then
 						return { "biome", stop_after_first = true }
 					end
-					return { "prettierd", "prettier", stop_after_first = true }
+					return { "oxfmt" }
 				end,
 
 				html = { "prettierd", "prettier", stop_after_first = true },
