@@ -43,7 +43,7 @@ return {
 			".markdownlint-cli2.mjs",
 		}, { upward = true })[1]
 		if not markdownlint_project_config then
-			local default = vim.fn.expand("$HOME/.config/markdownlint/.markdownlint.json")
+			local default = vim.fn.stdpath("config") .. "/.markdownlint.json"
 			if vim.fn.filereadable(default) == 1 then
 				lint.linters["markdownlint-cli2"].args = { "--config", default, "-" }
 			end
