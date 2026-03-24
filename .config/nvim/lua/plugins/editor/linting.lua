@@ -8,13 +8,6 @@ return {
 	config = function()
 		local lint = require("lint")
 
-		-- Disable jsonlint explicitly - we don't want it
-		lint.linters.jsonlint = nil
-
-		local function has_oxlint_config()
-			return vim.fs.find({ "oxlintrc.json", ".oxlintrc.json" }, { upward = true })[1] ~= nil
-		end
-
 		local function has_eslint_config()
 			return vim.fs.find({
 				".eslintrc",
@@ -64,34 +57,24 @@ return {
 			return { "oxlint" }
 		end
 
-		-- linters_by_filetype uses functions so detection runs per-buffer
-		lint.linters_by_filetype = {
+		-- Replace nvim-lint's default linters_by_ft entirely so built-in defaults
+		-- (vale, jsonlint, etc.) never fire. Only filetypes listed here are linted.
+		lint.linters_by_ft = {
 			javascript = get_js_linters,
 			javascriptreact = get_js_linters,
 			typescript = get_js_linters,
 			typescriptreact = get_js_linters,
-			-- Return empty array to prevent any fallback to jsonlint
 			json = {},
 			jsonc = {},
-			-- Python linting with ruff
 			python = { "ruff" },
-			-- YAML linting with yamllint
 			yaml = { "yamllint" },
-			-- Markdown linting with GFM support
 			markdown = { "markdownlint-cli2" },
 		}
 
-		-- Auto-lint on save and edit.
-		-- Use an allowlist of configured filetypes so nvim-lint's built-in defaults
-		-- (jsonlint, vale, etc.) never fire for unconfigured filetypes.
 		local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 		vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 			group = lint_augroup,
 			callback = function()
-				local ft = vim.bo.filetype
-				if not lint.linters_by_filetype[ft] then
-					return
-				end
 				pcall(lint.try_lint)
 			end,
 		})
