@@ -528,6 +528,7 @@ return {
 			"oxlint", -- Fast JS/TS linter (default when no eslint/biome config)
 			"oxfmt", -- Fast JS/TS formatter (default when no biome/prettier config)
 			"markdownlint-cli2", -- Markdown linter with GFM support
+			"yamllint", -- YAML linter
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
