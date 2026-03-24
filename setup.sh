@@ -104,7 +104,6 @@ xdg-config-stow fish
 xdg-config-stow nvim
 xdg-config-stow ghostty
 xdg-config-stow zellij
-xdg-config-stow oxfmt
 
 # setup global claude
 stow claude
