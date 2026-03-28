@@ -11,6 +11,13 @@ return {
 		config = function()
 			vim.g.mellow_italic_keywords = true
 
+			-- YAML keys map to @property, which mellow sets to gray07 (#c1c0d4) —
+			-- nearly identical to fg (#c9c7cd), making them look unstyled.
+			-- Override to use a distinct color so keys are visually differentiated.
+			vim.g.mellow_highlight_overrides = {
+				["@property.yaml"] = { fg = "#aca1cf" }, -- blue (mellow's c.blue)
+			}
+
 			vim.cmd.colorscheme("mellow")
 		end,
 	},

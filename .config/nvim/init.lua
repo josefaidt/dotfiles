@@ -207,6 +207,16 @@ vim.api.nvim_create_autocmd("SwapExists", {
 	end,
 })
 
+-- Markdown-specific settings
+vim.api.nvim_create_autocmd("FileType", {
+	desc = "Set text width and color column for markdown files",
+	group = vim.api.nvim_create_augroup("markdown-settings", { clear = true }),
+	pattern = "markdown",
+	callback = function()
+		vim.opt_local.textwidth = 100
+	end,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
