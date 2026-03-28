@@ -51,6 +51,7 @@ return {
 
 		-- Document existing key chains
 		spec = {
+			{ "<leader>e", desc = "Show diagnostic" },
 			{ "<leader>s", group = "[S]earch" },
 			{ "<leader>t", group = "[T]oggle" },
 			{ "<leader>g", group = "[G]it" },

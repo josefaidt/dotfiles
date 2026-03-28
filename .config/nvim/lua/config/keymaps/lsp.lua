@@ -54,7 +54,6 @@ function M.on_attach(event)
 	--  the definition of its *type*, not where it was *defined*.
 	map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
 
-	-- VSCode-like diagnostic keymaps
 	-- Show hover documentation (like hovering in VSCode)
 	-- Custom hover that suppresses "No information available" when another client
 	-- already returned content (e.g. ts_ls + biome both attached to the same buffer)
@@ -78,16 +77,6 @@ function M.on_attach(event)
 			end, 0)
 		end
 	end, "Hover Documentation")
-	-- Show diagnostic in floating window (focused so you can scroll)
-	map("<leader>e", function()
-		local winid = vim.diagnostic.open_float()
-		if winid and vim.api.nvim_win_is_valid(winid) then
-			vim.api.nvim_set_current_win(winid)
-		end
-	end, "Show Diagnostic")
-	-- Jump to next/previous diagnostic
-	map("[d", vim.diagnostic.goto_prev, "Previous Diagnostic")
-	map("]d", vim.diagnostic.goto_next, "Next Diagnostic")
 
 	-- Toggle inlay hints (if supported by the LSP)
 	local client = vim.lsp.get_client_by_id(event.data.client_id)

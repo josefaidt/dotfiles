@@ -120,6 +120,16 @@ vim.keymap.set("n", "<leader>uL", function()
 	end)
 end, { desc = "[U]I: Set buffer [L]anguage/filetype" })
 
+-- Diagnostic keymaps (global so they work with linters, not just LSP)
+vim.keymap.set("n", "<leader>e", function()
+	local winid = vim.diagnostic.open_float()
+	if winid and vim.api.nvim_win_is_valid(winid) then
+		vim.api.nvim_set_current_win(winid)
+	end
+end, { desc = "Show diagnostic" })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+
 -- Clear highlights on search and close floating windows when pressing <Esc> in normal mode
 vim.keymap.set("n", "<Esc>", function()
 	-- Clear search highlights

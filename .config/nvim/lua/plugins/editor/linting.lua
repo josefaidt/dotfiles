@@ -42,6 +42,21 @@ return {
 			end
 		end
 
+		-- Point yamllint at the dotfile default config when no project config exists,
+		-- so noisy rules (document-start, line-length) are always disabled.
+		-- Project configs (.yamllint, .yamllint.yml, etc.) take precedence when present.
+		local yamllint_project_config = vim.fs.find({
+			".yamllint",
+			".yamllint.yml",
+			".yamllint.yaml",
+		}, { upward = true })[1]
+		if not yamllint_project_config then
+			local default = vim.fn.stdpath("config") .. "/.yamllint"
+			if vim.fn.filereadable(default) == 1 then
+				lint.linters.yamllint.args = { "--format", "parsable", "-c", default, "-" }
+			end
+		end
+
 		local function has_biome_config()
 			return vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1] ~= nil
 		end
