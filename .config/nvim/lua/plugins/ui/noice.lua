@@ -172,6 +172,14 @@ return {
 					},
 				},
 			},
+			-- Cap notification width and enable text wrapping
+			notify = {
+				max_width = 60,
+				win_options = {
+					wrap = true,
+					linebreak = true,
+				},
+			},
 		},
 		-- Configure cmdline to use centered popup
 		cmdline = {
