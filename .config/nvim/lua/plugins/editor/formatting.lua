@@ -43,13 +43,21 @@ return {
 		})
 	end,
 	opts = function()
+		-- Find the project root so config searches don't escape into parent directories.
+		-- Falls back to $HOME as a hard stop if no root markers are found.
+		local function get_project_stop()
+			local root = vim.fs.root(0, { ".git", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock", "Cargo.toml", "pyproject.toml" })
+			return root and vim.fn.fnamemodify(root, ":h") or vim.env.HOME
+		end
+
 		local function has_biome_config()
-			local root = vim.fs.dirname(vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1])
-			if not root then
+			local config = vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true, stop = get_project_stop() })[1]
+			if not config then
 				return false
 			end
 			-- Also verify biome is actually installed, otherwise fall through to prettier
-			return vim.fn.filereadable(root .. "/node_modules/.bin/biome") == 1
+			local config_dir = vim.fs.dirname(config)
+			return vim.fn.filereadable(config_dir .. "/node_modules/.bin/biome") == 1
 				or vim.fn.exepath("biome") ~= ""
 		end
 
@@ -67,7 +75,7 @@ return {
 				"prettier.config.js",
 				"prettier.config.cjs",
 				"prettier.config.mjs",
-			}, { upward = true })[1] ~= nil
+			}, { upward = true, stop = get_project_stop() })[1] ~= nil
 		end
 
 		-- Filetypes with full or experimental Biome support:
