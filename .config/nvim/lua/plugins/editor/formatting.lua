@@ -70,9 +70,10 @@ return {
 			}, { upward = true })[1] ~= nil
 		end
 
-		-- Choose formatter for JS/TS filetypes.
+		-- Filetypes with full or experimental Biome support:
+		--   JS, TS, JSX, TSX, HTML, CSS, GraphQL, Vue, Svelte, Astro
 		-- Priority: biome (if config) > prettier (if config) > oxfmt (default)
-		local function get_js_formatter()
+		local function get_formatter()
 			if has_biome_config() then
 				return { "biome", stop_after_first = true }
 			elseif has_prettier_config() then
@@ -81,10 +82,27 @@ return {
 			return { "oxfmt" }
 		end
 
+		-- JSON/JSONC: no prettier needed since oxfmt handles them well.
+		-- Priority: biome (if config) > oxfmt (default)
+		local function get_json_formatter()
+			if has_biome_config() then
+				return { "biome", stop_after_first = true }
+			end
+			return { "oxfmt" }
+		end
+
+		-- Filetypes Biome does not yet support (SCSS, YAML, Markdown, Less, TOML, MDX, JSON5).
+		-- Priority: prettier (if config) > oxfmt (default)
+		local function get_prettier_or_oxfmt()
+			if has_prettier_config() then
+				return { "prettierd", "prettier", stop_after_first = true }
+			end
+			return { "oxfmt" }
+		end
+
 		-- Point oxfmt at the dotfile default config so settings like semi=false
-		-- and singleQuote=true are always applied. If a project-local oxfmt config
-		-- exists in or above the file's directory, skip --config so the project
-		-- config takes precedence (checked at format time via ctx.dirname).
+		-- are always applied. If a project-local oxfmt config exists in or above
+		-- the file's directory, skip --config so the project config takes precedence.
 		local oxfmt_default_config = vim.fn.stdpath("config") .. "/.oxfmtrc.jsonc"
 
 		return {
@@ -115,31 +133,32 @@ return {
 				rust = { "rustfmt", lsp_format = "fallback" },
 				python = { "ruff_format", "ruff_organize_imports" },
 
-				javascript = get_js_formatter,
-				javascriptreact = get_js_formatter,
-				typescript = get_js_formatter,
-				typescriptreact = get_js_formatter,
+				-- Biome fully supported
+				javascript = get_formatter,
+				javascriptreact = get_formatter,
+				typescript = get_formatter,
+				typescriptreact = get_formatter,
+				html = get_formatter,
+				css = get_formatter,
+				graphql = get_formatter,
 
-				json = function()
-					if has_biome_config() then
-						return { "biome", stop_after_first = true }
-					end
-					return { "oxfmt" }
-				end,
-				jsonc = function()
-					if has_biome_config() then
-						return { "biome", stop_after_first = true }
-					end
-					return { "oxfmt" }
-				end,
+				-- Biome experimental
+				vue = get_formatter,
+				svelte = get_formatter,
+				astro = get_formatter,
 
-				html = { "prettierd", "prettier", stop_after_first = true },
-				css = { "prettierd", "prettier", stop_after_first = true },
-				scss = { "prettierd", "prettier", stop_after_first = true },
-				astro = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-astro
-				svelte = { "prettierd", "prettier", stop_after_first = true }, -- requires @prettier/plugin-svelte
-				markdown = { "prettierd", "prettier", stop_after_first = true },
-				yaml = { "prettierd", "prettier", stop_after_first = true },
+				-- Biome supported, no prettier needed
+				json = get_json_formatter,
+				jsonc = get_json_formatter,
+
+				-- Biome not yet supported, oxfmt as default
+				scss = get_prettier_or_oxfmt,
+				less = get_prettier_or_oxfmt,
+				yaml = get_prettier_or_oxfmt,
+				markdown = get_prettier_or_oxfmt,
+				mdx = get_prettier_or_oxfmt,
+				toml = get_prettier_or_oxfmt,
+				json5 = get_prettier_or_oxfmt,
 			},
 		}
 	end,
