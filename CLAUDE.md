@@ -139,6 +139,30 @@ Only the directories that actually changed are re-stowed; unrelated configs are 
 
 ## Common Tasks
 
+### Neovim linters and formatters
+
+Tools are installed via Mason (`mason_ensure_installed` in `lua/plugins/lsp/init.lua`). The global default configs live inside `.config/nvim/` and are passed to each tool when no project-local config is found:
+
+| Tool | Default config | Filetype(s) |
+|---|---|---|
+| `oxlint` | none needed (zero-config) | JS/TS (fallback) |
+| `oxfmt` | `.oxfmtrc.jsonc` | JS/TS, JSON/JSONC (fallback) |
+| `markdownlint-cli2` | `.markdownlint.json` | markdown |
+| `yamllint` | `.yamllint` | yaml |
+| `stylua` | `.stylelua.toml` | lua |
+
+**Linter priority** (nvim-lint, per JS/TS buffer): eslint (if config found) → biome (if config found) → oxlint (default)
+
+**Formatter priority** (conform.nvim, per JS/TS buffer): biome (if config + binary found) → prettier/prettierd (if config found) → oxfmt (default)
+
+Project-local configs always take precedence — the fallback to the nvim config dir only fires when no config file is found by searching upward from the file's directory.
+
+To add a new global linter/formatter:
+1. Add it to `mason_ensure_installed` in `lua/plugins/lsp/init.lua`
+2. Register it in `lint.linters_by_ft` in `lua/plugins/editor/linting.lua`
+3. Register it in `formatters_by_ft` in `lua/plugins/editor/formatting.lua`
+4. Place any default config file in `.config/nvim/` and wire it up via `prepend_args` / `.args` (see existing oxfmt/markdownlint examples)
+
 ### When modifying neovim plugins:
 - Add new plugins by creating files in appropriate `plugins/` subdirectory (editor/, lsp/, or ui/)
 - Keymaps are centralized in `config/keymaps/` and organized by category (general, lsp, plugins, telescope)
