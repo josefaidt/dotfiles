@@ -50,17 +50,6 @@ return {
 			return root and vim.fn.fnamemodify(root, ":h") or vim.env.HOME
 		end
 
-		local function has_biome_config()
-			local config = vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true, stop = get_project_stop() })[1]
-			if not config then
-				return false
-			end
-			-- Also verify biome is actually installed, otherwise fall through to prettier
-			local config_dir = vim.fs.dirname(config)
-			return vim.fn.filereadable(config_dir .. "/node_modules/.bin/biome") == 1
-				or vim.fn.exepath("biome") ~= ""
-		end
-
 		local function has_prettier_config()
 			return vim.fs.find({
 				".prettierrc",
@@ -80,22 +69,16 @@ return {
 
 		-- Filetypes with full or experimental Biome support:
 		--   JS, TS, JSX, TSX, HTML, CSS, GraphQL, Vue, Svelte, Astro
-		-- Priority: biome (if config) > prettier (if config) > oxfmt (default)
+		-- Priority: oxfmt (default) > prettier (if config); biome is never used as formatter
 		local function get_formatter()
-			if has_biome_config() then
-				return { "biome", stop_after_first = true }
-			elseif has_prettier_config() then
+			if has_prettier_config() then
 				return { "prettierd", "prettier", stop_after_first = true }
 			end
 			return { "oxfmt" }
 		end
 
-		-- JSON/JSONC: no prettier needed since oxfmt handles them well.
-		-- Priority: biome (if config) > oxfmt (default)
+		-- JSON/JSONC: oxfmt always wins.
 		local function get_json_formatter()
-			if has_biome_config() then
-				return { "biome", stop_after_first = true }
-			end
 			return { "oxfmt" }
 		end
 

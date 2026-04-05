@@ -151,9 +151,9 @@ Tools are installed via Mason (`mason_ensure_installed` in `lua/plugins/lsp/init
 | `yamllint` | `.yamllint` | yaml |
 | `stylua` | `.stylelua.toml` | lua |
 
-**Linter priority** (nvim-lint, per JS/TS buffer): eslint (if config found) → biome (if config found) → oxlint (default)
+**Linter priority** (nvim-lint, per JS/TS buffer): eslint (if config found) → oxlint (default)
 
-**Formatter priority** (conform.nvim, per JS/TS buffer): biome (if config + binary found) → prettier/prettierd (if config found) → oxfmt (default)
+**Formatter priority** (conform.nvim, per JS/TS buffer): prettier/prettierd (if config found) → oxfmt (default)
 
 Project-local configs always take precedence — the fallback to the nvim config dir only fires when no config file is found by searching upward from the file's directory.
 

@@ -57,17 +57,11 @@ return {
 			end
 		end
 
-		local function has_biome_config()
-			return vim.fs.find({ "biome.json", "biome.jsonc" }, { upward = true })[1] ~= nil
-		end
-
 		-- Dynamically choose linter based on project config.
-		-- Priority: eslint (if config) > biome (if config) > oxlint (default)
+		-- Priority: eslint (if config) > oxlint (default); biome is never used as linter
 		local function get_js_linters()
 			if has_eslint_config() then
 				return { "eslint" }
-			elseif has_biome_config() then
-				return { "biomejs" }
 			end
 			return { "oxlint" }
 		end
