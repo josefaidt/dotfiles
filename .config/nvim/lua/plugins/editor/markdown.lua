@@ -60,34 +60,33 @@ return {
 					end
 				end, vim.tbl_extend("force", opts, { desc = "Toggle markdown checkbox" }))
 
-				-- Tab to indent list item
+				-- Tab to indent list item (works regardless of cursor position within the line)
 				vim.keymap.set("i", "<Tab>", function()
 					local line = vim.api.nvim_get_current_line()
-					local col = vim.api.nvim_win_get_cursor(0)[2]
+					local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
-					-- Check if we're in a list or checkbox
 					if line:match("^%s*%- ") or line:match("^%s*%d+%. ") then
-						-- Add two spaces for indentation
-						vim.api.nvim_feedkeys("  ", "n", false)
+						-- Prepend two spaces, keep cursor at same text offset
+						local new_line = "  " .. line
+						vim.api.nvim_buf_set_lines(0, row - 1, row, false, { new_line })
+						vim.api.nvim_win_set_cursor(0, { row, col + 2 })
 					else
 						-- Default tab behavior
 						vim.api.nvim_feedkeys("\t", "n", false)
 					end
 				end, vim.tbl_extend("force", opts, { desc = "Indent markdown list item" }))
 
-				-- Shift-Tab to dedent list item
+				-- Shift-Tab to dedent list item (works regardless of cursor position within the line)
 				vim.keymap.set("i", "<S-Tab>", function()
 					local line = vim.api.nvim_get_current_line()
-					local row = vim.api.nvim_win_get_cursor(0)[1]
+					local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
-					-- Check if we're in a list or checkbox
 					if line:match("^%s*%- ") or line:match("^%s*%d+%. ") then
-						-- Remove two spaces for dedentation
-						local new_line = line:gsub("^  ", "", 1)
-						vim.api.nvim_buf_set_lines(0, row - 1, row, false, { new_line })
-						-- Adjust cursor position
-						local col = vim.api.nvim_win_get_cursor(0)[2]
-						vim.api.nvim_win_set_cursor(0, { row, math.max(0, col - 2) })
+						local new_line, removed = line:gsub("^  ", "", 1)
+						if removed > 0 then
+							vim.api.nvim_buf_set_lines(0, row - 1, row, false, { new_line })
+							vim.api.nvim_win_set_cursor(0, { row, math.max(0, col - 2) })
+						end
 					end
 				end, vim.tbl_extend("force", opts, { desc = "Dedent markdown list item" }))
 			end,
