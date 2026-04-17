@@ -86,6 +86,7 @@ local function pick()
 	pickers
 		.new({}, {
 			prompt_title = "Markdown Headings",
+			sorting_strategy = "ascending",
 			finder = finders.new_table({
 				results = headings,
 				entry_maker = function(h)
