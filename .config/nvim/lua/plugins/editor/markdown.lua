@@ -33,6 +33,9 @@ return {
 				-- For markdown, we want wrapped lines to continue at the same indent as the list item
 				-- but without the extra "shift". This makes prose wrap cleanly while lists maintain
 				-- proper indentation for wrapped content.
+				vim.opt_local.tabstop = 2
+				vim.opt_local.softtabstop = 2
+				vim.opt_local.shiftwidth = 2
 				vim.opt_local.breakindent = true
 				vim.opt_local.breakindentopt = ""
 				vim.opt_local.linebreak = true
