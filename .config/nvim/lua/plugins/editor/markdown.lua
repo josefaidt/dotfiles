@@ -88,6 +88,7 @@ return {
 					if line:match("^%s*%- ") or line:match("^%s*%d+%. ") then
 						local new_line, removed = line:gsub("^  ", "", 1)
 						if removed > 0 then
+							new_line = new_line:gsub("^(%s*)%d+(%. )", "%11%2", 1)
 							vim.api.nvim_buf_set_lines(0, row - 1, row, false, { new_line })
 							vim.api.nvim_win_set_cursor(0, { row, math.max(0, col - 2) })
 						end
