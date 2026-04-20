@@ -59,6 +59,7 @@ vim.keymap.set("n", "<C-x>", "<cmd>Lazy<CR>", { desc = "Open Lazy.nvim" })
 vim.keymap.set("n", "<leader>uc", function()
 	---@type string[]
 	local themes = {
+		"mellow",
 		"everforest",
 		"catppuccin",
 		"catppuccin-latte",
