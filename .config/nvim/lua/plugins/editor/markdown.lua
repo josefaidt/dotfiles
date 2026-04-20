@@ -36,11 +36,18 @@ return {
 				vim.opt_local.tabstop = 2
 				vim.opt_local.softtabstop = 2
 				vim.opt_local.shiftwidth = 2
+				vim.opt_local.wrap = true
+				vim.opt_local.linebreak = true
 				vim.opt_local.breakindent = true
 				vim.opt_local.breakindentopt = ""
-				vim.opt_local.linebreak = true
+				vim.opt_local.textwidth = 0
+				vim.opt_local.wrapmargin = 0
 
 				local opts = { buffer = true, silent = true }
+
+				-- Move by visual line so wrapped prose feels natural
+				vim.keymap.set("n", "j", "gj", opts)
+				vim.keymap.set("n", "k", "gk", opts)
 
 				-- Toggle checkbox: <leader>x or <C-Space> in normal mode
 				vim.keymap.set("n", "<leader>x", function()
