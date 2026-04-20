@@ -69,8 +69,9 @@ return {
 					local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 
 					if line:match("^%s*%- ") or line:match("^%s*%d+%. ") then
-						-- Prepend two spaces, keep cursor at same text offset
+						-- Prepend two spaces; reset ordered list number to 1 after indent
 						local new_line = "  " .. line
+						new_line = new_line:gsub("^(%s*)%d+(%. )", "%11%2", 1)
 						vim.api.nvim_buf_set_lines(0, row - 1, row, false, { new_line })
 						vim.api.nvim_win_set_cursor(0, { row, col + 2 })
 					else
