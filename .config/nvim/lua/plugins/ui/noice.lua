@@ -236,6 +236,11 @@ return {
 				},
 				opts = { skip = true },
 			},
+			{
+				-- Send verbose output to a persistent split so it doesn't vanish
+				filter = { event = "msg_show", kind = "verbose" },
+				view = "split",
+			},
 		},
 	},
 }
