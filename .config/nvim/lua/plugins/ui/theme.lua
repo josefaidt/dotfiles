@@ -9,7 +9,7 @@ return {
 		priority = 1001, -- Highest priority to make it default
 		lazy = false,
 		config = function()
-			vim.g.mellow_italic_keywords = true
+			vim.g.mellow_italic_keywords = false
 
 			-- YAML keys map to @property, which mellow sets to gray07 (#c1c0d4) —
 			-- nearly identical to fg (#c9c7cd), making them look unstyled.
@@ -19,6 +19,22 @@ return {
 			}
 
 			vim.cmd.colorscheme("mellow")
+
+			-- Selective keyword italics to match catppuccin's approach
+			local italic = { italic = true }
+			for _, group in ipairs({
+				"@keyword.conditional",
+				"@keyword.repeat",
+				"@keyword.import",
+				"@keyword.return",
+				"@keyword.function",
+				"@keyword.operator",
+				"@keyword.modifier",
+				"@keyword.type",
+			}) do
+				local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+				vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
+			end
 		end,
 	},
 	-- Everforest theme
@@ -140,6 +156,7 @@ return {
 						["@keyword.function"] = { style = { "italic" } },
 						["@keyword.operator"] = { style = { "italic" } },
 						["@keyword.modifier"] = { style = { "italic" } },
+						["@keyword.type"] = { style = { "italic" } },
 					}
 				end,
 			})
