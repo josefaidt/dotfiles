@@ -370,38 +370,24 @@ return {
 			cssls = {}, -- CSS
 			tailwindcss = {
 				-- Only attach when tailwindcss is actually a project dependency.
-				-- Detects the package manager from lock files and queries it directly.
+				-- Walks up from the file reading each package.json — no subprocess.
 				root_dir = function(fname)
-					-- Use vim.fs.root for finding package.json (replaces lspconfig.util)
-					local pkg_root = vim.fs.root(fname, { "package.json" })
-					if not pkg_root then
-						return nil
+					local stop = vim.fn.getcwd()
+					for _, pkg_path in ipairs(vim.fs.find("package.json", {
+						path = vim.fs.dirname(fname),
+						upward = true,
+						limit = math.huge,
+						stop = stop,
+					})) do
+						local f = io.open(pkg_path, "r")
+						if f then
+							local content = f:read("*a")
+							f:close()
+							if content:find('"tailwindcss"') then
+								return vim.fs.dirname(pkg_path)
+							end
+						end
 					end
-
-					local pm = "npm"
-					if vim.fn.filereadable(pkg_root .. "/pnpm-lock.yaml") == 1 then
-						pm = "pnpm"
-					elseif
-						vim.fn.filereadable(pkg_root .. "/bun.lock") == 1
-						or vim.fn.filereadable(pkg_root .. "/bun.lockb") == 1
-					then
-						pm = "bun"
-					elseif vim.fn.filereadable(pkg_root .. "/yarn.lock") == 1 then
-						pm = "yarn"
-					end
-
-					local cmds = {
-						npm = "npm list tailwindcss --depth=0 2>/dev/null",
-						pnpm = "pnpm list tailwindcss 2>/dev/null",
-						yarn = "yarn list --pattern tailwindcss 2>/dev/null",
-						bun = "bun pm ls 2>/dev/null",
-					}
-
-					local output = vim.fn.system(string.format("cd %s && %s", vim.fn.shellescape(pkg_root), cmds[pm]))
-					if output:match("tailwindcss") then
-						return pkg_root
-					end
-
 					return nil
 				end,
 			}, -- Tailwind
