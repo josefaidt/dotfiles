@@ -1,11 +1,14 @@
-/opt/homebrew/bin/brew shellenv | source
+if status is-login
+  /opt/homebrew/bin/brew shellenv | source
+  fnm env --corepack-enabled --use-on-cd | source
+  source ~/.orbstack/shell/init2.fish 2>/dev/null || :
+  source "$HOME/.cargo/env.fish"
+  source "$HOME/.vite-plus/env.fish"
+end
 
 if status is-interactive
   # initialize starship prompt
   starship init fish | source
-
-  # load fnm
-  fnm env --corepack-enabled --use-on-cd | source
 
   # personal aliases
   alias ..="cd .."
@@ -35,7 +38,6 @@ set --export BUN_INSTALL "$HOME/.bun"
 fish_add_path $JAVA_HOME
 fish_add_path "$BUN_INSTALL/bin"
 fish_add_path ~/.local/bin
-# opencode
 fish_add_path $HOME/.opencode/bin
 
 # just aws things
@@ -46,14 +48,6 @@ set --export --global AWS_REGION us-east-1
 set --export --global EZA_CONFIG_DIR ~/.config/eza
 
 # load environment variables from dotenv files on startup
-loadenv --silent; or true
-
-# Added by OrbStack: command-line tools and integration
-# This won't be added again if you remove it.
-source ~/.orbstack/shell/init2.fish 2>/dev/null || :
-
-# load rust
-source "$HOME/.cargo/env.fish"
-
-# Vite+ bin (https://viteplus.dev)
-source "$HOME/.vite-plus/env.fish"
+if status is-interactive
+  loadenv --silent; or true
+end
