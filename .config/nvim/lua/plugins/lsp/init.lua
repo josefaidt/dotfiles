@@ -372,6 +372,9 @@ return {
 				-- Only attach when tailwindcss is actually a project dependency.
 				-- Walks up from the file reading each package.json — no subprocess.
 				root_dir = function(fname)
+					if type(fname) ~= "string" then
+						return nil
+					end
 					local stop = vim.fn.getcwd()
 					for _, pkg_path in ipairs(vim.fs.find("package.json", {
 						path = vim.fs.dirname(fname),
