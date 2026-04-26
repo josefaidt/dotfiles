@@ -209,11 +209,13 @@ vim.api.nvim_create_autocmd("SwapExists", {
 
 -- Markdown-specific settings
 vim.api.nvim_create_autocmd("FileType", {
-	desc = "Set text width and color column for markdown files",
+	desc = "Disable hard line wrapping for markdown (keep soft visual wrap via linebreak)",
 	group = vim.api.nvim_create_augroup("markdown-settings", { clear = true }),
 	pattern = "markdown",
 	callback = function()
-		vim.opt_local.textwidth = 100
+		-- Disable auto hard line breaks; soft visual wrapping handles long lines instead
+		vim.opt_local.textwidth = 0
+		vim.opt_local.formatoptions:remove({ "t", "c" })
 	end,
 })
 
