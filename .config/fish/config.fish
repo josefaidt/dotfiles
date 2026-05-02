@@ -1,10 +1,8 @@
-if status is-login
-  /opt/homebrew/bin/brew shellenv | source
-  fnm env --corepack-enabled --use-on-cd | source
-  source ~/.orbstack/shell/init2.fish 2>/dev/null || :
-  source "$HOME/.cargo/env.fish"
-  source "$HOME/.vite-plus/env.fish"
-end
+/opt/homebrew/bin/brew shellenv | source
+fnm env --corepack-enabled --use-on-cd | source
+source ~/.orbstack/shell/init2.fish 2>/dev/null || :
+source "$HOME/.cargo/env.fish"
+source "$HOME/.vite-plus/env.fish"
 
 if status is-interactive
   # initialize starship prompt
