@@ -371,17 +371,35 @@ return {
 			tailwindcss = {
 				-- Only attach when tailwindcss is actually a project dependency.
 				-- Walks up from the file reading each package.json — no subprocess.
+				filetypes = {
+					"html",
+					"css",
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"svelte",
+					"vue",
+					"astro",
+				},
+				init_options = {
+					userLanguages = {
+						astro = "html",
+					},
+				},
 				root_dir = function(fname)
 					if type(fname) ~= "string" then
 						return nil
 					end
 					local stop = vim.fn.getcwd()
-					for _, pkg_path in ipairs(vim.fs.find("package.json", {
-						path = vim.fs.dirname(fname),
-						upward = true,
-						limit = math.huge,
-						stop = stop,
-					})) do
+					for _, pkg_path in
+						ipairs(vim.fs.find("package.json", {
+							path = vim.fs.dirname(fname),
+							upward = true,
+							limit = math.huge,
+							stop = stop,
+						}))
+					do
 						local f = io.open(pkg_path, "r")
 						if f then
 							local content = f:read("*a")
@@ -444,23 +462,23 @@ return {
 			},
 
 			yamlls = {
-			-- YAML language server with schema support
-			settings = {
-				yaml = {
-					schemaStore = {
-						-- Disable built-in schemaStore so schemastore.nvim can provide schemas
-						enable = false,
-						url = "",
+				-- YAML language server with schema support
+				settings = {
+					yaml = {
+						schemaStore = {
+							-- Disable built-in schemaStore so schemastore.nvim can provide schemas
+							enable = false,
+							url = "",
+						},
+						schemas = require("schemastore").yaml.schemas(),
+						validate = true,
+						hover = true,
+						completion = true,
 					},
-					schemas = require("schemastore").yaml.schemas(),
-					validate = true,
-					hover = true,
-					completion = true,
 				},
 			},
-		},
 
-		lua_ls = {
+			lua_ls = {
 				-- cmd = { ... },
 				-- filetypes = { ... },
 				-- capabilities = {},
