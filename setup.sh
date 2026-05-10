@@ -100,6 +100,19 @@ install_bun_globals() {
 }
 
 # ---------------------------------------------------------------------------
+# Shared: nvim prettier plugins
+# ---------------------------------------------------------------------------
+# Installs prettier plugins (e.g. prettier-plugin-astro) into the nvim config
+# dir so conform.nvim can format filetypes like .astro without requiring a
+# project-local install. Wired up in lua/plugins/editor/formatting.lua.
+
+install_nvim_prettier_plugins() {
+  step "Installing nvim prettier plugins..."
+  cd "$DOTFILES_DIR/.config/nvim/prettier-plugins"
+  npm install
+}
+
+# ---------------------------------------------------------------------------
 # INSTALL
 # ---------------------------------------------------------------------------
 
@@ -151,6 +164,7 @@ run_install() {
 
   stow_all
   install_bun_globals
+  install_nvim_prettier_plugins
 
   echo ""
   echo "✅ Install complete!"
@@ -189,6 +203,7 @@ run_update() {
   fi
 
   install_bun_globals
+  install_nvim_prettier_plugins
 
   echo ""
   echo "✅ Update complete!"

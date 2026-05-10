@@ -1,0 +1,10 @@
+{
+  "name": "nvim-prettier-plugins",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Global prettier plugins for prettierd/prettier fallback when a project does not install them locally. Wired into conform.nvim via absolute --plugin paths.",
+  "type": "commonjs",
+  "dependencies": {
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}

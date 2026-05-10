@@ -4,3 +4,4 @@
 # no aws stuff
 .config/fish/conf.d/aws.fish
 
+node_modules

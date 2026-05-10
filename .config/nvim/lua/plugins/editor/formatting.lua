@@ -46,7 +46,20 @@ return {
 		-- Find the project root so config searches don't escape into parent directories.
 		-- Falls back to $HOME as a hard stop if no root markers are found.
 		local function get_project_stop()
-			local root = vim.fs.root(0, { ".git", "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock", "Cargo.toml", "pyproject.toml" })
+			local root = vim.fs.root(
+				0,
+				{
+					".git",
+					"package.json",
+					"package-lock.json",
+					"yarn.lock",
+					"pnpm-lock.yaml",
+					"bun.lockb",
+					"bun.lock",
+					"Cargo.toml",
+					"pyproject.toml",
+				}
+			)
 			return root and vim.fn.fnamemodify(root, ":h") or vim.env.HOME
 		end
 
@@ -96,6 +109,13 @@ return {
 		-- the file's directory, skip --config so the project config takes precedence.
 		local oxfmt_default_config = vim.fn.stdpath("config") .. "/.oxfmtrc.jsonc"
 
+		-- Absolute path to prettier-plugin-astro installed under the nvim config dir,
+		-- plus the dotfile-managed prettier config that references it. Used as a
+		-- fallback so .astro files format without requiring a project-local install.
+		local prettier_global_config = vim.fn.stdpath("config") .. "/.prettierrc.json"
+		local prettier_astro_plugin = vim.fn.stdpath("config")
+			.. "/prettier-plugins/node_modules/prettier-plugin-astro/dist/index.js"
+
 		return {
 			notify_on_error = false,
 			formatters = {
@@ -118,6 +138,32 @@ return {
 						return { "--config", oxfmt_default_config }
 					end,
 				},
+				-- prettierd: CLI args for plugins are unreliable, so inject the global
+				-- prettier config via PRETTIERD_DEFAULT_CONFIG only when the project
+				-- has no prettier config of its own. The global config references
+				-- prettier-plugin-astro by absolute path so Node can resolve it.
+				prettierd = {
+					inherit = true,
+					env = function(_, _ctx)
+						if has_prettier_config() then
+							return {}
+						end
+						return { PRETTIERD_DEFAULT_CONFIG = prettier_global_config }
+					end,
+				},
+				-- prettier (vanilla) fallback: prettierd env vars don't apply, so pass
+				-- the plugin via --plugin with an absolute path when no project config
+				-- is present. Project-local prettier configs are auto-discovered and
+				-- take precedence.
+				prettier = {
+					inherit = true,
+					prepend_args = function(_, _ctx)
+						if has_prettier_config() then
+							return {}
+						end
+						return { "--plugin=" .. prettier_astro_plugin }
+					end,
+				},
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
@@ -136,7 +182,11 @@ return {
 				-- Biome experimental
 				vue = get_formatter,
 				svelte = get_formatter,
-				astro = get_formatter,
+				-- Astro: prettier is the only viable formatter. When the project has
+				-- no prettier config, the prettierd/prettier formatter overrides
+				-- above inject a dotfile-managed config + plugin path so formatting
+				-- works without requiring a project-local install.
+				astro = { "prettierd", "prettier", stop_after_first = true },
 
 				-- Biome supported, no prettier needed
 				json = get_json_formatter,
