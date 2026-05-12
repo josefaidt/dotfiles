@@ -1,10 +1,10 @@
 ---@module 'plugins.ui.statusline'
----Mini.nvim collection including statusline, surround, text objects, and starter
+---Mini.nvim collection including statusline, surround, and text objects
 
 ---@type LazySpec
-return { -- Collection of various small independent plugins/modules
+return {
 	"echasnovski/mini.nvim",
-	lazy = false, -- must load at startup for mini.starter VimEnter hook
+	event = "VeryLazy",
 	config = function()
 		-- Better Around/Inside textobjects
 		--
@@ -21,48 +21,12 @@ return { -- Collection of various small independent plugins/modules
 		-- - sr)'  - [S]urround [R]eplace [)] [']
 		require("mini.surround").setup()
 
-		-- Simple and easy statusline.
-		--  You could remove this setup call if you don't like it,
-		--  and try some other statusline plugin
 		local statusline = require("mini.statusline")
-		-- set use_icons to true if you have a Nerd Font
 		statusline.setup({ use_icons = vim.g.have_nerd_font })
 
-		-- You can configure sections in the statusline by overriding their
-		-- default behavior. For example, here we set the section for
-		-- cursor location to LINE:COLUMN
 		---@diagnostic disable-next-line: duplicate-set-field
 		statusline.section_location = function()
 			return "%2l:%-2v"
 		end
-
-		-- Starter screen shown when opening Neovim with no files.
-		-- Disable autoopen — auto-session handles session restore on VimEnter and
-		-- races with mini.starter, breaking NeoTree/edgy layout. Open manually instead.
-		local starter = require("mini.starter")
-		starter.setup({
-			autoopen = false,
-			items = {
-				starter.sections.telescope(),
-				starter.sections.recent_files(7, false, false),
-				starter.sections.builtin_actions(),
-			},
-			header = table.concat({
-				"██████╗ ███████╗███╗   ██╗ █████╗ ██╗     ██╗",
-				"██╔══██╗██╔════╝████╗  ██║██╔══██╗██║     ██║",
-				"██║  ██║█████╗  ██╔██╗ ██║███████║██║     ██║",
-				"██║  ██║██╔══╝  ██║╚██╗██║██╔══██║██║     ██║",
-				"██████╔╝███████╗██║ ╚████║██║  ██║███████╗██║",
-				"╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚═╝",
-			}, "\n"),
-			footer = "",
-			content_hooks = {
-				starter.gen_hook.adding_bullet("  "),
-				starter.gen_hook.aligning("center", "center"),
-			},
-		})
-
-		-- ... and there is more!
-		--  Check out: https://github.com/echasnovski/mini.nvim
 	end,
 }

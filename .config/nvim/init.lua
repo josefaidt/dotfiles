@@ -235,6 +235,12 @@ vim.opt.smoothscroll = true
 vim.opt.scrolloff = 8 -- keep 8 lines visible above/below cursor
 vim.opt.sidescrolloff = 8 -- same but horizontallys
 
+-- Treesitter-based folds are enabled per-buffer in syntax-highlighting.lua.
+-- Start with all folds open and hide the fold gutter for a clean look;
+-- folds still work via za/zc/zo when you want them.
+vim.opt.foldlevel = 99
+vim.opt.foldcolumn = "0"
+
 -- Disable heavy features for large files to prevent freezing
 -- Useful when inspecting large build files
 local large_file_group = vim.api.nvim_create_augroup("large-file-optimizations", { clear = true })

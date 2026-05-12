@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Personal dotfiles repository for macOS development environment. Uses GNU Stow for symlink management (via `xdg-config-stow` and `stow`) to deploy configs from this repo to `~/.config/` and `~`.
 
 **Recent Changes:**
+
 - Removed VSCode configuration (formerly in `.vscode/`)
 - Reorganized Fish config (moved functions out of `conf.d/` into `functions/`)
 - Added diffview plugin for Git diff viewing in Neovim
@@ -16,6 +17,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 ## Key Components
 
 ### Neovim (`.config/nvim/`)
+
 - **Plugin manager**: lazy.nvim (auto-bootstrapped on first run)
 - **Entry point**: `init.lua` loads config/keymaps → config/lazy → config/vscode
 - **Structure**:
@@ -49,6 +51,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Formatting**: Uses `.stylelua.toml` for Lua code formatting
 
 ### Fish Shell (`.config/fish/`)
+
 - **Main config**: `config.fish` - Shell initialization and environment setup
 - **Custom functions**: `functions/`
   - `cd.fish` - Enhanced directory navigation
@@ -60,11 +63,13 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Stow config**: `.stowignore` - Controls which files are stowed
 
 ### Git (`git/`)
+
 - `.gitignore_global` - Global gitignore patterns
 - Deployed via `stow git` to home directory
 - Configured with `git config --global core.excludesfile ~/.gitignore_global`
 
 ### Other Configs
+
 - **ghostty** - Terminal emulator config (`.config/ghostty/config`)
 - **zellij** - Terminal multiplexer (`.config/zellij/config.kdl`)
 - **starship** - Cross-shell prompt (`.config/starship.toml`)
@@ -72,6 +77,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 ## Dependencies (Brewfile)
 
 ### CLI Tools
+
 - **Package managers**: homebrew, fnm (Node.js), uv (Python)
 - **Development**: awscli, copilot-cli, git-secrets, luarocks, neovim
 - **Utilities**: bat, fzf, gh, httpie, jq, lazygit, ripgrep, stow, tree
@@ -79,10 +85,12 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Shells**: fish, starship
 
 ### GUI Applications
+
 - 1password-cli
 - warp (terminal)
 
 ### Cargo packages
+
 - eza (modern ls replacement)
 - jj-cli (Jujutsu VCS)
 - rustlings (Rust learning)
@@ -90,6 +98,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - xdg-config-stow (XDG-aware stow wrapper)
 
 ### Taps
+
 - 1password/tap
 - aws/tap
 - homebrew/services
@@ -143,13 +152,13 @@ Only the directories that actually changed are re-stowed; unrelated configs are 
 
 Tools are installed via Mason (`mason_ensure_installed` in `lua/plugins/lsp/init.lua`). The global default configs live inside `.config/nvim/` and are passed to each tool when no project-local config is found:
 
-| Tool | Default config | Filetype(s) |
-|---|---|---|
-| `oxlint` | none needed (zero-config) | JS/TS (fallback) |
-| `oxfmt` | `.oxfmtrc.jsonc` | JS/TS, JSON/JSONC (fallback) |
-| `markdownlint-cli2` | `.markdownlint.json` | markdown |
-| `yamllint` | `.yamllint` | yaml |
-| `stylua` | `.stylelua.toml` | lua |
+| Tool                | Default config            | Filetype(s)                  |
+| ------------------- | ------------------------- | ---------------------------- |
+| `oxlint`            | none needed (zero-config) | JS/TS (fallback)             |
+| `oxfmt`             | `.oxfmtrc.jsonc`          | JS/TS, JSON/JSONC (fallback) |
+| `markdownlint-cli2` | `.markdownlint.json`      | markdown                     |
+| `yamllint`          | `.yamllint`               | yaml                         |
+| `stylua`            | `.stylelua.toml`          | lua                          |
 
 **Linter priority** (nvim-lint, per JS/TS buffer): eslint (if config found) → oxlint (default)
 
@@ -158,18 +167,21 @@ Tools are installed via Mason (`mason_ensure_installed` in `lua/plugins/lsp/init
 Project-local configs always take precedence — the fallback to the nvim config dir only fires when no config file is found by searching upward from the file's directory.
 
 To add a new global linter/formatter:
+
 1. Add it to `mason_ensure_installed` in `lua/plugins/lsp/init.lua`
 2. Register it in `lint.linters_by_ft` in `lua/plugins/editor/linting.lua`
 3. Register it in `formatters_by_ft` in `lua/plugins/editor/formatting.lua`
 4. Place any default config file in `.config/nvim/` and wire it up via `prepend_args` / `.args` (see existing oxfmt/markdownlint examples)
 
 ### When modifying neovim plugins:
+
 - Add new plugins by creating files in appropriate `plugins/` subdirectory (editor/, lsp/, or ui/)
 - Keymaps are centralized in `config/keymaps/` and organized by category (general, lsp, plugins, telescope)
 - lazy.nvim auto-imports from `plugins.editor`, `plugins.lsp`, `plugins.ui`
 - Format Lua code with stylua using the provided `.stylelua.toml` config
 
 ### When building UI elements or dialogs in Neovim config:
+
 - **Always use `vim.ui.select` and `vim.ui.input`** — these are enhanced by the noice/nui stack (telescope-ui-select provides the dropdown, noice styles inputs/confirms)
 - Never build raw floating windows or custom pickers from scratch — the existing UI stack handles styling automatically
 - For pickers: `vim.ui.select(items, { prompt = "..." }, callback)`
@@ -177,6 +189,7 @@ To add a new global linter/formatter:
 - For notifications: `vim.notify(msg, vim.log.levels.INFO|WARN|ERROR)` (nvim-notify handles display)
 
 ### When modifying configs:
+
 - All configs live in `.config/` directory
 - Git config lives in `git/` directory (stowed to home)
 - Changes should be committed to repo, then re-stowed to apply
@@ -184,16 +197,19 @@ To add a new global linter/formatter:
 - Use `stow git` for git configuration
 
 ### When adding fish functions:
+
 - Place new functions in `.config/fish/functions/`
 - Follow existing naming pattern (e.g., `functionname.fish`)
 - Functions are auto-loaded by fish
 
 ### When updating dependencies:
+
 - Edit `Brewfile` to add/remove packages
 - Run `brew bundle` to install new dependencies
 - Run `brew bundle cleanup` to remove unlisted packages
 
 ### When working through notes.md items:
+
 - When addressing items line by line from `notes.md`, mark each item as complete by changing `[ ]` to `[x]` after successfully implementing/addressing it
 - If asked to skip or ignore an item, use strikethrough formatting (e.g., `~~- [ ] item text~~`) to indicate it should be skipped
 - This keeps the notes file as an accurate tracking document of what's been accomplished vs. what's pending
