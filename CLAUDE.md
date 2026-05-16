@@ -13,6 +13,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - Added diffview plugin for Git diff viewing in Neovim
 - Expanded Neovim keymaps with more telescope and LSP bindings
 - Added type annotations to Lua configurations
+- Migrated file/grep search from ripgrep-backed Telescope to fff.nvim (Telescope still handles buffers, help, LSP, worktrees, markdown nav)
 
 ## Key Components
 
@@ -26,6 +27,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
     - autopairs.lua - Auto-close brackets/quotes
     - comment.lua - Smart commenting (Comment.nvim)
+    - fff.lua - Frecency-ranked file finder + live grep (replaces ripgrep-backed file/grep pickers)
     - flash.lua - Quick navigation with labeled jumps
     - formatting.lua - Code formatting with conform.nvim
     - linting.lua - Linting with nvim-lint
@@ -33,7 +35,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - multiple-cursors.lua - VSCode-like multiple cursors (vim-visual-multi)
     - session.lua - Session management
     - syntax-highlighting.lua - Treesitter-based highlighting
-    - telescope.lua - Fuzzy finder
+    - telescope.lua - Picker for non-file/grep operations (buffers, help, LSP refs/symbols, command palette, worktrees, markdown nav)
   - `lua/plugins/lsp/` - Language server configuration:
     - init.lua - LSP setup and configuration
     - lazydev.lua - Lua development enhancements

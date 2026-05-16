@@ -10,6 +10,7 @@
   "dropbar.nvim": { "branch": "master", "commit": "f0a42bd92aa647e44221397723453403f5e20f16" },
   "edgy.nvim": { "branch": "main", "commit": "8bfd2808994a988c975694122f68624b8a219f5f" },
   "everforest": { "branch": "master", "commit": "aeef62ee97872d2557d25904d160ec93a4a355f8" },
+  "fff.nvim": { "branch": "main", "commit": "6645a68ebc1f1a0dc98c1669a7e3f6d91625f79f" },
   "flash.nvim": { "branch": "main", "commit": "fcea7ff883235d9024dc41e638f164a450c14ca2" },
   "git-blame.nvim": { "branch": "main", "commit": "5c536e2d4134d064aa3f41575280bc8a2a0e03d7" },
   "image.nvim": { "branch": "master", "commit": "73a64613048216bda1a4f464bf7bed2dbaaf4cec" },

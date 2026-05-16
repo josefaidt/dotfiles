@@ -149,16 +149,17 @@ end
 ---Set up Telescope keymaps
 function M.setup()
 	local builtin = require("telescope.builtin")
+	local fff = require("fff")
+
+	local function find_files_at_root()
+		fff.find_files_in_dir(initial_cwd)
+	end
 
 	-- File finding (VSCode-like + vim convention)
 	-- <leader>p for VSCode muscle memory (Cmd+P)
-	vim.keymap.set("n", "<leader>p", function()
-		builtin.find_files({ cwd = initial_cwd })
-	end, { desc = "Find files" })
+	vim.keymap.set("n", "<leader>p", find_files_at_root, { desc = "Find files" })
 	-- <leader>ff for vim users' expectation
-	vim.keymap.set("n", "<leader>ff", function()
-		builtin.find_files({ cwd = initial_cwd })
-	end, { desc = "[F]ind [F]iles" })
+	vim.keymap.set("n", "<leader>ff", find_files_at_root, { desc = "[F]ind [F]iles" })
 	-- Cmd+Shift+P - command palette
 	vim.keymap.set("n", "<leader>P", builtin.commands, { desc = "Command palette" })
 
@@ -169,77 +170,23 @@ function M.setup()
 		require("telescope").extensions.noice.noice()
 	end, { desc = "[S]earch [N]otifications" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
-	vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch [W]ord under cursor" })
+	vim.keymap.set("n", "<leader>sw", function()
+		fff.live_grep({ query = vim.fn.expand("<cword>") })
+	end, { desc = "[S]earch [W]ord under cursor" })
 
-	-- Search/grep all text in project (ignoring node_modules, .git, etc.)
+	-- Search/grep all text in project
 	vim.keymap.set("n", "<leader>sg", function()
-		builtin.live_grep({
-			cwd = initial_cwd,
-			additional_args = function()
-				return {
-					"--hidden", -- Include hidden files
-					"--glob",
-					"!.git/*", -- Exclude .git
-					"--glob",
-					"!**/node_modules/*",
-					"--glob",
-					"!**/.next/*",
-					"--glob",
-					"!**/.astro/*",
-					"--glob",
-					"!**/.svelte-kit/*",
-					"--glob",
-					"!**/dist/*",
-					"--glob",
-					"!**/build/*",
-					"--glob",
-					"!**/coverage/*",
-					"--glob",
-					"!**/.amplify-hosting/*",
-				}
-			end,
-		})
+		fff.live_grep()
 	end, { desc = "[S]earch/[G]rep all text" })
 
-	-- Search for visually selected text in all files (prefills search input)
+	-- Search for visually selected text (prefills the grep prompt)
 	vim.keymap.set("v", "<leader>sg", function()
-		-- Get the visual selection
 		vim.cmd('normal! "vy')
-		local selected_text = vim.fn.getreg("v")
-
-		-- Open live_grep with the selected text prefilled
-		builtin.live_grep({
-			cwd = initial_cwd,
-			default_text = selected_text,
-			additional_args = function()
-				return {
-					"--hidden", -- Include hidden files
-					"--glob",
-					"!.git/*", -- Exclude .git
-					"--glob",
-					"!**/node_modules/*",
-					"--glob",
-					"!**/.next/*",
-					"--glob",
-					"!**/.astro/*",
-					"--glob",
-					"!**/.svelte-kit/*",
-					"--glob",
-					"!**/dist/*",
-					"--glob",
-					"!**/build/*",
-					"--glob",
-					"!**/coverage/*",
-					"--glob",
-					"!**/.amplify-hosting/*",
-				}
-			end,
-		})
+		fff.live_grep({ query = vim.fn.getreg("v") })
 	end, { desc = "[S]earch/[G]rep selection in all text" })
 
-	-- Slightly advanced example of overriding default behavior and theme
+	-- Fuzzy search in current buffer
 	vim.keymap.set("n", "<leader>/", function()
-		-- You can pass additional configuration to Telescope to change the theme, layout, etc.
 		builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
 			winblend = 10,
 			previewer = false,
@@ -253,36 +200,19 @@ function M.setup()
 	vim.keymap.set("n", "<leader>fp", function()
 		local package_root = find_package_root()
 		if package_root then
-			builtin.find_files({
-				cwd = package_root,
-				prompt_title = "Find Files in Package: " .. vim.fn.fnamemodify(package_root, ":t"),
-			})
+			fff.find_files_in_dir(package_root)
 		else
 			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 		end
 	end, { desc = "[F]ind files in current [P]ackage" })
 
-	-- Search/grep text within the current npm package (live grep)
+	-- Search/grep text within the current npm package
+	-- fff's live_grep has no per-call cwd, so we re-index to the package root.
 	vim.keymap.set("n", "<leader>sp", function()
 		local package_root = find_package_root()
 		if package_root then
-			builtin.live_grep({
-				cwd = package_root,
-				prompt_title = "Search in Package: " .. vim.fn.fnamemodify(package_root, ":t"),
-				additional_args = function()
-					return {
-						"--hidden",
-						"--glob",
-						"!node_modules/*",
-						"--glob",
-						"!.git/*",
-						"--glob",
-						"!dist/*",
-						"--glob",
-						"!build/*",
-					}
-				end,
-			})
+			fff.change_indexing_directory(package_root)
+			fff.live_grep()
 		else
 			vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 		end

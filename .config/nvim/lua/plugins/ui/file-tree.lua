@@ -235,11 +235,7 @@ return {
 							if node.type == "file" then
 								path = vim.fn.fnamemodify(path, ":h")
 							end
-							-- Use telescope to find files in this directory
-							require("telescope.builtin").find_files({
-								prompt_title = "Find Files in: " .. vim.fn.fnamemodify(path, ":~:."),
-								cwd = path,
-							})
+							require("fff").find_files_in_dir(path)
 						end,
 						-- Git add all files
 						["gA"] = function(state)

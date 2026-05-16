@@ -27,87 +27,23 @@ return {
 		{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 	},
 	config = function()
-		local actions = require("telescope.actions")
-
 		require("telescope").setup({
-			-- Your telescope config here
 			defaults = {
 				layout_strategy = "vertical",
-				-- Search hidden files (dotfiles) but exclude .git directory
+				-- file_ignore_patterns still applies to LSP pickers (references,
+				-- definitions, symbols) and buffer/help pickers.
 				file_ignore_patterns = {
-					"^.git/", -- Ignore .git directory
+					"^.git/",
 					"node_modules/",
 					".DS_Store",
-					"%.next/", -- Lua pattern: % escapes the dot
+					"%.next/",
 					"%.astro/",
-					"%.svelte%-kit/", -- Lua pattern: % escapes the hyphen and dot
+					"%.svelte%-kit/",
 					"/dist/",
 					"/build/",
 					"/coverage/",
-					"%.amplify%-hosting/", -- Exclude amplify build artifacts
-					"%.venv/", -- Exclude Python virtual environments
-				},
-				vimgrep_arguments = {
-					"rg",
-					"--color=never",
-					"--no-heading",
-					"--with-filename",
-					"--line-number",
-					"--column",
-					"--smart-case",
-					"--hidden", -- Search hidden files/dotfiles
-					"--glob",
-					"!.git/*", -- But exclude .git
-					"--glob",
-					"!**/node_modules/*",
-					"--glob",
-					"!**/.next/*",
-					"--glob",
-					"!**/.astro/*",
-					"--glob",
-					"!**/.svelte-kit/*",
-					"--glob",
-					"!**/dist/*",
-					"--glob",
-					"!**/build/*",
-					"--glob",
-					"!**/coverage/*",
-					"--glob",
-					"!**/.amplify-hosting/*",
-					"--glob",
-					"!**/.venv/*",
-				},
-				-- Use default Telescope keymaps (Ctrl+n/p for navigation)
-			},
-			pickers = {
-				-- Configure find_files to show dotfiles but not .git
-				find_files = {
-					find_command = {
-						"rg",
-						"--files",
-						"--hidden", -- Include hidden files/dotfiles
-						"--no-ignore", -- Shows gitignored files
-						"--glob",
-						"!.git/*", -- Exclude .git directory
-						"--glob",
-						"!**/node_modules/*",
-						"--glob",
-						"!**/.next/*",
-						"--glob",
-						"!**/.astro/*",
-						"--glob",
-						"!**/.svelte-kit/*",
-						"--glob",
-						"!**/dist/*",
-						"--glob",
-						"!**/build/*",
-						"--glob",
-						"!**/coverage/*",
-						"--glob",
-						"!**/.amplify-hosting/*",
-						"--glob",
-						"!**/.venv/*",
-					},
+					"%.amplify%-hosting/",
+					"%.venv/",
 				},
 			},
 			extensions = {
