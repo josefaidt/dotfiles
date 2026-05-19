@@ -41,19 +41,18 @@ return {
 				vim.api.nvim_set_hl(0, "NotifyTRACEBody", { link = "NotifyTRACEBorder" })
 			end,
 			keys = {
-				-- Dismiss all notifications with <leader>un
 				{
-					"<leader>un",
+					"<leader>snd",
 					function()
 						require("notify").dismiss({ silent = true, pending = true })
 					end,
-					desc = "[U]I: Dismiss [N]otifications",
+					desc = "[S]earch [N]oice: [D]ismiss notifications",
 				},
 			},
 		},
 	},
 	keys = {
-		{ "<leader>ul", "<cmd>Noice last<cr>", desc = "[U]I: [L]ast notification" },
+		{ "<leader>snl", "<cmd>Noice last<cr>", desc = "[S]earch [N]oice: [L]ast message" },
 	},
 	---@module 'noice'
 	---@type NoiceConfig

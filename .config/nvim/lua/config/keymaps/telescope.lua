@@ -177,13 +177,20 @@ function M.setup()
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-	vim.keymap.set("n", "<leader>sn", function()
+	vim.keymap.set("n", "<leader>snt", function()
 		require("telescope").extensions.noice.noice()
-	end, { desc = "[S]earch [N]otifications" })
+	end, { desc = "[S]earch [N]oice: [T]elescope picker" })
 	vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 	vim.keymap.set("n", "<leader>sw", function()
 		fff.live_grep({ query = vim.fn.expand("<cword>") })
 	end, { desc = "[S]earch [W]ord under cursor" })
+
+	-- LazyVim-style search expansions (telescope built-ins)
+	vim.keymap.set("n", "<leader>s/", builtin.search_history, { desc = "[S]earch: search history" })
+	vim.keymap.set("n", '<leader>s"', builtin.registers, { desc = "[S]earch: registers" })
+	vim.keymap.set("n", "<leader>sc", builtin.command_history, { desc = "[S]earch: [C]ommand history" })
+	vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch: [D]iagnostics" })
+	vim.keymap.set("n", "<leader>sj", builtin.jumplist, { desc = "[S]earch: [J]umplist" })
 
 	-- Search/grep all text in project
 	vim.keymap.set("n", "<leader>sg", function()

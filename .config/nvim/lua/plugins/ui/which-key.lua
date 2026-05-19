@@ -58,6 +58,7 @@ return {
 			{ "<leader>g", group = "[G]it" },
 			{ "<leader>q", group = "[Q]uit" },
 			{ "<leader>s", group = "[S]earch" },
+			{ "<leader>sn", group = "[S]earch [N]oice" },
 			{ "<leader>u", group = "[U]I" },
 		},
 
