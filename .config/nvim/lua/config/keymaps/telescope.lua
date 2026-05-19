@@ -163,6 +163,17 @@ function M.setup()
 	-- Cmd+Shift+P - command palette
 	vim.keymap.set("n", "<leader>P", builtin.commands, { desc = "Command palette" })
 
+	-- Recent files (MRU from shada)
+	vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "[F]ile: [R]ecent" })
+
+	-- New file
+	vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "[F]ile: [N]ew" })
+
+	-- Edit Neovim config
+	vim.keymap.set("n", "<leader>fc", function()
+		vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua")
+	end, { desc = "[F]ile: edit nvim [C]onfig" })
+
 	-- general search commands
 	vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
