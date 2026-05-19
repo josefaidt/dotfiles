@@ -163,9 +163,6 @@ function M.setup()
 	-- Cmd+Shift+P - command palette
 	vim.keymap.set("n", "<leader>P", builtin.commands, { desc = "Command palette" })
 
-	-- Recent files (MRU from shada)
-	vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "[F]ile: [R]ecent" })
-
 	-- New file
 	vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "[F]ile: [N]ew" })
 
