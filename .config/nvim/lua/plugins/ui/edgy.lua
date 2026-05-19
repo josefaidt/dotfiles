@@ -14,11 +14,11 @@ return {
 	keys = {
 		-- Jump to main editor window
 		{
-			"<leader>fd",
+			"<leader>ue",
 			function()
 				require("edgy").goto_main()
 			end,
-			desc = "Focus editor",
+			desc = "[U]I: focus [E]ditor (from drawer)",
 		},
 	},
 	opts = {

@@ -31,6 +31,7 @@ vim.keymap.set("n", "<C-=>", "<C-i>", { desc = "Jump to next position" })
 
 -- write file
 vim.keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "write file" })
+vim.keymap.set({ "n", "i", "x", "s" }, "<C-s>", "<cmd>w<CR><Esc>", { desc = "Save file" })
 
 -- reload current buffer from disk (useful when external tools modify files)
 vim.keymap.set("n", "<leader>br", function()
@@ -39,18 +40,18 @@ vim.keymap.set("n", "<leader>br", function()
 end, { desc = "[B]uffer [R]eload from disk" })
 
 -- LSP restart commands (useful when diagnostics don't refresh)
-vim.keymap.set("n", "<leader>lr", function()
+vim.keymap.set("n", "<leader>cr", function()
 	vim.cmd("LspRestart")
 	vim.notify("LSP restarted for current buffer", vim.log.levels.INFO)
-end, { desc = "[L]SP [R]estart" })
+end, { desc = "[C]ode: LSP [R]estart" })
 
-vim.keymap.set("n", "<leader>ls", function()
+vim.keymap.set("n", "<leader>cR", function()
 	vim.cmd("LspStop")
 	vim.schedule(function()
 		vim.cmd("LspStart")
 		vim.notify("All LSP clients restarted", vim.log.levels.INFO)
 	end)
-end, { desc = "[L]SP [S]top and start all" })
+end, { desc = "[C]ode: LSP stop and start all" })
 
 -- open lazy with ctrl+x
 vim.keymap.set("n", "<C-x>", "<cmd>Lazy<CR>", { desc = "Open Lazy.nvim" })
@@ -92,11 +93,10 @@ vim.keymap.set("n", "<leader>uc", function()
 	)
 end, { desc = "[U]I: [C]hoose colorscheme/theme" })
 
--- Settings toggles (<leader>us)
-vim.keymap.set("n", "<leader>ush", function()
+vim.keymap.set("n", "<leader>ua", function()
 	vim.g.lsp_auto_hover = not vim.g.lsp_auto_hover
 	vim.notify("LSP auto-hover " .. (vim.g.lsp_auto_hover and "enabled" or "disabled"), vim.log.levels.INFO)
-end, { desc = "[U]I [S]ettings: toggle LSP auto-[h]over" })
+end, { desc = "[U]I: toggle LSP [A]uto-hover" })
 
 -- Set filetype/language for current buffer (for syntax highlighting of non-standard files)
 vim.keymap.set("n", "<leader>uL", function()

@@ -52,16 +52,13 @@ return {
 		-- Document existing key chains
 		spec = {
 			{ "<leader>e", desc = "Show diagnostic" },
-			{ "<leader>s", group = "[S]earch" },
-			{ "<leader>t", group = "[T]oggle" },
+			{ "<leader>b", group = "[B]uffer" },
+			{ "<leader>c", group = "[C]ode" },
+			{ "<leader>f", group = "[F]ile/find" },
 			{ "<leader>g", group = "[G]it" },
 			{ "<leader>q", group = "[Q]uit" },
-			{ "<leader>f", group = "[F]ocus" },
-			{ "<leader>b", group = "[B]uffer" },
-			{ "<leader>d", group = "[D]ropbar" },
-			{ "<leader>l", group = "[L]SP" },
+			{ "<leader>s", group = "[S]earch" },
 			{ "<leader>u", group = "[U]I" },
-			{ "<leader>us", group = "[U]I [S]ettings" },
 		},
 
 		triggers = {

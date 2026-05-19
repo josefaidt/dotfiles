@@ -31,12 +31,12 @@ end, { desc = "Toggle focus between NeoTree and editor", silent = true })
 vim.keymap.set("n", "<C-\\>", "<cmd>Neotree toggle<CR>", { desc = "Toggle NeoTree visibility", silent = true })
 
 -- Formatting with conform.nvim
-vim.keymap.set("n", "<leader>bf", function()
+vim.keymap.set("n", "<leader>cf", function()
 	require("conform").format({ async = true, lsp_fallback = true })
-end, { desc = "Format buffer" })
+end, { desc = "[C]ode [F]ormat" })
 
 -- Format with formatter picker
-vim.keymap.set("n", "<leader>bF", function()
+vim.keymap.set("n", "<leader>cF", function()
 	local conform = require("conform")
 
 	-- Use the public API to get available formatters for current buffer
@@ -77,4 +77,4 @@ vim.keymap.set("n", "<leader>bF", function()
 			end)
 		end
 	end)
-end, { desc = "Format buffer (choose formatter)" })
+end, { desc = "[C]ode [F]ormat (choose formatter)" })
