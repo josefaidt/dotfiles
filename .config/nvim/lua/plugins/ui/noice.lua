@@ -46,13 +46,13 @@ return {
 					function()
 						require("notify").dismiss({ silent = true, pending = true })
 					end,
-					desc = "[S]earch [N]oice: [D]ismiss notifications",
+					desc = "Dismiss notifications",
 				},
 			},
 		},
 	},
 	keys = {
-		{ "<leader>snl", "<cmd>Noice last<cr>", desc = "[S]earch [N]oice: [L]ast message" },
+		{ "<leader>snl", "<cmd>Noice last<cr>", desc = "Last notification" },
 	},
 	---@module 'noice'
 	---@type NoiceConfig

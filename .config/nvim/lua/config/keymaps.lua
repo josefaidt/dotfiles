@@ -204,11 +204,11 @@ vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 vim.keymap.set("n", "<leader>bd", function()
 	Snacks.bufdelete()
-end, { desc = "[B]uffer [D]elete" })
+end, { desc = "Buffer delete" })
 
 vim.keymap.set("n", "<leader>bD", function()
 	Snacks.bufdelete.all()
-end, { desc = "[B]uffer [D]elete all" })
+end, { desc = "Buffer delete all" })
 
 vim.keymap.set("n", "<leader>bb", "<C-^>", { desc = "Jump to last buffer" })
 vim.keymap.set("n", "<C-->", "<C-o>", { desc = "Jump to previous position" })
@@ -217,7 +217,7 @@ vim.keymap.set("n", "<C-=>", "<C-i>", { desc = "Jump to next position" })
 vim.keymap.set("n", "<leader>br", function()
 	vim.cmd("checktime")
 	vim.notify("Buffer reloaded from disk", vim.log.levels.INFO)
-end, { desc = "[B]uffer [R]eload from disk" })
+end, { desc = "Buffer reload from disk" })
 
 -- =============================================================================
 -- Code (<leader>c) — format + LSP control
@@ -225,7 +225,7 @@ end, { desc = "[B]uffer [R]eload from disk" })
 
 vim.keymap.set("n", "<leader>cf", function()
 	require("conform").format({ async = true, lsp_fallback = true })
-end, { desc = "[C]ode [F]ormat" })
+end, { desc = "Code format" })
 
 vim.keymap.set("n", "<leader>cF", function()
 	local conform = require("conform")
@@ -266,12 +266,12 @@ vim.keymap.set("n", "<leader>cF", function()
 			end)
 		end
 	end)
-end, { desc = "[C]ode [F]ormat (choose formatter)" })
+end, { desc = "Code format (choose formatter)" })
 
 vim.keymap.set("n", "<leader>cr", function()
 	vim.cmd("LspRestart")
 	vim.notify("LSP restarted for current buffer", vim.log.levels.INFO)
-end, { desc = "[C]ode: LSP [R]estart" })
+end, { desc = "LSP restart" })
 
 vim.keymap.set("n", "<leader>cR", function()
 	vim.cmd("LspStop")
@@ -279,7 +279,7 @@ vim.keymap.set("n", "<leader>cR", function()
 		vim.cmd("LspStart")
 		vim.notify("All LSP clients restarted", vim.log.levels.INFO)
 	end)
-end, { desc = "[C]ode: LSP stop and start all" })
+end, { desc = "LSP stop and start all" })
 
 -- =============================================================================
 -- Diagnostics (top-level, work with linters not just LSP)
@@ -304,15 +304,15 @@ end
 
 -- File finding
 vim.keymap.set("n", "<leader>p", find_files_at_root, { desc = "Find files" })
-vim.keymap.set("n", "<leader>ff", find_files_at_root, { desc = "[F]ind [F]iles" })
+vim.keymap.set("n", "<leader>ff", find_files_at_root, { desc = "Find files" })
 vim.keymap.set("n", "<leader>P", function()
 	require("telescope.builtin").commands()
 end, { desc = "Command palette" })
 
-vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "[F]ile: [N]ew" })
+vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "New file" })
 vim.keymap.set("n", "<leader>fc", function()
 	vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua")
-end, { desc = "[F]ile: edit nvim [C]onfig" })
+end, { desc = "Edit nvim config file" })
 
 -- Find files within the current npm package
 vim.keymap.set("n", "<leader>fp", function()
@@ -322,51 +322,51 @@ vim.keymap.set("n", "<leader>fp", function()
 	else
 		vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 	end
-end, { desc = "[F]ind files in current [P]ackage" })
+end, { desc = "Find files in current package" })
 
 -- General search commands
 vim.keymap.set("n", "<leader>sh", function()
 	require("telescope.builtin").help_tags()
-end, { desc = "[S]earch [H]elp" })
+end, { desc = "Search help" })
 vim.keymap.set("n", "<leader>sk", function()
 	require("telescope.builtin").keymaps()
-end, { desc = "[S]earch [K]eymaps" })
+end, { desc = "Search keymaps" })
 vim.keymap.set("n", "<leader>snt", function()
 	require("telescope").extensions.noice.noice()
-end, { desc = "[S]earch [N]oice: [T]elescope picker" })
+end, { desc = "Noice telescope picker" })
 vim.keymap.set("n", "<leader><leader>", function()
 	require("telescope.builtin").buffers()
-end, { desc = "[ ] Find existing buffers" })
+end, { desc = "Find existing buffers" })
 vim.keymap.set("n", "<leader>sw", function()
 	require("fff").live_grep({ query = vim.fn.expand("<cword>") })
-end, { desc = "[S]earch [W]ord under cursor" })
+end, { desc = "Search word under cursor" })
 
 -- LazyVim-style search expansions (telescope built-ins)
 vim.keymap.set("n", "<leader>s/", function()
 	require("telescope.builtin").search_history()
-end, { desc = "[S]earch: search history" })
+end, { desc = "Search history" })
 vim.keymap.set("n", '<leader>s"', function()
 	require("telescope.builtin").registers()
-end, { desc = "[S]earch: registers" })
+end, { desc = "Registers" })
 vim.keymap.set("n", "<leader>sc", function()
 	require("telescope.builtin").command_history()
-end, { desc = "[S]earch: [C]ommand history" })
+end, { desc = "Command history" })
 vim.keymap.set("n", "<leader>sd", function()
 	require("telescope.builtin").diagnostics()
-end, { desc = "[S]earch: [D]iagnostics" })
+end, { desc = "Search diagnostics" })
 vim.keymap.set("n", "<leader>sj", function()
 	require("telescope.builtin").jumplist()
-end, { desc = "[S]earch: [J]umplist" })
+end, { desc = "Search jumplist" })
 
 -- Grep across project
 vim.keymap.set("n", "<leader>sg", function()
 	require("fff").live_grep()
-end, { desc = "[S]earch/[G]rep all text" })
+end, { desc = "Grep all text" })
 
 vim.keymap.set("v", "<leader>sg", function()
 	vim.cmd('normal! "vy')
 	require("fff").live_grep({ query = vim.fn.getreg("v") })
-end, { desc = "[S]earch/[G]rep selection in all text" })
+end, { desc = "Grep selection in all text" })
 
 -- Fuzzy search in current buffer
 vim.keymap.set("n", "<leader>/", function()
@@ -374,7 +374,7 @@ vim.keymap.set("n", "<leader>/", function()
 		winblend = 10,
 		previewer = false,
 	}))
-end, { desc = "[/] Fuzzily search in current buffer" })
+end, { desc = "Fuzzily search in current buffer" })
 
 -- fff has no per-call cwd, so we re-index to the package root.
 vim.keymap.set("n", "<leader>sp", function()
@@ -385,13 +385,13 @@ vim.keymap.set("n", "<leader>sp", function()
 	else
 		vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 	end
-end, { desc = "[S]earch/grep text in current [P]ackage" })
+end, { desc = "Grep text in current package" })
 
 -- =============================================================================
 -- Git (<leader>g)
 -- =============================================================================
 
-vim.keymap.set("n", "<leader>gw", pick_worktree, { desc = "[G]it [W]orktrees" })
+vim.keymap.set("n", "<leader>gw", pick_worktree, { desc = "Git worktrees" })
 
 -- =============================================================================
 -- Quit (<leader>q)
@@ -437,12 +437,12 @@ vim.keymap.set("n", "<leader>uc", function()
 			end
 		end
 	)
-end, { desc = "[U]I: [C]hoose colorscheme/theme" })
+end, { desc = "Choose colorscheme/theme" })
 
 vim.keymap.set("n", "<leader>ua", function()
 	vim.g.lsp_auto_hover = not vim.g.lsp_auto_hover
 	vim.notify("LSP auto-hover " .. (vim.g.lsp_auto_hover and "enabled" or "disabled"), vim.log.levels.INFO)
-end, { desc = "[U]I: toggle LSP [A]uto-hover" })
+end, { desc = "Toggle LSP auto-hover" })
 
 vim.keymap.set("n", "<leader>uL", function()
 	local parsers = require("nvim-treesitter.parsers")
@@ -463,7 +463,7 @@ vim.keymap.set("n", "<leader>uL", function()
 			vim.notify("Filetype set to " .. choice, vim.log.levels.INFO)
 		end
 	end)
-end, { desc = "[U]I: Set buffer [L]anguage/filetype" })
+end, { desc = "Set buffer language/filetype" })
 
 -- =============================================================================
 -- Plugin shortcuts (top-level)

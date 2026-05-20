@@ -123,7 +123,7 @@ return {
 			"<leader>sm",
 			pick,
 			ft = "markdown",
-			desc = "[S]earch [M]arkdown headings",
+			desc = "Search markdown headings",
 		},
 	},
 }

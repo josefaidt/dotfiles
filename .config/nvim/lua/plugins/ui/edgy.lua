@@ -18,7 +18,7 @@ return {
 			function()
 				require("edgy").goto_main()
 			end,
-			desc = "[U]I: focus [E]ditor (from drawer)",
+			desc = "Focus editor (from drawer)",
 		},
 	},
 	opts = {
