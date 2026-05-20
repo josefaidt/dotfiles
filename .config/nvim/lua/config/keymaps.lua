@@ -295,18 +295,18 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnosti
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 
 -- =============================================================================
--- File/Find (<leader>f) + Search (<leader>s) — telescope + fff
+-- File/Find (<leader>f) + Search (<leader>s) — snacks picker
 -- =============================================================================
 
-local function find_files_at_root()
-	require("fff").find_files_in_dir(initial_cwd)
-end
-
 -- File finding
-vim.keymap.set("n", "<leader>p", find_files_at_root, { desc = "Find files" })
-vim.keymap.set("n", "<leader>ff", find_files_at_root, { desc = "Find files" })
+vim.keymap.set("n", "<leader>p", function()
+	Snacks.picker.files({ cwd = initial_cwd })
+end, { desc = "Find files" })
+vim.keymap.set("n", "<leader>ff", function()
+	Snacks.picker.files({ cwd = initial_cwd })
+end, { desc = "Find files" })
 vim.keymap.set("n", "<leader>P", function()
-	require("telescope.builtin").commands()
+	Snacks.picker.commands()
 end, { desc = "Command palette" })
 
 vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "New file" })
@@ -318,7 +318,7 @@ end, { desc = "Edit nvim config file" })
 vim.keymap.set("n", "<leader>fp", function()
 	local package_root = find_package_root()
 	if package_root then
-		require("fff").find_files_in_dir(package_root)
+		Snacks.picker.files({ cwd = package_root })
 	else
 		vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 	end
@@ -326,62 +326,49 @@ end, { desc = "Find files in current package" })
 
 -- General search commands
 vim.keymap.set("n", "<leader>sh", function()
-	require("telescope.builtin").help_tags()
+	Snacks.picker.help()
 end, { desc = "Search help" })
 vim.keymap.set("n", "<leader>sk", function()
-	require("telescope.builtin").keymaps()
+	Snacks.picker.keymaps()
 end, { desc = "Search keymaps" })
-vim.keymap.set("n", "<leader>snt", function()
-	require("telescope").extensions.noice.noice()
-end, { desc = "Noice telescope picker" })
 vim.keymap.set("n", "<leader><leader>", function()
-	require("telescope.builtin").buffers()
+	Snacks.picker.buffers()
 end, { desc = "Find existing buffers" })
-vim.keymap.set("n", "<leader>sw", function()
-	require("fff").live_grep({ query = vim.fn.expand("<cword>") })
+vim.keymap.set({ "n", "x" }, "<leader>sw", function()
+	Snacks.picker.grep_word()
 end, { desc = "Search word under cursor" })
 
--- LazyVim-style search expansions (telescope built-ins)
+-- LazyVim-style search expansions
 vim.keymap.set("n", "<leader>s/", function()
-	require("telescope.builtin").search_history()
+	Snacks.picker.search_history()
 end, { desc = "Search history" })
 vim.keymap.set("n", '<leader>s"', function()
-	require("telescope.builtin").registers()
+	Snacks.picker.registers()
 end, { desc = "Registers" })
 vim.keymap.set("n", "<leader>sc", function()
-	require("telescope.builtin").command_history()
+	Snacks.picker.command_history()
 end, { desc = "Command history" })
 vim.keymap.set("n", "<leader>sd", function()
-	require("telescope.builtin").diagnostics()
+	Snacks.picker.diagnostics()
 end, { desc = "Search diagnostics" })
 vim.keymap.set("n", "<leader>sj", function()
-	require("telescope.builtin").jumplist()
+	Snacks.picker.jumps()
 end, { desc = "Search jumplist" })
 
 -- Grep across project
 vim.keymap.set("n", "<leader>sg", function()
-	require("fff").live_grep()
+	Snacks.picker.grep()
 end, { desc = "Grep all text" })
-
-vim.keymap.set("v", "<leader>sg", function()
-	vim.cmd('normal! "vy')
-	require("fff").live_grep({ query = vim.fn.getreg("v") })
-end, { desc = "Grep selection in all text" })
 
 -- Fuzzy search in current buffer
 vim.keymap.set("n", "<leader>/", function()
-	require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-		winblend = 10,
-		previewer = false,
-	}))
+	Snacks.picker.lines()
 end, { desc = "Fuzzily search in current buffer" })
 
--- fff has no per-call cwd, so we re-index to the package root.
 vim.keymap.set("n", "<leader>sp", function()
 	local package_root = find_package_root()
 	if package_root then
-		require("fff").change_indexing_directory(package_root)
-		require("fff").live_grep()
+		Snacks.picker.grep({ cwd = package_root })
 	else
 		vim.notify("No package.json found in parent directories", vim.log.levels.WARN)
 	end
