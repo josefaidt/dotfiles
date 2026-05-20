@@ -12,6 +12,7 @@ return {
 		bufdelete = { enabled = true }, -- Smart buffer deletion
 		quickfile = { enabled = true }, -- Fast loading for small files
 		words = { enabled = true }, -- Highlight references under cursor
+		picker = { enabled = true, ui_select = true }, -- Replaces telescope/fff and vim.ui.select
 		statuscolumn = { enabled = false }, -- Using default for now
 		dashboard = { enabled = false }, -- Disabled for now
 		notifier = { enabled = false }, -- Using nvim-notify instead
