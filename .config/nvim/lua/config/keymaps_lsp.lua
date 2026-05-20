@@ -18,41 +18,43 @@ function M.on_attach(event)
 	end
 
 	-- Rename the variable under your cursor.
-	--  Most Language Servers support renaming across files, etc.
-	map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
+	map("grn", vim.lsp.buf.rename, "Rename")
 
-	-- Execute a code action, usually your cursor needs to be on top of an error
-	-- or a suggestion from your LSP for this to activate.
-	map("gra", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
+	-- Execute a code action.
+	map("gra", vim.lsp.buf.code_action, "Code action", { "n", "x" })
 
 	-- Find references for the word under your cursor.
-	map("grr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+	map("grr", function()
+		Snacks.picker.lsp_references()
+	end, "Goto references")
 
 	-- Jump to the implementation of the word under your cursor.
-	--  Useful when your language has ways of declaring types without an actual implementation.
-	map("gri", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+	map("gri", function()
+		Snacks.picker.lsp_implementations()
+	end, "Goto implementation")
 
 	-- Jump to the definition of the word under your cursor.
-	--  This is where a variable was first declared, or where a function is defined, etc.
-	--  To jump back, press <C-t>.
-	map("grd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+	map("grd", function()
+		Snacks.picker.lsp_definitions()
+	end, "Goto definition")
 
-	-- WARN: This is not Goto Definition, this is Goto Declaration.
-	--  For example, in C this would take you to the header.
-	map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+	-- WARN: This is not Goto Definition, this is Goto Declaration (e.g. C header).
+	map("grD", vim.lsp.buf.declaration, "Goto declaration")
 
-	-- Fuzzy find all the symbols in your current document.
-	--  Symbols are things like variables, functions, types, etc.
-	map("gO", require("telescope.builtin").lsp_document_symbols, "Open Document Symbols")
+	-- Fuzzy find all symbols in the current document.
+	map("gO", function()
+		Snacks.picker.lsp_symbols()
+	end, "Document symbols")
 
-	-- Fuzzy find all the symbols in your current workspace.
-	--  Similar to document symbols, except searches over your entire project.
-	map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")
+	-- Fuzzy find all symbols across the workspace.
+	map("gW", function()
+		Snacks.picker.lsp_workspace_symbols()
+	end, "Workspace symbols")
 
 	-- Jump to the type of the word under your cursor.
-	--  Useful when you're not sure what type a variable is and you want to see
-	--  the definition of its *type*, not where it was *defined*.
-	map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
+	map("grt", function()
+		Snacks.picker.lsp_type_definitions()
+	end, "Goto type definition")
 
 	-- Show hover documentation (like hovering in VSCode)
 	-- Custom hover that suppresses "No information available" when another client
@@ -97,7 +99,7 @@ function M.on_attach(event)
 		if client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
 			map("<leader>uh", function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-			end, "[U]I: Toggle Inlay [H]ints")
+			end, "Toggle inlay hints")
 		end
 	end
 end
