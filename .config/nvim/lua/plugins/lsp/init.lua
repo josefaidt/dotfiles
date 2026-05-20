@@ -56,7 +56,7 @@ return {
 			group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 			callback = function(event)
 				-- Load LSP keymaps from centralized keymap config
-				require("config.keymaps.lsp").on_attach(event)
+				require("config.keymaps_lsp").on_attach(event)
 
 				---This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
 				---@param client vim.lsp.Client

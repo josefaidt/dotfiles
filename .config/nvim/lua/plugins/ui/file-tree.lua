@@ -19,7 +19,7 @@ return {
 			"nvim-tree/nvim-web-devicons",
 		},
 		lazy = false, -- neo-tree will lazily load itself
-		-- Keymaps are configured in lua/config/keymaps/plugins.lua
+		-- Keymaps are configured in lua/config/keymaps.lua
 		config = function()
 			-- Strip the "Neo-tree Popup\n" prefix that Neo-tree prepends to prompts when
 			-- cmdheight=0 and use_popups_for_input=false (see neo-tree/ui/inputs.lua).

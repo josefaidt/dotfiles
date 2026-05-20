@@ -9,7 +9,7 @@ return {
 	},
 	event = { "BufWritePre" },
 	cmd = { "ConformInfo" },
-	-- Keymaps are configured in lua/config/keymaps/plugins.lua
+	-- Keymaps are configured in lua/config/keymaps.lua
 	init = function()
 		local disable_filetypes = { c = true, cpp = true }
 		-- Filetypes where the LSP must never be used as a fallback formatter.

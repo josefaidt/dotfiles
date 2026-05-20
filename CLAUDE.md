@@ -14,6 +14,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - Expanded Neovim keymaps with more telescope and LSP bindings
 - Added type annotations to Lua configurations
 - Migrated file/grep search from ripgrep-backed Telescope to fff.nvim (Telescope still handles buffers, help, LSP, worktrees, markdown nav)
+- Consolidated keymaps into a single `lua/config/keymaps.lua` (LSP on-attach maps remain in `keymaps_lsp.lua`); aligned leader prefixes with LazyVim conventions ([B]uffer, [C]ode, [F]ile/find, [G]it, [Q]uit, [S]earch, [U]I)
 
 ## Key Components
 
@@ -22,7 +23,10 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - **Plugin manager**: lazy.nvim (auto-bootstrapped on first run)
 - **Entry point**: `init.lua` loads config/keymaps → config/lazy → config/vscode
 - **Structure**:
-  - `lua/config/` - Core settings and keymaps (split into general, lsp, plugins, telescope)
+  - `lua/config/` - Core settings and keymaps:
+    - `keymaps.lua` - All eager keymaps (general, buffer, code, file/find, search, git, quit, ui)
+    - `keymaps_lsp.lua` - LSP on-attach keymaps (buffer-local, set when an LSP attaches)
+    - `lazy.lua`, `vscode.lua`
   - `lua/plugins/editor/` - Editor features:
     - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
     - autopairs.lua - Auto-close brackets/quotes
@@ -41,7 +45,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - lazydev.lua - Lua development enhancements
   - `lua/plugins/ui/` - UI components:
     - diffview.lua - Git diff viewer
-    - dropbar.lua - IDE-like breadcrumbs winbar with context navigation
+    - dropbar.lua - IDE-like breadcrumbs winbar (passive)
     - file-tree.lua - Neo-tree file explorer
     - git-blame.lua - Git blame annotations
     - statusline.lua - Lualine status bar

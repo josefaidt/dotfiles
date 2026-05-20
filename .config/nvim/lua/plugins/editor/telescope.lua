@@ -57,14 +57,5 @@ return {
 		pcall(require("telescope").load_extension, "fzf")
 		pcall(require("telescope").load_extension, "ui-select")
 		pcall(require("telescope").load_extension, "noice")
-
-		-- Load Telescope keymaps from centralized keymap config
-		-- Wrap in pcall to catch any errors
-		local ok, err = pcall(function()
-			require("config.keymaps.telescope").setup()
-		end)
-		if not ok then
-			vim.notify("Failed to load telescope keymaps: " .. tostring(err), vim.log.levels.ERROR)
-		end
 	end,
 }

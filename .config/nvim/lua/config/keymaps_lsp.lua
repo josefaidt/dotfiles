@@ -1,4 +1,4 @@
----@module 'config.keymaps.lsp'
+---@module 'config.keymaps_lsp'
 ---LSP keymaps module
 ---These keymaps are set up when an LSP attaches to a buffer
 
