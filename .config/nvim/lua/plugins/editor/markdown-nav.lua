@@ -1,7 +1,7 @@
 ---@module 'plugins.editor.markdown-nav'
----Telescope-based markdown heading navigator.
+---Snacks-based markdown heading navigator.
 ---
----Opens a picker showing every heading in the current buffer.  Each entry's
+---Opens a picker showing every heading in the current buffer. Each entry's
 ---ordinal (the text you type to filter) is the full ancestor path, e.g.
 ---  "Intro / Setup / Prerequisites"
 ---so fuzzy-matching by path segments works like navigating a file tree.
@@ -49,13 +49,6 @@ local function pick()
 		return
 	end
 
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-	local entry_display = require("telescope.pickers.entry_display")
-
 	local hl_map = {
 		"markdownH1",
 		"markdownH2",
@@ -65,65 +58,51 @@ local function pick()
 		"markdownH6",
 	}
 
-	local displayer = entry_display.create({
-		separator = "",
-		items = {
-			{ width = 4 }, -- "H1 " … "H6 "
-			{ remaining = true },
-		},
+	Snacks.picker.pick({
+		source = "markdown_headings",
+		title = "Markdown Headings",
+		items = vim.tbl_map(function(h)
+			return {
+				text = h.path, -- ordinal: fuzzy-match on full ancestor path
+				level = h.level,
+				heading = h.text,
+				lnum = h.lnum,
+			}
+		end, headings),
+		format = function(item)
+			local hl = hl_map[item.level] or "Normal"
+			local indent = string.rep("  ", item.level - 1)
+			return {
+				{ "H" .. item.level .. " ", hl },
+				{ indent .. item.heading, hl },
+			}
+		end,
+		confirm = function(picker, item)
+			picker:close()
+			if item then
+				vim.api.nvim_win_set_cursor(0, { item.lnum, 0 })
+				vim.cmd("normal! zz")
+			end
+		end,
 	})
-
-	local function make_display(entry)
-		local h = entry.value
-		local hl = hl_map[h.level] or "Normal"
-		local indent = string.rep("  ", h.level - 1)
-		return displayer({
-			{ "H" .. h.level .. " ", hl },
-			{ indent .. h.text, hl },
-		})
-	end
-
-	pickers
-		.new({}, {
-			prompt_title = "Markdown Headings",
-			sorting_strategy = "ascending",
-			finder = finders.new_table({
-				results = headings,
-				entry_maker = function(h)
-					return {
-						value = h,
-						display = make_display,
-						ordinal = h.path, -- fuzzy-match on full ancestor path
-						lnum = h.lnum,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr)
-				actions.select_default:replace(function()
-					actions.close(prompt_bufnr)
-					local sel = action_state.get_selected_entry()
-					if sel then
-						vim.api.nvim_win_set_cursor(0, { sel.value.lnum, 0 })
-						vim.cmd("normal! zz")
-					end
-				end)
-				return true
-			end,
-		})
-		:find()
 end
 
 ---@type LazySpec
 return {
-	"nvim-telescope/telescope.nvim",
-	optional = true, -- piggybacks on the main telescope spec; lazy deduplicates
-	keys = {
-		{
-			"<leader>sm",
-			pick,
-			ft = "markdown",
-			desc = "Search markdown headings",
-		},
-	},
+	-- Standalone spec (no longer piggybacks on telescope).
+	-- snacks is loaded eagerly, so we just wire up the keymap on FileType.
+	"folke/snacks.nvim",
+	optional = true,
+	init = function()
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "markdown",
+			group = vim.api.nvim_create_augroup("markdown-nav", { clear = true }),
+			callback = function(args)
+				vim.keymap.set("n", "<leader>sm", pick, {
+					buffer = args.buf,
+					desc = "Search markdown headings",
+				})
+			end,
+		})
+	end,
 }

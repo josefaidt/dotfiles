@@ -13,7 +13,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = ";"
 
 -- =============================================================================
--- Helpers (telescope/fff pickers and git utilities)
+-- Helpers (git utilities + custom snacks pickers)
 -- =============================================================================
 
 ---Find the git repository root by searching upward from current directory
@@ -86,7 +86,7 @@ local function list_worktrees()
 	end, worktrees)
 end
 
----Open a Telescope picker for selecting a git worktree.
+---Open a snacks picker for selecting a git worktree.
 ---The selected worktree opens in a new tab via `tcd`.
 local function pick_worktree()
 	local worktrees = list_worktrees()
@@ -95,65 +95,40 @@ local function pick_worktree()
 		return
 	end
 
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-	local entry_display = require("telescope.pickers.entry_display")
-
 	local cwd = vim.fn.systemlist("git rev-parse --show-toplevel")[1] or vim.fn.getcwd()
 
-	local displayer = entry_display.create({
-		separator = "  ",
-		items = {
-			{ width = 35 },
-			{ remaining = true },
-		},
+	Snacks.picker.pick({
+		source = "git_worktrees",
+		title = "Git Worktrees",
+		items = vim.tbl_map(function(wt)
+			local branch = wt.branch or "(detached)"
+			local is_current = wt.path == cwd
+			local is_claude = wt.path:find("%.claude/worktrees") ~= nil
+			return {
+				text = (wt.branch or "") .. " " .. wt.path,
+				path = wt.path,
+				branch = branch,
+				is_current = is_current,
+				is_claude = is_claude,
+			}
+		end, worktrees),
+		format = function(item)
+			local prefix = item.is_current and "* " or "  "
+			local label = prefix .. item.branch .. (item.is_claude and " [claude]" or "")
+			return {
+				{ label, item.is_current and "SnacksPickerLabel" or nil },
+				{ "  " },
+				{ item.path, "SnacksPickerComment" },
+			}
+		end,
+		confirm = function(picker, item)
+			picker:close()
+			if item then
+				vim.cmd("tabnew")
+				vim.cmd("tcd " .. vim.fn.fnameescape(item.path))
+			end
+		end,
 	})
-
-	local function make_display(entry)
-		local wt = entry.value
-		local branch = wt.branch or "(detached)"
-		local is_current = wt.path == cwd
-		local is_claude = wt.path:find("%.claude/worktrees") ~= nil
-
-		local label = (is_current and "* " or "  ") .. branch .. (is_claude and " [claude]" or "")
-		local hl = is_current and "TelescopeResultsIdentifier" or "Normal"
-
-		return displayer({
-			{ label, hl },
-			{ wt.path, "TelescopeResultsComment" },
-		})
-	end
-
-	pickers
-		.new({}, {
-			prompt_title = "Git Worktrees",
-			finder = finders.new_table({
-				results = worktrees,
-				entry_maker = function(wt)
-					return {
-						value = wt,
-						display = make_display,
-						ordinal = (wt.branch or "") .. " " .. wt.path,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr)
-				actions.select_default:replace(function()
-					actions.close(prompt_bufnr)
-					local selection = action_state.get_selected_entry()
-					if selection then
-						vim.cmd("tabnew")
-						vim.cmd("tcd " .. vim.fn.fnameescape(selection.value.path))
-					end
-				end)
-				return true
-			end,
-		})
-		:find()
 end
 
 -- =============================================================================
