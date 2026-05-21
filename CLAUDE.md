@@ -38,7 +38,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - markdown.lua - Markdown preview
     - markdown-nav.lua - Snacks-based heading picker for markdown buffers
     - multiple-cursors.lua - VSCode-like multiple cursors (vim-visual-multi)
-    - session.lua - Session management
+    - persistence.lua - Session save/restore (folke/persistence.nvim); auto-saves on quit, manually restored via alpha dashboard `s`/`S`
     - syntax-highlighting.lua - Treesitter-based highlighting
   - `lua/plugins/lsp/` - Language server configuration:
     - init.lua - LSP setup and configuration
