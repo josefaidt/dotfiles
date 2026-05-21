@@ -557,15 +557,20 @@ return {
 			pattern = "*.json",
 			callback = function(args)
 				local clients = vim.lsp.get_clients({ bufnr = args.buf, name = "jsonls" })
-				if #clients > 0 then
-					-- Check first 10 lines for $schema
-					local lines = vim.api.nvim_buf_get_lines(args.buf, 0, 10, false)
-					for _, line in ipairs(lines) do
-						if line:match('"$schema"') then
-							vim.cmd("LspRestart jsonls")
-							-- Silently restart without notification
-							break
+				if #clients == 0 then
+					return
+				end
+				-- Only restart when the file declares a $schema (changes warrant re-validation)
+				local lines = vim.api.nvim_buf_get_lines(args.buf, 0, 10, false)
+				for _, line in ipairs(lines) do
+					if line:match('"$schema"') then
+						for _, client in ipairs(clients) do
+							client:stop()
 						end
+						vim.defer_fn(function()
+							vim.lsp.enable("jsonls")
+						end, 100)
+						break
 					end
 				end
 			end,

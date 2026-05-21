@@ -244,16 +244,28 @@ vim.keymap.set("n", "<leader>cF", function()
 end, { desc = "Code format (choose formatter)" })
 
 vim.keymap.set("n", "<leader>cr", function()
-	vim.cmd("LspRestart")
-	vim.notify("LSP restarted for current buffer", vim.log.levels.INFO)
+	-- Stop LSP clients attached to current buffer; lspconfig's filetype
+	-- autocmds will reattach them on the next event (e.g. cursor move).
+	local clients = vim.lsp.get_clients({ bufnr = 0 })
+	for _, client in ipairs(clients) do
+		client:stop()
+	end
+	vim.defer_fn(function()
+		vim.cmd("edit") -- triggers FileType -> lspconfig reattach
+		vim.notify("LSP restarted for current buffer", vim.log.levels.INFO)
+	end, 100)
 end, { desc = "LSP restart" })
 
 vim.keymap.set("n", "<leader>cR", function()
-	vim.cmd("LspStop")
-	vim.schedule(function()
-		vim.cmd("LspStart")
+	-- Stop every active client; lspconfig reattaches via filetype autocmds
+	-- when buffers are re-edited.
+	for _, client in ipairs(vim.lsp.get_clients()) do
+		client:stop()
+	end
+	vim.defer_fn(function()
+		vim.cmd("edit")
 		vim.notify("All LSP clients restarted", vim.log.levels.INFO)
-	end)
+	end, 100)
 end, { desc = "LSP stop and start all" })
 
 -- =============================================================================
