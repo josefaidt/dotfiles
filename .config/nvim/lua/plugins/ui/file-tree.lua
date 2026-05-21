@@ -235,7 +235,7 @@ return {
 							if node.type == "file" then
 								path = vim.fn.fnamemodify(path, ":h")
 							end
-							require("fff").find_files_in_dir(path)
+							Snacks.picker.files({ cwd = path })
 						end,
 						-- Git add all files
 						["gA"] = function(state)

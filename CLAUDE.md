@@ -15,6 +15,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 - Added type annotations to Lua configurations
 - Migrated file/grep search from ripgrep-backed Telescope to fff.nvim (Telescope still handles buffers, help, LSP, worktrees, markdown nav)
 - Consolidated keymaps into a single `lua/config/keymaps.lua` (LSP on-attach maps remain in `keymaps_lsp.lua`); aligned leader prefixes with LazyVim conventions ([B]uffer, [C]ode, [F]ile/find, [G]it, [Q]uit, [S]earch, [U]I)
+- Replaced Telescope and fff with snacks.nvim picker; snacks also handles `vim.ui.select` via `ui_select = true`. Custom worktree and markdown-heading pickers rewritten on snacks.
 
 ## Key Components
 
@@ -31,15 +32,14 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
     - autopairs.lua - Auto-close brackets/quotes
     - comment.lua - Smart commenting (Comment.nvim)
-    - fff.lua - Frecency-ranked file finder + live grep (replaces ripgrep-backed file/grep pickers)
     - flash.lua - Quick navigation with labeled jumps
     - formatting.lua - Code formatting with conform.nvim
     - linting.lua - Linting with nvim-lint
     - markdown.lua - Markdown preview
+    - markdown-nav.lua - Snacks-based heading picker for markdown buffers
     - multiple-cursors.lua - VSCode-like multiple cursors (vim-visual-multi)
     - session.lua - Session management
     - syntax-highlighting.lua - Treesitter-based highlighting
-    - telescope.lua - Picker for non-file/grep operations (buffers, help, LSP refs/symbols, command palette, worktrees, markdown nav)
   - `lua/plugins/lsp/` - Language server configuration:
     - init.lua - LSP setup and configuration
     - lazydev.lua - Lua development enhancements
@@ -48,6 +48,7 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - dropbar.lua - IDE-like breadcrumbs winbar (passive)
     - file-tree.lua - Neo-tree file explorer
     - git-blame.lua - Git blame annotations
+    - snacks.lua - folke/snacks: bufdelete, quickfile, words, picker (replaces telescope/fff and `vim.ui.select`)
     - statusline.lua - Lualine status bar
     - tabs.lua - Buffer/tab line (barbar.nvim)
     - theme.lua - Color scheme configuration
