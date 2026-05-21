@@ -367,6 +367,10 @@ end, { desc = "Grep text in current package" })
 
 vim.keymap.set("n", "<leader>gw", pick_worktree, { desc = "Git worktrees" })
 
+-- Expose pick_worktree as a command so the alpha dashboard can call it
+-- (dashboard buttons feed keystrokes; <leader> sequences don't resolve there).
+vim.api.nvim_create_user_command("PickWorktree", pick_worktree, { desc = "Pick a git worktree" })
+
 -- =============================================================================
 -- Quit (<leader>q)
 -- =============================================================================

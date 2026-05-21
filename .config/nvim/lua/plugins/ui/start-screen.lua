@@ -23,11 +23,9 @@ return {
 			dashboard.button("e", "  New file", "<cmd>enew<CR>"),
 			dashboard.button("f", "  Find file", "<cmd>lua Snacks.picker.files()<CR>"),
 			dashboard.button("g", "  Grep", "<cmd>lua Snacks.picker.grep()<CR>"),
-			dashboard.button("c", "  Config", "<cmd>edit " .. vim.fn.stdpath("config") .. "/init.lua<CR>"),
-			dashboard.button("w", "  Worktrees", "<leader>gw"),
+			dashboard.button("w", "  Worktrees", "<cmd>PickWorktree<CR>"),
 			dashboard.button("s", "  Restore session", "<cmd>lua require('persistence').load()<CR>"),
 			dashboard.button("S", "  Select session", "<cmd>lua require('persistence').select()<CR>"),
-			dashboard.button("l", "󰒲  Lazy", "<cmd>Lazy<CR>"),
 			dashboard.button("q", "  Quit", "<cmd>qa<CR>"),
 		}
 
