@@ -377,6 +377,14 @@ vim.api.nvim_create_user_command("PickWorktree", pick_worktree, { desc = "Pick a
 
 vim.keymap.set("n", "<leader>qq", "<cmd>qa<CR>", { desc = "Quit Neovim" })
 
+vim.keymap.set("n", "<leader>qs", function()
+	require("persistence").load()
+end, { desc = "Restore session" })
+
+vim.keymap.set("n", "<leader>qS", function()
+	require("persistence").select()
+end, { desc = "Select session" })
+
 -- =============================================================================
 -- UI (<leader>u)
 -- =============================================================================
