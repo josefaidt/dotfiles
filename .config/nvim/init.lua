@@ -279,9 +279,11 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 	end,
 })
 
-require("config.lazy")
-
--- @TODO redo lazy config loading, something is awry
+require("config.pack").setup({
+	"plugins.editor",
+	"plugins.lsp",
+	"plugins.ui",
+})
 
 -- load vscode settings
 require("config.vscode")
