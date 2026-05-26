@@ -1,48 +1,38 @@
----@module 'plugins.ui.edgy'
----Edgy.nvim - Manage neo-tree positioning and prevent it from taking over the window
----https://github.com/folke/edgy.nvim
-
----@type LazySpec
 return {
 	"folke/edgy.nvim",
-	event = "VeryLazy",
-	init = function()
-		vim.opt.laststatus = 3
-		vim.opt.splitkeep = "screen"
-	end,
-	---@type table<string, fun(win:Edgy.Window)|false>
-	keys = {
-		-- Jump to main editor window
-		{
-			"<leader>ue",
-			function()
-				require("edgy").goto_main()
-			end,
-			desc = "Focus editor (from drawer)",
-		},
-	},
-	opts = {
-		---@type (Edgy.View.Opts|string)[]
-		right = {
-			-- Neo-tree file explorer on the right
+	{
+		event = "VeryLazy",
+		keys = {
 			{
-				title = "Files",
-				ft = "neo-tree",
-				filter = function(buf)
-					return vim.b[buf].neo_tree_source == "filesystem"
+				"<leader>ue",
+				function()
+					require("edgy").goto_main()
 				end,
-				size = { width = 30 },
+				desc = "Focus editor (from drawer)",
 			},
 		},
-		-- Disable animations for better performance
-		---@type Edgy.Animate
-		animate = {
-			enabled = false,
-		},
-		-- Disable edgy's custom window highlights to preserve neo-tree's original appearance
-		---@type vim.wo
-		wo = {
-			winhighlight = "",
-		},
+		setup = function()
+			vim.opt.laststatus = 3
+			vim.opt.splitkeep = "screen"
+
+			require("edgy").setup({
+				right = {
+					{
+						title = "Files",
+						ft = "neo-tree",
+						filter = function(buf)
+							return vim.b[buf].neo_tree_source == "filesystem"
+						end,
+						size = { width = 30 },
+					},
+				},
+				animate = {
+					enabled = false,
+				},
+				wo = {
+					winhighlight = "",
+				},
+			})
+		end,
 	},
 }

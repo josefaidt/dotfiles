@@ -21,13 +21,13 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
 
 ### Neovim (`.config/nvim/`)
 
-- **Plugin manager**: lazy.nvim (auto-bootstrapped on first run)
-- **Entry point**: `init.lua` loads config/keymaps → config/lazy → config/vscode
+- **Plugin manager**: built-in `vim.pack` (Neovim 0.12+); custom loader at `lua/config/pack.lua` walks `plugins.{editor,lsp,ui}` and adds lazy.nvim-style triggers (`event`/`ft`/`cmd`/`keys`) on top of `vim.pack.add`
+- **Entry point**: `init.lua` loads config/keymaps → config/pack → config/vscode
 - **Structure**:
   - `lua/config/` - Core settings and keymaps:
     - `keymaps.lua` - All eager keymaps (general, buffer, code, file/find, search, git, quit, ui)
     - `keymaps_lsp.lua` - LSP on-attach keymaps (buffer-local, set when an LSP attaches)
-    - `lazy.lua`, `vscode.lua`
+    - `pack.lua`, `vscode.lua`
   - `lua/plugins/editor/` - Editor features:
     - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
     - autopairs.lua - Auto-close brackets/quotes
@@ -54,7 +54,8 @@ Personal dotfiles repository for macOS development environment. Uses GNU Stow fo
     - theme.lua - Color scheme configuration
     - which-key.lua - Keybinding hints
   - `colors/` - Custom color schemes (rouge2.lua)
-- **Plugin organization**: Each file in `plugins/` returns a lazy.nvim spec table
+- **Plugin organization**: Each file in `plugins/` returns a tuple `{ "user/repo", { ...config... } }` (or a list of such tuples). The config table accepts `event`/`ft`/`cmd`/`keys` for lazy-loading, `priority` for eager order, `setup(opts)` for post-load init, `version`/`build`/`enabled`/`name` mirroring lazy.nvim's spec keys. See `lua/config/pack.lua` for the full schema.
+- **Plugin updates**: `:lua vim.pack.update()` (replaces `:Lazy sync`) — opens a confirmation tab; `:write` to apply, `:quit` to cancel
 - **Formatting**: Uses `.stylelua.toml` for Lua code formatting
 
 ### Fish Shell (`.config/fish/`)
@@ -183,8 +184,10 @@ To add a new global linter/formatter:
 ### When modifying neovim plugins:
 
 - Add new plugins by creating files in appropriate `plugins/` subdirectory (editor/, lsp/, or ui/)
-- Keymaps are centralized in `config/keymaps/` and organized by category (general, lsp, plugins, telescope)
-- lazy.nvim auto-imports from `plugins.editor`, `plugins.lsp`, `plugins.ui`
+- Keymaps are centralized in `config/keymaps.lua` (general) and `config/keymaps_lsp.lua` (LSP on-attach)
+- `config/pack.lua` walks `plugins.editor`, `plugins.lsp`, `plugins.ui` and feeds every spec to `vim.pack.add`. Plugins with no `event`/`ft`/`cmd`/`keys` trigger load eagerly (sorted by `priority` desc); the rest are lazy-loaded by the loader's autocmds/user-commands/keymaps
+- For dependencies: `vim.pack` has no transitive resolution. If plugin A `require`s plugin B, declare B as its own top-level tuple in the same file (or in another file under `plugins/`). Use `priority` to enforce load order between eager plugins
+- Build hooks: define `build = function(path) ... end` in the config table — runs on `PackChanged` install/update events
 - Format Lua code with stylua using the provided `.stylelua.toml` config
 
 ### When building UI elements or dialogs in Neovim config:

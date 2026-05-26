@@ -1,18 +1,10 @@
 ---@module 'plugins.editor.markdown-nav'
----Snacks-based markdown heading navigator.
----
----Opens a picker showing every heading in the current buffer. Each entry's
----ordinal (the text you type to filter) is the full ancestor path, e.g.
----  "Intro / Setup / Prerequisites"
----so fuzzy-matching by path segments works like navigating a file tree.
----The display shows an indented tree with per-level highlight groups.
----
----Keymap: <leader>sm  (Search Markdown), active only in markdown buffers.
+---Snacks-based markdown heading navigator. Opens a picker showing every
+---heading in the current buffer; ordinal is the full ancestor path
+---("Intro / Setup / Prerequisites") so fuzzy-matching by path segments
+---works like navigating a file tree. Display is an indented tree with
+---per-level highlight groups. Keymap: <leader>sm in markdown buffers.
 
----@param accumulated {level:number, text:string}[] headings seen so far
----@param level number current heading level (1–6)
----@param text string heading text (without #s)
----@return string path like "Parent / Child / Heading"
 local function heading_path(accumulated, level, text)
 	local parts = {}
 	for l = 1, level - 1 do
@@ -63,7 +55,7 @@ local function pick()
 		title = "Markdown Headings",
 		items = vim.tbl_map(function(h)
 			return {
-				text = h.path, -- ordinal: fuzzy-match on full ancestor path
+				text = h.path,
 				level = h.level,
 				heading = h.text,
 				lnum = h.lnum,
@@ -87,22 +79,17 @@ local function pick()
 	})
 end
 
----@type LazySpec
-return {
-	-- Standalone spec (no longer piggybacks on telescope).
-	-- snacks is loaded eagerly, so we just wire up the keymap on FileType.
-	"folke/snacks.nvim",
-	optional = true,
-	init = function()
-		vim.api.nvim_create_autocmd("FileType", {
-			pattern = "markdown",
-			group = vim.api.nvim_create_augroup("markdown-nav", { clear = true }),
-			callback = function(args)
-				vim.keymap.set("n", "<leader>sm", pick, {
-					buffer = args.buf,
-					desc = "Search markdown headings",
-				})
-			end,
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	group = vim.api.nvim_create_augroup("markdown-nav", { clear = true }),
+	callback = function(args)
+		vim.keymap.set("n", "<leader>sm", pick, {
+			buffer = args.buf,
+			desc = "Search markdown headings",
 		})
 	end,
-}
+})
+
+-- This file registers a keymap rather than declaring a plugin, so return an
+-- empty list so config/pack.lua treats it as a no-op spec source.
+return {}

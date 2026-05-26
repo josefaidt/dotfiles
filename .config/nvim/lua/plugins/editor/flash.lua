@@ -1,67 +1,67 @@
----@type LazySpec
 return {
 	"folke/flash.nvim",
-	event = "VeryLazy",
-	---@type Flash.Config
-	opts = {
-		-- Enable jump labels during regular search
-		search = {
-			mode = "search",
-			incremental = false,
-		},
-		-- Jump to exact matches during search
-		label = {
-			rainbow = {
-				enabled = true,
-			},
-		},
-		modes = {
-			-- Enable flash during regular search with / and ?
+	{
+		event = "VeryLazy",
+		opts = {
 			search = {
-				enabled = true,
+				mode = "search",
+				incremental = false,
+			},
+			label = {
+				rainbow = {
+					enabled = true,
+				},
+			},
+			modes = {
+				search = {
+					enabled = true,
+				},
 			},
 		},
-	},
-	keys = {
-		{
-			"s",
-			mode = { "n", "x", "o" },
-			function()
-				require("flash").jump()
-			end,
-			desc = "Flash Jump",
-		},
-		{
-			"S",
-			mode = { "n", "x", "o" },
-			function()
-				require("flash").treesitter()
-			end,
-			desc = "Flash Treesitter",
-		},
-		{
-			"r",
-			mode = "o",
-			function()
-				require("flash").remote()
-			end,
-			desc = "Remote Flash",
-		},
-		{
-			"R",
-			mode = { "o", "x" },
-			function()
-				require("flash").treesitter_search()
-			end,
-			desc = "Treesitter Search",
-		},
-		{
-			"<c-s>",
-			mode = { "c" },
-			function()
-				require("flash").toggle()
-			end,
-			desc = "Toggle Flash Search",
+		setup = function(opts)
+			require("flash").setup(opts)
+		end,
+		keys = {
+			{
+				"s",
+				function()
+					require("flash").jump()
+				end,
+				mode = { "n", "x", "o" },
+				desc = "Flash Jump",
+			},
+			{
+				"S",
+				function()
+					require("flash").treesitter()
+				end,
+				mode = { "n", "x", "o" },
+				desc = "Flash Treesitter",
+			},
+			{
+				"r",
+				function()
+					require("flash").remote()
+				end,
+				mode = "o",
+				desc = "Remote Flash",
+			},
+			{
+				"R",
+				function()
+					require("flash").treesitter_search()
+				end,
+				mode = { "o", "x" },
+				desc = "Treesitter Search",
+			},
+			{
+				"<c-s>",
+				function()
+					require("flash").toggle()
+				end,
+				mode = "c",
+				desc = "Toggle Flash Search",
+			},
 		},
 	},
 }

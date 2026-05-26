@@ -1,165 +1,86 @@
----@module 'plugins.ui.theme'
----Theme configuration for Everforest and Catppuccin
-
----@type LazySpec[]
 return {
-	-- Mellow theme
 	{
 		"mellow-theme/mellow.nvim",
-		priority = 1001, -- Highest priority to make it default
-		lazy = false,
-		config = function()
-			vim.g.mellow_italic_keywords = false
+		{
+			priority = 1001,
+			setup = function()
+				vim.g.mellow_italic_keywords = false
 
-			-- YAML keys map to @property, which mellow sets to gray07 (#c1c0d4) —
-			-- nearly identical to fg (#c9c7cd), making them look unstyled.
-			-- Override to use a distinct color so keys are visually differentiated.
-			vim.g.mellow_highlight_overrides = {
-				["@property.yaml"] = { fg = "#aca1cf" }, -- blue (mellow's c.blue)
-			}
+				-- YAML keys map to @property, which mellow sets to gray07 (#c1c0d4) —
+				-- nearly identical to fg (#c9c7cd), making them look unstyled.
+				-- Override to use a distinct color so keys are visually differentiated.
+				vim.g.mellow_highlight_overrides = {
+					["@property.yaml"] = { fg = "#aca1cf" }, -- blue (mellow's c.blue)
+				}
 
-			vim.cmd.colorscheme("mellow")
+				vim.cmd.colorscheme("mellow")
 
-			-- Selective keyword italics to match catppuccin's approach
-			local italic = { italic = true }
-			for _, group in ipairs({
-				"@keyword.conditional",
-				"@keyword.repeat",
-				"@keyword.import",
-				"@keyword.return",
-				"@keyword.function",
-				"@keyword.operator",
-				"@keyword.modifier",
-				"@keyword.type",
-			}) do
-				local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
-				vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
-			end
-		end,
+				-- Selective keyword italics to match catppuccin's approach
+				local italic = { italic = true }
+				for _, group in ipairs({
+					"@keyword.conditional",
+					"@keyword.repeat",
+					"@keyword.import",
+					"@keyword.return",
+					"@keyword.function",
+					"@keyword.operator",
+					"@keyword.modifier",
+					"@keyword.type",
+				}) do
+					local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+					vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
+				end
+			end,
+		},
 	},
-	-- Everforest theme
 	{
 		"sainnhe/everforest",
-		priority = 1000,
-		lazy = false, -- Load immediately to avoid flash
-		config = function()
-			-- Everforest configuration
-			-- Available values: 'hard', 'medium'(default), 'soft'
-			vim.g.everforest_background = "hard"
-
-			-- For better performance
-			vim.g.everforest_better_performance = 1
-
-			-- Enable italic for keywords and comments
-			vim.g.everforest_enable_italic = 1
-
-			-- Transparent background (set to 1 if you want transparency)
-			vim.g.everforest_transparent_background = 0
-
-			-- UI related
-			vim.g.everforest_ui_contrast = "high" -- 'low', 'high'
-
-			-- Dim inactive windows
-			vim.g.everforest_dim_inactive_windows = 0
-
-			-- Diagnostic style: 'default' or 'colored'
-			vim.g.everforest_diagnostic_text_highlight = 1
-			vim.g.everforest_diagnostic_line_highlight = 0
-			vim.g.everforest_diagnostic_virtual_text = "colored"
-
-			-- Load the colorscheme (default theme)
-			-- vim.cmd.colorscheme("everforest") -- Disabled, using Mellow instead
-
-			-- CUSTOMIZATIONS COMMENTED OUT FOR TESTING
-			-- Uncomment incrementally to identify what's causing issues
-
-			-- -- Configure italics for comments while preserving color
-			-- local comment_hl = vim.api.nvim_get_hl(0, { name = "Comment", link = false })
-			-- if comment_hl then
-			-- 	comment_hl.italic = true
-			-- 	vim.api.nvim_set_hl(0, "Comment", comment_hl)
-			-- end
-
-			-- -- Configure language-specific keyword italics
-			-- -- Only apply italics to actual language keywords in JS/TS files
-			-- local keyword_groups = {
-			-- 	"@keyword.conditional", -- if, else, switch
-			-- 	"@keyword.repeat", -- for, while, do
-			-- 	"@keyword.import", -- import, export
-			-- 	"@keyword.return",
-			-- 	"@keyword.function", -- function, async (when it's a keyword)
-			-- 	"@keyword.operator", -- typeof, instanceof
-			-- 	"@keyword.modifier", -- const, let, var, static
-			-- }
-
-			-- -- Apply italic only to these specific treesitter groups
-			-- -- Preserve existing colors while adding italic
-			-- for _, group in ipairs(keyword_groups) do
-			-- 	local keyword_hl = vim.api.nvim_get_hl(0, { name = group, link = false })
-			-- 	if keyword_hl and next(keyword_hl) ~= nil then
-			-- 		keyword_hl.italic = true
-			-- 		vim.api.nvim_set_hl(0, group, keyword_hl)
-			-- 	end
-			-- end
-
-			-- -- Ensure @lsp.type.keyword does NOT get italics (this affects JSON and other contexts)
-			-- vim.api.nvim_set_hl(0, "@lsp.type.keyword", { italic = false })
-
-			-- -- Normalize function colors - use the same color for all function types
-			-- -- This addresses the Vitest vs builtin function color issue
-			-- local function_color = vim.api.nvim_get_hl(0, { name = "@function", link = false })
-			-- if function_color then
-			-- 	vim.api.nvim_set_hl(0, "@function.builtin", function_color)
-			-- 	vim.api.nvim_set_hl(0, "@function.call", function_color)
-			-- 	vim.api.nvim_set_hl(0, "@function.method", function_color)
-			-- 	vim.api.nvim_set_hl(0, "@function.method.call", function_color)
-			-- 	vim.api.nvim_set_hl(0, "@lsp.type.function", function_color)
-			-- 	vim.api.nvim_set_hl(0, "@lsp.type.method", function_color)
-			-- end
-
-			-- -- Dim shebang lines at the top of executables (use comment theming)
-			-- vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-			-- 	pattern = { "*.sh", "*.bash", "*.zsh", "*.py", "*.rb", "*.pl", "*" },
-			-- 	callback = function()
-			-- 		-- Create syntax match for shebang lines
-			-- 		vim.cmd([[
-			-- 			syntax match Shebang /\%^#!.*/
-			-- 			highlight link Shebang Comment
-			-- 		]])
-			-- 	end,
-			-- })
-		end,
+		{
+			priority = 1000,
+			setup = function()
+				-- Available values: 'hard', 'medium' (default), 'soft'
+				vim.g.everforest_background = "hard"
+				vim.g.everforest_better_performance = 1
+				vim.g.everforest_enable_italic = 1
+				-- Transparent background (set to 1 if you want transparency)
+				vim.g.everforest_transparent_background = 0
+				vim.g.everforest_ui_contrast = "high"
+				vim.g.everforest_dim_inactive_windows = 0
+				vim.g.everforest_diagnostic_text_highlight = 1
+				vim.g.everforest_diagnostic_line_highlight = 0
+				vim.g.everforest_diagnostic_virtual_text = "colored"
+				-- Mellow is the default; this just makes the colorscheme available.
+			end,
+		},
 	},
-	-- Catppuccin theme
 	{
 		"catppuccin/nvim",
-		name = "catppuccin",
-		priority = 999, -- Slightly lower priority than default theme
-		lazy = false,
-		config = function()
-			require("catppuccin").setup({
-				flavour = "mocha", -- latte, frappe, macchiato, mocha
-				styles = {
-					comments = { "italic" },
-					-- Don't italicize all keywords globally
-					keywords = {},
-					functions = {},
-					variables = {},
-				},
-				custom_highlights = function(colors)
-					return {
-						-- Only italicize specific keyword types
-						["@keyword.conditional"] = { style = { "italic" } },
-						["@keyword.repeat"] = { style = { "italic" } },
-						["@keyword.import"] = { style = { "italic" } },
-						["@keyword.return"] = { style = { "italic" } },
-						["@keyword.function"] = { style = { "italic" } },
-						["@keyword.operator"] = { style = { "italic" } },
-						["@keyword.modifier"] = { style = { "italic" } },
-						["@keyword.type"] = { style = { "italic" } },
-					}
-				end,
-			})
-		end,
+		{
+			name = "catppuccin",
+			priority = 999,
+			setup = function()
+				require("catppuccin").setup({
+					flavour = "mocha",
+					styles = {
+						comments = { "italic" },
+						keywords = {},
+						functions = {},
+						variables = {},
+					},
+					custom_highlights = function(colors)
+						return {
+							["@keyword.conditional"] = { style = { "italic" } },
+							["@keyword.repeat"] = { style = { "italic" } },
+							["@keyword.import"] = { style = { "italic" } },
+							["@keyword.return"] = { style = { "italic" } },
+							["@keyword.function"] = { style = { "italic" } },
+							["@keyword.operator"] = { style = { "italic" } },
+							["@keyword.modifier"] = { style = { "italic" } },
+							["@keyword.type"] = { style = { "italic" } },
+						}
+					end,
+				})
+			end,
+		},
 	},
 }
