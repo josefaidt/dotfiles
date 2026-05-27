@@ -66,7 +66,9 @@ local function pick()
 				text = h.path, -- ordinal: fuzzy-match on full ancestor path
 				level = h.level,
 				heading = h.text,
-				lnum = h.lnum,
+				-- buf + pos let the default file previewer show the doc at this heading
+				buf = bufnr,
+				pos = { h.lnum, 0 },
 			}
 		end, headings),
 		format = function(item)
@@ -79,8 +81,8 @@ local function pick()
 		end,
 		confirm = function(picker, item)
 			picker:close()
-			if item then
-				vim.api.nvim_win_set_cursor(0, { item.lnum, 0 })
+			if item and item.pos then
+				vim.api.nvim_win_set_cursor(0, { item.pos[1], item.pos[2] })
 				vim.cmd("normal! zz")
 			end
 		end,
