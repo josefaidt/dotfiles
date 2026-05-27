@@ -87,7 +87,7 @@ local function list_worktrees()
 end
 
 ---Open a snacks picker for selecting a git worktree.
----The selected worktree opens in a new tab via `tcd`.
+---The selected worktree changes the current tab's directory via `tcd`.
 local function pick_worktree()
 	local worktrees = list_worktrees()
 	if #worktrees == 0 then
@@ -124,7 +124,6 @@ local function pick_worktree()
 		confirm = function(picker, item)
 			picker:close()
 			if item then
-				vim.cmd("tabnew")
 				vim.cmd("tcd " .. vim.fn.fnameescape(item.path))
 			end
 		end,
