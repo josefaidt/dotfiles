@@ -58,12 +58,16 @@ function M.on_attach(event)
 
 	-- Show hover documentation (like hovering in VSCode)
 	-- Custom hover that suppresses "No information available" when another client
-	-- already returned content (e.g. ts_ls + biome both attached to the same buffer)
+	-- already returned content (e.g. ts_ls + biome both attached to the same buffer).
+	-- Routes the result through noice's on_hover so the views.hover styling applies;
+	-- vim.lsp.handlers["textDocument/hover"] is the vanilla handler and bypasses noice.
 	map("K", function()
 		local clients = vim.lsp.get_clients({ bufnr = 0 })
 		if #clients == 0 then
 			return
 		end
+		local ok, noice_hover = pcall(require, "noice.lsp.hover")
+		local handler = ok and noice_hover.on_hover or vim.lsp.handlers["textDocument/hover"]
 		local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
 		local got_content = false
 		local pending = #clients
@@ -72,7 +76,7 @@ function M.on_attach(event)
 				pending = pending - 1
 				if not err and result and result.contents then
 					got_content = true
-					vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+					handler(err, result, ctx, config)
 				elseif pending == 0 and not got_content then
 					vim.notify("No information available", vim.log.levels.INFO)
 				end
