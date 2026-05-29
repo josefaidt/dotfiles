@@ -62,6 +62,12 @@ return {
 			hover = {
 				enabled = true,
 			},
+			-- Noice ships with signature.auto_open enabled, which pops a signature
+			-- float on `(` / `,` while typing args. Disable it — K shows the same info.
+			signature = {
+				enabled = true,
+				auto_open = { enabled = false },
+			},
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {
 				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
@@ -79,14 +85,27 @@ return {
 		},
 		-- Configure the display for various UI elements
 		views = {
+			-- Mirror the sizing/wrap behavior of vim.diagnostic.config().float so K and
+			-- <leader>e produce visually consistent floats. Extra padding + a distinct
+			-- NormalFloat background make the hover stand off the editor background.
 			hover = {
+				-- Anchor below the cursor; nvim auto-flips above when room is tight.
+				relative = "cursor",
+				anchor = "NW",
+				position = { row = 1, col = 0 },
+				size = {
+					max_width = 80,
+					max_height = 20,
+				},
 				border = {
 					style = "rounded",
-					padding = { 0, 1 },
+					padding = { 1, 2 },
 				},
 				win_options = {
+					wrap = true,
+					linebreak = true,
 					winhighlight = {
-						Normal = "Normal",
+						Normal = "NormalFloat",
 						FloatBorder = "LspHoverBorder",
 					},
 					-- Enable conceal to hide markdown syntax
