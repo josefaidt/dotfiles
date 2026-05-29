@@ -1,5 +1,5 @@
 ---@module 'plugins.ui.theme'
----Theme configuration for Everforest and Catppuccin
+---Theme configuration for Mellow (active), Everforest, Catppuccin, and Nightfox
 
 ---@type LazySpec[]
 return {
@@ -161,5 +161,11 @@ return {
 				end,
 			})
 		end,
+	},
+	-- Nightfox theme family (nightfox, dayfox, dawnfox, duskfox, nordfox, terafox, carbonfox)
+	-- Not set as active; loads when invoked via :colorscheme.
+	{
+		"EdenEast/nightfox.nvim",
+		lazy = true,
 	},
 }

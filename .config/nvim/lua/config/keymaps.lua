@@ -398,6 +398,13 @@ vim.keymap.set("n", "<leader>uc", function()
 		"catppuccin-frappe",
 		"catppuccin-macchiato",
 		"catppuccin-mocha",
+		"nightfox",
+		"dayfox",
+		"dawnfox",
+		"duskfox",
+		"nordfox",
+		"terafox",
+		"carbonfox",
 		"rouge2",
 	}
 
