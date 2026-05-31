@@ -72,12 +72,18 @@ local function pick()
 			}
 		end, headings),
 		format = function(item)
-			local hl = hl_map[item.level] or "Normal"
+			local level_hl = hl_map[item.level] or "Normal"
 			local indent = string.rep("  ", item.level - 1)
-			return {
-				{ "H" .. item.level .. " ", hl },
-				{ indent .. item.heading, hl },
+			local ret = {
+				{ "H" .. item.level .. " ", level_hl },
+				{ indent, "SnacksPickerFile" },
+				{ item.text, "SnacksPickerFile" },
 			}
+			if item.positions then
+				local offset = Snacks.picker.highlight.offset(ret)
+				Snacks.picker.highlight.matches(ret, item.positions, offset)
+			end
+			return ret
 		end,
 		confirm = function(picker, item)
 			picker:close()
