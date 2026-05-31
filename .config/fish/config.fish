@@ -21,7 +21,7 @@ if status is-interactive
   abbr --add --position command lg lazygit
 
   abbr --add --position command p pnpm
-  abbr --add --position command pi pnpm install
+  # abbr --add --position command pi pnpm install
   abbr --add --position command b bun
   abbr --add --position command bi bun install
 
