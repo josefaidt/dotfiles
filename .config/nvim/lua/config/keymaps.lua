@@ -189,8 +189,26 @@ vim.keymap.set("n", "<C-->", "<C-o>", { desc = "Jump to previous position" })
 vim.keymap.set("n", "<C-=>", "<C-i>", { desc = "Jump to next position" })
 
 vim.keymap.set("n", "<leader>br", function()
-	vim.cmd("checktime")
-	vim.notify("Buffer reloaded from disk", vim.log.levels.INFO)
+	local function reload()
+		vim.cmd("edit!")
+		vim.notify("Buffer reloaded from disk", vim.log.levels.INFO)
+	end
+
+	if not vim.bo.modified then
+		reload()
+		return
+	end
+
+	vim.ui.select({ "Save and reload", "Discard and reload", "Cancel" }, {
+		prompt = "Buffer has unsaved changes:",
+	}, function(choice)
+		if choice == "Save and reload" then
+			vim.cmd("write")
+			reload()
+		elseif choice == "Discard and reload" then
+			reload()
+		end
+	end)
 end, { desc = "Buffer reload from disk" })
 
 -- =============================================================================
