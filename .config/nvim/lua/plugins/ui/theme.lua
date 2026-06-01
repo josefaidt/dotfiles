@@ -168,4 +168,15 @@ return {
 		"EdenEast/nightfox.nvim",
 		lazy = true,
 	},
+	-- Gruvbox Material — single colorscheme name; variants tuned via vim.g.gruvbox_material_*.
+	{
+		"sainnhe/gruvbox-material",
+		lazy = true,
+		init = function()
+			vim.g.gruvbox_material_background = "medium" -- 'hard' | 'medium' | 'soft'
+			vim.g.gruvbox_material_foreground = "material" -- 'material' | 'mix' | 'original'
+			vim.g.gruvbox_material_better_performance = 1
+			vim.g.gruvbox_material_enable_italic = 1
+		end,
+	},
 }

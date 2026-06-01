@@ -389,43 +389,73 @@ end, { desc = "Select session" })
 -- =============================================================================
 
 vim.keymap.set("n", "<leader>uc", function()
-	---@type string[]
+	---@param colors string colorscheme name
+	---@param vars? table<string, any> vim.g.* values to set before applying
+	---@return fun() apply
+	local function applier(colors, vars)
+		return function()
+			if vars then
+				for k, v in pairs(vars) do
+					vim.g[k] = v
+				end
+			end
+			vim.cmd.colorscheme(colors)
+		end
+	end
+
+	---@class ThemeChoice
+	---@field label string display name + key for "(current)" check
+	---@field apply fun()
+
+	---@type ThemeChoice[]
 	local themes = {
-		"mellow",
-		"everforest",
-		"catppuccin",
-		"catppuccin-latte",
-		"catppuccin-frappe",
-		"catppuccin-macchiato",
-		"catppuccin-mocha",
-		"nightfox",
-		"dayfox",
-		"dawnfox",
-		"duskfox",
-		"nordfox",
-		"terafox",
-		"carbonfox",
-		"rouge2",
+		{ label = "mellow", apply = applier("mellow") },
+		{ label = "everforest", apply = applier("everforest") },
+		{ label = "catppuccin", apply = applier("catppuccin") },
+		{ label = "catppuccin-latte", apply = applier("catppuccin-latte") },
+		{ label = "catppuccin-frappe", apply = applier("catppuccin-frappe") },
+		{ label = "catppuccin-macchiato", apply = applier("catppuccin-macchiato") },
+		{ label = "catppuccin-mocha", apply = applier("catppuccin-mocha") },
+		{ label = "nightfox", apply = applier("nightfox") },
+		{ label = "dayfox", apply = applier("dayfox") },
+		{ label = "dawnfox", apply = applier("dawnfox") },
+		{ label = "duskfox", apply = applier("duskfox") },
+		{ label = "nordfox", apply = applier("nordfox") },
+		{ label = "terafox", apply = applier("terafox") },
+		{ label = "carbonfox", apply = applier("carbonfox") },
+		{
+			label = "gruvbox-material-hard",
+			apply = applier("gruvbox-material", { gruvbox_material_background = "hard" }),
+		},
+		{
+			label = "gruvbox-material-medium",
+			apply = applier("gruvbox-material", { gruvbox_material_background = "medium" }),
+		},
+		{
+			label = "gruvbox-material-soft",
+			apply = applier("gruvbox-material", { gruvbox_material_background = "soft" }),
+		},
+		{ label = "rouge2", apply = applier("rouge2") },
 	}
 
 	vim.ui.select(
 		themes,
 		{
 			prompt = "Select Theme:",
-			---@param item string
+			---@param item ThemeChoice
 			---@return string
 			format_item = function(item)
-				local current = vim.g.colors_name
-				if item == current then
-					return item .. " (current)"
+				if item.label == vim.g.theme_picker_current then
+					return item.label .. " (current)"
 				end
-				return item
+				return item.label
 			end,
-		}, ---@param choice? string
+		}, ---@param choice? ThemeChoice
 		function(choice)
 			if choice then
-				vim.cmd.colorscheme(choice)
-				vim.notify("Switched to " .. choice, vim.log.levels.INFO)
+				choice.apply()
+				vim.g.theme_picker_current = choice.label
+				vim.notify("Switched to " .. choice.label, vim.log.levels.INFO)
 			end
 		end
 	)
