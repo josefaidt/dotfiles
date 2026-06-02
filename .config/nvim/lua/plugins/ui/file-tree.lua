@@ -107,13 +107,22 @@ return {
 								local dir = vim.fn.fnamemodify(old_path, ":h")
 								local new_path = dir .. "/" .. new_name
 
-								-- Check if we're in a git repo
-								local in_git_repo =
-									vim.fn.system("git rev-parse --is-inside-work-tree 2>/dev/null"):match("true")
+								-- Use git mv only when both: (a) we're in a git repo, AND
+								-- (b) the file is actually tracked. Untracked files in a git repo
+								-- (or files in a freshly `git init`'d repo) must use plain rename
+								-- because `git mv` errors on them.
+								local cwd = vim.fn.fnamemodify(old_path, ":h")
+								local in_git_repo = vim.fn
+									.system({ "git", "-C", cwd, "rev-parse", "--is-inside-work-tree" })
+									:match("true")
+								local tracked = false
+								if in_git_repo then
+									vim.fn.system({ "git", "-C", cwd, "ls-files", "--error-unmatch", old_path })
+									tracked = vim.v.shell_error == 0
+								end
 
 								local success
-								if in_git_repo then
-									-- Use git mv
+								if tracked then
 									local result = vim.fn.system({ "git", "mv", old_path, new_path })
 									success = vim.v.shell_error == 0
 									if not success then
@@ -125,7 +134,6 @@ return {
 										)
 									end
 								else
-									-- Use regular rename
 									success = vim.loop.fs_rename(old_path, new_path)
 									if not success then
 										vim.notify("Rename failed", vim.log.levels.ERROR)
