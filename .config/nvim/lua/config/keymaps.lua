@@ -359,10 +359,53 @@ vim.keymap.set("n", "<leader>sj", function()
 	Snacks.picker.jumps()
 end, { desc = "Search jumplist" })
 
--- Grep across project
+-- Capture the grep pattern when results are sent to the quickfix list, so
+-- <leader>sR can pre-fill it. Cleared again when <leader>sR consumes it so
+-- stale values from old sessions don't leak in.
+local last_grep_pattern = nil
+
+-- Grep across project. Wraps the default <C-q> action to stash the live search
+-- before delegating to snacks' built-in qflist sender.
 vim.keymap.set("n", "<leader>sg", function()
-	Snacks.picker.grep()
+	Snacks.picker.grep({
+		actions = {
+			qflist = function(picker)
+				local f = picker.input and picker.input.filter
+				last_grep_pattern = f and (f.search ~= "" and f.search or f.pattern) or nil
+				require("snacks.picker.actions").qflist(picker)
+			end,
+		},
+	})
 end, { desc = "Grep all text" })
+
+-- Project-wide search & replace via quickfix.
+-- Workflow: <leader>sg → narrow → <C-q> to send results to quickfix → <leader>sR.
+vim.keymap.set("n", "<leader>sR", function()
+	local qf = vim.fn.getqflist()
+	if #qf == 0 then
+		vim.notify("Quickfix is empty — run <leader>sg, then <C-q> to send results", vim.log.levels.WARN)
+		return
+	end
+
+	local default_pat = last_grep_pattern or ""
+	last_grep_pattern = nil -- consume; next replace starts fresh
+	vim.ui.input({ prompt = "Pattern: ", default = default_pat }, function(pattern)
+		if not pattern or pattern == "" then
+			return
+		end
+		vim.ui.input({ prompt = "Replacement: " }, function(replacement)
+			if replacement == nil then
+				return
+			end
+			-- `c` flag prompts per-match; drop it if you want fully unattended replace.
+			local cmd = string.format("cdo s/%s/%s/gc | update", pattern, replacement)
+			local ok, err = pcall(vim.cmd, cmd)
+			if not ok then
+				vim.notify("Replace failed: " .. err, vim.log.levels.ERROR)
+			end
+		end)
+	end)
+end, { desc = "Search & replace across quickfix" })
 
 -- Fuzzy search in current buffer
 vim.keymap.set("n", "<leader>/", function()
