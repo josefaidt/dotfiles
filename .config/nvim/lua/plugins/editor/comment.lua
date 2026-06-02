@@ -11,6 +11,14 @@ return {
       padding = true,
       sticky = true,
       ignore = "^$", -- Ignore empty lines
+      -- For filetypes Comment.nvim's treesitter-based calculate path can't handle
+      -- (notably `env` for .env*, where get_parser returns nil and the lookup
+      -- silently bails), short-circuit with the buffer's commentstring.
+      pre_hook = function()
+        if vim.bo.filetype == "env" then
+          return "#%s"
+        end
+      end,
     })
 
     -- Custom keybindings for <leader>m
