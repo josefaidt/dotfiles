@@ -23,10 +23,15 @@ return {
 		local Rule = require("nvim-autopairs.rule")
 		local cond = require("nvim-autopairs.conds")
 
-		-- Rule for /* */ comments with proper multiline formatting
+		-- Multi-line block comments in JS/TS:
+		--   `/*`  + <enter> → /* │ */ split across lines.
+		--   `/**` + <enter> → JSDoc block (extra rule below). Without it,
+		--   autopairs' CR check sees `**` before the cursor, not `/*`, so
+		--   the closing `*/` never lands on its own line.
+		local js_fts = { "javascript", "typescript", "javascriptreact", "typescriptreact" }
 		npairs.add_rules({
-			Rule("/*", "*/", { "javascript", "typescript", "javascriptreact", "typescriptreact" })
-				:with_pair(cond.not_before_text("/")), -- Don't trigger on ///
+			Rule("/*", "*/", js_fts):with_pair(cond.not_before_text("/")), -- skip ///
+			Rule("/**", "*/", js_fts), -- JSDoc-aware CR expansion
 		})
 	end,
 }

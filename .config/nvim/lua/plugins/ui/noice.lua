@@ -78,7 +78,10 @@ return {
 		-- you can enable a preset for easier configuration
 		presets = {
 			bottom_search = false, -- use a centered popup cmdline for search
-			command_palette = false, -- disable to use custom centered views
+			-- Stacks the cmdline + a completions popupmenu (cmdline_popupmenu).
+			-- Preset anchors near the top; we re-center via views.cmdline_popup
+			-- below to keep your established layout.
+			command_palette = true,
 			long_message_to_split = true, -- long messages will be sent to a split
 			inc_rename = false, -- enables an input dialog for inc-rename.nvim
 			lsp_doc_border = false, -- managed manually via views.hover below
@@ -113,18 +116,12 @@ return {
 					concealcursor = "",
 				},
 			},
-			-- Center the cmdline popup
+			-- Re-center the cmdline (command_palette preset anchors it near top).
+			-- Width is min_width=60 from the preset; we keep "auto" so longer
+			-- inputs grow naturally.
 			cmdline_popup = {
-				backend = "popup",
-				relative = "editor",
-				position = {
-					row = "50%",
-					col = "50%",
-				},
-				size = {
-					width = 60,
-					height = "auto",
-				},
+				position = { row = "40%", col = "50%" },
+				size = { min_width = 60, width = "auto", height = "auto" },
 				border = {
 					style = "rounded",
 					padding = { 0, 1 },
@@ -133,6 +130,21 @@ return {
 					winblend = 0,
 					winhighlight = {
 						Normal = "NoiceCmdlinePopup",
+						FloatBorder = "NoiceCmdlinePopupBorder",
+					},
+				},
+			},
+			-- Completions popup that appears below the cmdline.
+			cmdline_popupmenu = {
+				position = { row = "40%", col = "50%" },
+				size = { width = 60, height = "auto", max_height = 12 },
+				border = {
+					style = "rounded",
+					padding = { 0, 1 },
+				},
+				win_options = {
+					winhighlight = {
+						Normal = "NormalFloat",
 						FloatBorder = "NoiceCmdlinePopupBorder",
 					},
 				},
