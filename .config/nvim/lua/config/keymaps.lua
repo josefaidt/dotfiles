@@ -26,9 +26,6 @@ local function find_git_root()
 	return vim.fn.getcwd()
 end
 
--- Initial working directory captured at startup (prefer git root).
-local initial_cwd = find_git_root()
-
 ---Find the nearest package.json directory by searching upward from current file
 ---@return string|nil The directory containing package.json, or nil if not found
 local function find_package_root()
@@ -304,13 +301,13 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" }
 
 -- File finding
 vim.keymap.set("n", "<leader>p", function()
-	Snacks.picker.files({ cwd = initial_cwd })
+	Snacks.picker.files({ cwd = find_git_root() })
 end, { desc = "Find files" })
 vim.keymap.set("n", "<leader>ff", function()
-	Snacks.picker.files({ cwd = initial_cwd })
+	Snacks.picker.files({ cwd = find_git_root() })
 end, { desc = "Find files" })
 vim.keymap.set("n", "<leader>P", function()
-	Snacks.picker.commands()
+	Snacks.picker.commands({ layout = "select" })
 end, { desc = "Command palette" })
 
 vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "New file" })
@@ -333,7 +330,7 @@ vim.keymap.set("n", "<leader>sh", function()
 	Snacks.picker.help()
 end, { desc = "Search help" })
 vim.keymap.set("n", "<leader>sk", function()
-	Snacks.picker.keymaps()
+	Snacks.picker.keymaps({ layout = "select" })
 end, { desc = "Search keymaps" })
 vim.keymap.set("n", "<leader><leader>", function()
 	Snacks.picker.buffers()
