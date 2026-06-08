@@ -85,7 +85,9 @@ end
 
 ---Open a snacks picker for selecting a git worktree.
 ---The selected worktree changes the current tab's directory via `tcd`.
-local function pick_worktree()
+---@param opts? { on_select?: fun(path: string) } optional post-select hook
+local function pick_worktree(opts)
+	opts = opts or {}
 	local worktrees = list_worktrees()
 	if #worktrees == 0 then
 		vim.notify("No git worktrees found", vim.log.levels.WARN)
@@ -97,6 +99,7 @@ local function pick_worktree()
 	Snacks.picker.pick({
 		source = "git_worktrees",
 		title = "Git Worktrees",
+		layout = "select", -- preview pane wasn't useful; give the list full width
 		items = vim.tbl_map(function(wt)
 			local branch = wt.branch or "(detached)"
 			local is_current = wt.path == cwd
@@ -122,6 +125,9 @@ local function pick_worktree()
 			picker:close()
 			if item then
 				vim.cmd("tcd " .. vim.fn.fnameescape(item.path))
+				if opts.on_select then
+					opts.on_select(item.path)
+				end
 			end
 		end,
 	})
@@ -422,11 +428,26 @@ end, { desc = "Grep text in current package" })
 -- Git (<leader>g)
 -- =============================================================================
 
-vim.keymap.set("n", "<leader>gw", pick_worktree, { desc = "Git worktrees" })
+vim.keymap.set("n", "<leader>gw", function()
+	pick_worktree()
+end, { desc = "Git worktrees" })
 
 -- Expose pick_worktree as a command so the alpha dashboard can call it
 -- (dashboard buttons feed keystrokes; <leader> sequences don't resolve there).
-vim.api.nvim_create_user_command("PickWorktree", pick_worktree, { desc = "Pick a git worktree" })
+-- :PickWorktree         → switch worktree only
+-- :PickWorktree files   → switch then open file picker (used from alpha so the
+--                          dashboard doesn't linger after selection)
+vim.api.nvim_create_user_command("PickWorktree", function(args)
+	if args.args == "files" then
+		pick_worktree({
+			on_select = function(path)
+				Snacks.picker.files({ cwd = path })
+			end,
+		})
+	else
+		pick_worktree()
+	end
+end, { nargs = "?", desc = "Pick a git worktree" })
 
 -- =============================================================================
 -- Quit (<leader>q)
