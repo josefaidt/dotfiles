@@ -435,13 +435,21 @@ end, { desc = "Git worktrees" })
 -- Expose pick_worktree as a command so the alpha dashboard can call it
 -- (dashboard buttons feed keystrokes; <leader> sequences don't resolve there).
 -- :PickWorktree         → switch worktree only
--- :PickWorktree files   → switch then open file picker (used from alpha so the
---                          dashboard doesn't linger after selection)
+-- :PickWorktree session → switch then restore that worktree's session, falling
+--                          back to a file picker if none exists (used from alpha
+--                          so the dashboard doesn't linger after selection)
 vim.api.nvim_create_user_command("PickWorktree", function(args)
-	if args.args == "files" then
+	if args.args == "session" then
 		pick_worktree({
 			on_select = function(path)
-				Snacks.picker.files({ cwd = path })
+				-- tcd already ran, so persistence.current() resolves to this
+				-- worktree's session. Restore it if present, else show files.
+				local ok, persistence = pcall(require, "persistence")
+				if ok and vim.fn.filereadable(persistence.current()) == 1 then
+					persistence.load()
+				else
+					Snacks.picker.files({ cwd = path })
+				end
 			end,
 		})
 	else
