@@ -72,6 +72,7 @@ return {
 			{ "<leader>s", group = "search" },
 			{ "<leader>sn", group = "noice" },
 			{ "<leader>u", group = "ui" },
+			{ "gr", group = "goto/refactor" },
 		},
 
 		triggers = {
