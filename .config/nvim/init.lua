@@ -207,6 +207,31 @@ vim.api.nvim_create_autocmd("SwapExists", {
 	end,
 })
 
+-- vim.filetype.detect is part of Neovim's runtime but isn't reachable via
+-- the luajit path when luarocks (e.g. image.nvim) is on the search path.
+-- Stub it so unknown-filetype detection fails silently (returns nil) instead
+-- of throwing, which would block the buffer from opening at all.
+if not pcall(require, "vim.filetype.detect") then
+	package.preload["vim.filetype.detect"] = function()
+		return setmetatable({}, {
+			__index = function()
+				return function()
+					return nil
+				end
+			end,
+		})
+	end
+end
+
+-- Register .dev.vars as sh filetype (KEY=VALUE env format) to prevent
+-- filetype detection from falling through to vim.filetype.detect which
+-- is missing from the luajit path in Neovim 0.12.
+vim.filetype.add({
+	pattern = {
+		["%.dev%.vars"] = "sh",
+	},
+})
+
 -- Markdown-specific settings
 vim.api.nvim_create_autocmd("FileType", {
 	desc = "Disable hard line wrapping for markdown (keep soft visual wrap via linebreak)",
