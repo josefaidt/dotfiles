@@ -4,325 +4,370 @@
 
 ---@type LazySpec[]
 return {
-	{
-		"nvim-tree/nvim-web-devicons",
-		opts = {
-			color_icons = false,
-		},
-	},
-	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-tree/nvim-web-devicons",
-		},
-		lazy = false, -- neo-tree will lazily load itself
-		-- Keymaps are configured in lua/config/keymaps.lua
-		config = function()
-			-- Strip the "Neo-tree Popup\n" prefix that Neo-tree prepends to prompts when
-			-- cmdheight=0 and use_popups_for_input=false (see neo-tree/ui/inputs.lua).
-			-- Without this, noice renders "Neo-tree Popup" as a visible title line in
-			-- the input dialog.
-			local orig_ui_input = vim.ui.input
-			vim.ui.input = function(opts, on_confirm)
-				if opts and type(opts.prompt) == "string" then
-					opts = vim.tbl_extend("force", opts, {
-						prompt = opts.prompt:gsub("^Neo%-tree Popup\n", ""),
-					})
-				end
-				return orig_ui_input(opts, on_confirm)
-			end
+  {
+    "nvim-tree/nvim-web-devicons",
+    opts = {
+      color_icons = false,
+    },
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    lazy = false, -- neo-tree will lazily load itself
+    -- Keymaps are configured in lua/config/keymaps.lua
+    config = function()
+      -- Strip the "Neo-tree Popup\n" prefix that Neo-tree prepends to prompts when
+      -- cmdheight=0 and use_popups_for_input=false (see neo-tree/ui/inputs.lua).
+      -- Without this, noice renders "Neo-tree Popup" as a visible title line in
+      -- the input dialog.
+      local orig_ui_input = vim.ui.input
+      vim.ui.input = function(opts, on_confirm)
+        if opts and type(opts.prompt) == "string" then
+          opts = vim.tbl_extend("force", opts, {
+            prompt = opts.prompt:gsub("^Neo%-tree Popup\n", ""),
+          })
+        end
+        return orig_ui_input(opts, on_confirm)
+      end
 
-			-- Define custom highlight groups for git status using theme colors
-			vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" }) -- green
-			vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" }) -- yellow
-			vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { link = "DiagnosticError" }) -- red
-			vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" }) -- purple/magenta
+      -- Define custom highlight groups for git status using theme colors
+      vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" }) -- green
+      vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" }) -- yellow
+      vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { link = "DiagnosticError" }) -- red
+      vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" }) -- purple/magenta
 
-			require("neo-tree").setup({
-				-- Use vim.ui for all prompts (noice will intercept and center them)
-				use_popups_for_input = false,
-				window = {
-					position = "right", -- Position on the right side
-					width = 30, -- Default is 40, try 25-35
-					mappings = {
-						-- Use native neotree delete (will use popup near sidebar)
-						["O"] = function(state)
-							local node = state.tree:get_node()
-							local path = node:get_id()
-							vim.fn.jobstart({ "open", path }, { detach = true })
-						end,
-						-- Custom delete with confirm prompt
-						["d"] = function(state)
-							local node = state.tree:get_node()
-							local path = node:get_id()
-							local name = vim.fn.fnamemodify(path, ":t")
-							local type_str = node.type == "directory" and "directory" or "file"
+      require("neo-tree").setup({
+        -- Use vim.ui for all prompts (noice will intercept and center them)
+        use_popups_for_input = false,
+        window = {
+          position = "right", -- Position on the right side
+          width = 30, -- Default is 40, try 25-35
+          -- Never grow the sidebar to fit long filenames (this is the
+          -- "auto-resize" behavior). Off by default, but pinned here so a
+          -- stray `e` keypress can't toggle it on; long names truncate
+          -- instead. Width stays fixed at 30 (also enforced by edgy).
+          auto_expand_width = false,
+          mappings = {
+            -- Disable the built-in toggle so the sidebar can't be flipped
+            -- into auto-expanding width by accident.
+            ["e"] = "noop",
+            -- Use native neotree delete (will use popup near sidebar)
+            ["O"] = function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
+              vim.fn.jobstart({ "open", path }, { detach = true })
+            end,
+            -- Custom delete with confirm prompt
+            ["d"] = function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
+              local name = vim.fn.fnamemodify(path, ":t")
+              local type_str = node.type == "directory" and "directory"
+                or "file"
 
-							-- Use vim.fn.confirm for consistent noice UI
-							local choice = vim.fn.confirm(
-								string.format("Delete %s '%s'?", type_str, name),
-								"&Yes\n&No",
-								2 -- default to No
-							)
+              -- Use vim.fn.confirm for consistent noice UI
+              local choice = vim.fn.confirm(
+                string.format("Delete %s '%s'?", type_str, name),
+                "&Yes\n&No",
+                2 -- default to No
+              )
 
-							if choice == 1 then -- Yes
-								local success
-								if node.type == "directory" then
-									-- Use vim.fn.delete with 'rf' flag for recursive directory deletion
-									success = vim.fn.delete(path, "rf") == 0
-								else
-									success = vim.fn.delete(path) == 0
-								end
+              if choice == 1 then -- Yes
+                local success
+                if node.type == "directory" then
+                  -- Use vim.fn.delete with 'rf' flag for recursive directory deletion
+                  success = vim.fn.delete(path, "rf") == 0
+                else
+                  success = vim.fn.delete(path) == 0
+                end
 
-								if success then
-									require("neo-tree.sources.manager").refresh(state.name)
-									vim.notify(string.format("Deleted %s: %s", type_str, name), vim.log.levels.INFO)
-								else
-									vim.notify(
-										string.format("Failed to delete %s: %s", type_str, name),
-										vim.log.levels.ERROR
-									)
-								end
-							end
-						end,
-						-- Custom rename that uses git mv when in a git repo
-						["r"] = function(state)
-							local node = state.tree:get_node()
-							local old_path = node:get_id()
-							local old_name = vim.fn.fnamemodify(old_path, ":t")
+                if success then
+                  require("neo-tree.sources.manager").refresh(state.name)
+                  vim.notify(
+                    string.format("Deleted %s: %s", type_str, name),
+                    vim.log.levels.INFO
+                  )
+                else
+                  vim.notify(
+                    string.format("Failed to delete %s: %s", type_str, name),
+                    vim.log.levels.ERROR
+                  )
+                end
+              end
+            end,
+            -- Custom rename that uses git mv when in a git repo
+            ["r"] = function(state)
+              local node = state.tree:get_node()
+              local old_path = node:get_id()
+              local old_name = vim.fn.fnamemodify(old_path, ":t")
 
-							-- Prompt for new name
-							vim.ui.input({
-								prompt = "Rename to: ",
-								default = old_name,
-							}, function(new_name)
-								if not new_name or new_name == "" or new_name == old_name then
-									return
-								end
+              -- Prompt for new name
+              vim.ui.input({
+                prompt = "Rename to: ",
+                default = old_name,
+              }, function(new_name)
+                if not new_name or new_name == "" or new_name == old_name then
+                  return
+                end
 
-								-- Get the directory and construct new path
-								local dir = vim.fn.fnamemodify(old_path, ":h")
-								local new_path = dir .. "/" .. new_name
+                -- Get the directory and construct new path
+                local dir = vim.fn.fnamemodify(old_path, ":h")
+                local new_path = dir .. "/" .. new_name
 
-								-- Use git mv only when both: (a) we're in a git repo, AND
-								-- (b) the file is actually tracked. Untracked files in a git repo
-								-- (or files in a freshly `git init`'d repo) must use plain rename
-								-- because `git mv` errors on them.
-								local cwd = vim.fn.fnamemodify(old_path, ":h")
-								local in_git_repo = vim.fn
-									.system({ "git", "-C", cwd, "rev-parse", "--is-inside-work-tree" })
-									:match("true")
-								local tracked = false
-								if in_git_repo then
-									vim.fn.system({ "git", "-C", cwd, "ls-files", "--error-unmatch", old_path })
-									tracked = vim.v.shell_error == 0
-								end
+                -- Use git mv only when both: (a) we're in a git repo, AND
+                -- (b) the file is actually tracked. Untracked files in a git repo
+                -- (or files in a freshly `git init`'d repo) must use plain rename
+                -- because `git mv` errors on them.
+                local cwd = vim.fn.fnamemodify(old_path, ":h")
+                local in_git_repo = vim.fn
+                  .system({ "git", "-C", cwd, "rev-parse", "--is-inside-work-tree" })
+                  :match("true")
+                local tracked = false
+                if in_git_repo then
+                  vim.fn.system({
+                    "git",
+                    "-C",
+                    cwd,
+                    "ls-files",
+                    "--error-unmatch",
+                    old_path,
+                  })
+                  tracked = vim.v.shell_error == 0
+                end
 
-								local success
-								if tracked then
-									local result = vim.fn.system({ "git", "mv", old_path, new_path })
-									success = vim.v.shell_error == 0
-									if not success then
-										vim.notify("git mv failed: " .. result, vim.log.levels.ERROR)
-									else
-										vim.notify(
-											"Renamed with git mv: " .. old_name .. " → " .. new_name,
-											vim.log.levels.INFO
-										)
-									end
-								else
-									success = vim.loop.fs_rename(old_path, new_path)
-									if not success then
-										vim.notify("Rename failed", vim.log.levels.ERROR)
-									else
-										vim.notify("Renamed: " .. old_name .. " → " .. new_name, vim.log.levels.INFO)
-									end
-								end
+                local success
+                if tracked then
+                  local result =
+                    vim.fn.system({ "git", "mv", old_path, new_path })
+                  success = vim.v.shell_error == 0
+                  if not success then
+                    vim.notify(
+                      "git mv failed: " .. result,
+                      vim.log.levels.ERROR
+                    )
+                  else
+                    vim.notify(
+                      "Renamed with git mv: " .. old_name .. " → " .. new_name,
+                      vim.log.levels.INFO
+                    )
+                  end
+                else
+                  success = vim.loop.fs_rename(old_path, new_path)
+                  if not success then
+                    vim.notify("Rename failed", vim.log.levels.ERROR)
+                  else
+                    vim.notify(
+                      "Renamed: " .. old_name .. " → " .. new_name,
+                      vim.log.levels.INFO
+                    )
+                  end
+                end
 
-								if success then
-									-- Refresh neo-tree
-									require("neo-tree.sources.manager").refresh(state.name)
-								end
-							end)
-						end,
-						-- Show file info (name, size, permissions, owner, dates)
-					["K"] = function(state)
-						local node = state.tree:get_node()
-						local path = node:get_id()
+                if success then
+                  -- Refresh neo-tree
+                  require("neo-tree.sources.manager").refresh(state.name)
+                end
+              end)
+            end,
+            -- Show file info (name, size, permissions, owner, dates)
+            ["K"] = function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
 
-						local stat = vim.uv.fs_stat(path)
-						if not stat then
-							vim.notify("Could not stat: " .. path, vim.log.levels.ERROR)
-							return
-						end
+              local stat = vim.uv.fs_stat(path)
+              if not stat then
+                vim.notify("Could not stat: " .. path, vim.log.levels.ERROR)
+                return
+              end
 
-						-- Format bytes into human-readable size
-						local function fmt_size(bytes)
-							if bytes < 1024 then
-								return bytes .. " B"
-							elseif bytes < 1024 * 1024 then
-								return string.format("%.1f KB", bytes / 1024)
-							elseif bytes < 1024 * 1024 * 1024 then
-								return string.format("%.1f MB", bytes / (1024 * 1024))
-							else
-								return string.format("%.1f GB", bytes / (1024 * 1024 * 1024))
-							end
-						end
+              -- Format bytes into human-readable size
+              local function fmt_size(bytes)
+                if bytes < 1024 then
+                  return bytes .. " B"
+                elseif bytes < 1024 * 1024 then
+                  return string.format("%.1f KB", bytes / 1024)
+                elseif bytes < 1024 * 1024 * 1024 then
+                  return string.format("%.1f MB", bytes / (1024 * 1024))
+                else
+                  return string.format("%.1f GB", bytes / (1024 * 1024 * 1024))
+                end
+              end
 
-						-- Format unix timestamp as local datetime string
-						local function fmt_time(ts)
-							return ts and os.date("%Y-%m-%d %H:%M:%S", ts) or "unknown"
-						end
+              -- Format unix timestamp as local datetime string
+              local function fmt_time(ts)
+                return ts and os.date("%Y-%m-%d %H:%M:%S", ts) or "unknown"
+              end
 
-						-- Get owner via `stat` shell command (uv doesn't expose uid->name)
-						local owner = vim.fn.system("stat -f '%Su' " .. vim.fn.shellescape(path)):gsub("\n", "")
+              -- Get owner via `stat` shell command (uv doesn't expose uid->name)
+              local owner = vim.fn
+                .system("stat -f '%Su' " .. vim.fn.shellescape(path))
+                :gsub("\n", "")
 
-						-- Build permission string (rwxrwxrwx style) from mode bits
-						local function fmt_mode(mode)
-							local perms = { "---", "--x", "-w-", "-wx", "r--", "r-x", "rw-", "rwx" }
-							local function bits(shift)
-								return perms[math.floor(mode / (2 ^ shift)) % 8 + 1]
-							end
-							local prefix = stat.type == "directory" and "d" or "-"
-							return prefix .. bits(6) .. bits(3) .. bits(0)
-						end
+              -- Build permission string (rwxrwxrwx style) from mode bits
+              local function fmt_mode(mode)
+                local perms =
+                  { "---", "--x", "-w-", "-wx", "r--", "r-x", "rw-", "rwx" }
+                local function bits(shift)
+                  return perms[math.floor(mode / (2 ^ shift)) % 8 + 1]
+                end
+                local prefix = stat.type == "directory" and "d" or "-"
+                return prefix .. bits(6) .. bits(3) .. bits(0)
+              end
 
-						local lines = {
-							"  " .. vim.fn.fnamemodify(path, ":t"),
-							"",
-							"  Path    " .. vim.fn.fnamemodify(path, ":~"),
-							"  Type    " .. stat.type,
-							"  Size    " .. fmt_size(stat.size),
-							"  Mode    " .. fmt_mode(stat.mode),
-							"  Owner   " .. owner,
-							"  Modified " .. fmt_time(stat.mtime and stat.mtime.sec),
-							"  Created  " .. fmt_time(stat.birthtime and stat.birthtime.sec),
-						}
+              local lines = {
+                "  " .. vim.fn.fnamemodify(path, ":t"),
+                "",
+                "  Path    " .. vim.fn.fnamemodify(path, ":~"),
+                "  Type    " .. stat.type,
+                "  Size    " .. fmt_size(stat.size),
+                "  Mode    " .. fmt_mode(stat.mode),
+                "  Owner   " .. owner,
+                "  Modified " .. fmt_time(stat.mtime and stat.mtime.sec),
+                "  Created  "
+                  .. fmt_time(stat.birthtime and stat.birthtime.sec),
+              }
 
-						local width = 0
-						for _, l in ipairs(lines) do
-							width = math.max(width, #l + 2)
-						end
-						local height = #lines
+              local width = 0
+              for _, l in ipairs(lines) do
+                width = math.max(width, #l + 2)
+              end
+              local height = #lines
 
-						local buf = vim.api.nvim_create_buf(false, true)
-						vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-						vim.bo[buf].modifiable = false
+              local buf = vim.api.nvim_create_buf(false, true)
+              vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+              vim.bo[buf].modifiable = false
 
-						local win = vim.api.nvim_open_win(buf, true, {
-							relative = "editor",
-							width = width,
-							height = height,
-							row = math.floor((vim.o.lines - height) / 2),
-							col = math.floor((vim.o.columns - width) / 2),
-							style = "minimal",
-							border = "rounded",
-							title = " File Info ",
-							title_pos = "center",
-						})
-						vim.wo[win].cursorline = false
+              local win = vim.api.nvim_open_win(buf, true, {
+                relative = "editor",
+                width = width,
+                height = height,
+                row = math.floor((vim.o.lines - height) / 2),
+                col = math.floor((vim.o.columns - width) / 2),
+                style = "minimal",
+                border = "rounded",
+                title = " File Info ",
+                title_pos = "center",
+              })
+              vim.wo[win].cursorline = false
 
-						-- Close on any key
-						vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = buf, silent = true })
-						vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = buf, silent = true })
-						vim.keymap.set("n", "K", "<cmd>close<CR>", { buffer = buf, silent = true })
-					end,
-					-- Override Neo-tree's default <C-x> (fuzzy finder clear) to match global behavior
-						-- We don't use Neo-tree's fuzzy finder, so this ensures <C-x> always opens Lazy
-						["<C-x>"] = function()
-							vim.cmd("Lazy")
-						end,
-						-- Search files in folder (only works when in neo-tree)
-						["<leader>sf"] = function(state)
-							local node = state.tree:get_node()
-							local path = node:get_id()
-							-- If it's a file, get its parent directory
-							if node.type == "file" then
-								path = vim.fn.fnamemodify(path, ":h")
-							end
-							Snacks.picker.files({ cwd = path })
-						end,
-						-- Git add all files
-						["gA"] = function(state)
-							vim.fn.system("git add .")
-							require("neo-tree.sources.manager").refresh(state.name)
-							vim.notify("Staged all files", vim.log.levels.INFO)
-						end,
-					},
-				},
-				local_settings = { wrap = true },
-				enable_diagnostics = false,
-				enable_git_status = true,
-				hide_root_node = true, -- Hide the top level directory name
-				filesystem = {
-					follow_current_file = {
-						enabled = true, -- Expand folders to reveal current file
-						leave_dirs_open = true, -- Close folders when navigating away
-					},
-					-- Auto-refresh when files are created externally (e.g., by Claude, bun init)
-					use_libuv_file_watcher = true,
-					-- Add event handler configuration
-					async_directory_scan = "auto",
-					scan_mode = "shallow",
-					filtered_items = {
-						visible = true, -- Show filtered items dimmed
-						hide_dotfiles = false,
-						hide_gitignored = false,
-						hide_by_name = {
-							-- These will be completely hidden (not even dimmed)
-							".git",
-							".DS_Store",
-						},
-						never_show = {
-							".git",
-							".DS_Store",
-						},
-					},
-				},
-				default_component_configs = {
-					indent = {
-						indent_size = 2,
-						padding = 1,
-						with_markers = true,
-					},
-					icon = {
-						folder_closed = "",
-						folder_open = "",
-						folder_empty = "",
-						default = "",
-					},
-					-- Add more vertical spacing between items
-					name = {
-						trailing_slash = false,
-						use_git_status_colors = true,
-						highlight = "NeoTreeFileName",
-					},
-					git_status = {
-						symbols = {
-							added = "A",
-							modified = "M",
-							deleted = "D",
-							renamed = "R",
-							untracked = "U",
-							ignored = "I",
-							unstaged = "",
-							staged = "S",
-							conflict = "C",
-						},
-					},
-					symlink_target = {
-						enabled = false, -- Hide the "link:" prefix for symlinks
-					},
-				},
-				reveal = true,
-				source_selector = {
-					winbar = false, -- Disable tabs (file/buffer/git) - using DiffView instead
-					statusline = false,
-				},
-			})
-		end,
-	},
+              -- Close on any key
+              vim.keymap.set(
+                "n",
+                "q",
+                "<cmd>close<CR>",
+                { buffer = buf, silent = true }
+              )
+              vim.keymap.set(
+                "n",
+                "<Esc>",
+                "<cmd>close<CR>",
+                { buffer = buf, silent = true }
+              )
+              vim.keymap.set(
+                "n",
+                "K",
+                "<cmd>close<CR>",
+                { buffer = buf, silent = true }
+              )
+            end,
+            -- Override Neo-tree's default <C-x> (fuzzy finder clear) to match global behavior
+            -- We don't use Neo-tree's fuzzy finder, so this ensures <C-x> always opens Lazy
+            ["<C-x>"] = function()
+              vim.cmd("Lazy")
+            end,
+            -- Search files in folder (only works when in neo-tree)
+            ["<leader>sf"] = function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
+              -- If it's a file, get its parent directory
+              if node.type == "file" then
+                path = vim.fn.fnamemodify(path, ":h")
+              end
+              Snacks.picker.files({ cwd = path })
+            end,
+            -- Git add all files
+            ["gA"] = function(state)
+              vim.fn.system("git add .")
+              require("neo-tree.sources.manager").refresh(state.name)
+              vim.notify("Staged all files", vim.log.levels.INFO)
+            end,
+          },
+        },
+        local_settings = { wrap = true },
+        enable_diagnostics = false,
+        enable_git_status = true,
+        hide_root_node = true, -- Hide the top level directory name
+        filesystem = {
+          follow_current_file = {
+            enabled = true, -- Expand folders to reveal current file
+            leave_dirs_open = true, -- Close folders when navigating away
+          },
+          -- Auto-refresh when files are created externally (e.g., by Claude, bun init)
+          use_libuv_file_watcher = true,
+          -- Add event handler configuration
+          async_directory_scan = "auto",
+          scan_mode = "shallow",
+          filtered_items = {
+            visible = true, -- Show filtered items dimmed
+            hide_dotfiles = false,
+            hide_gitignored = false,
+            hide_by_name = {
+              -- These will be completely hidden (not even dimmed)
+              ".git",
+              ".DS_Store",
+            },
+            never_show = {
+              ".git",
+              ".DS_Store",
+            },
+          },
+        },
+        default_component_configs = {
+          indent = {
+            indent_size = 2,
+            padding = 1,
+            with_markers = true,
+          },
+          icon = {
+            folder_closed = "",
+            folder_open = "",
+            folder_empty = "",
+            default = "",
+          },
+          -- Add more vertical spacing between items
+          name = {
+            trailing_slash = false,
+            use_git_status_colors = true,
+            highlight = "NeoTreeFileName",
+          },
+          git_status = {
+            symbols = {
+              added = "A",
+              modified = "M",
+              deleted = "D",
+              renamed = "R",
+              untracked = "U",
+              ignored = "I",
+              unstaged = "",
+              staged = "S",
+              conflict = "C",
+            },
+          },
+          symlink_target = {
+            enabled = false, -- Hide the "link:" prefix for symlinks
+          },
+        },
+        reveal = true,
+        source_selector = {
+          winbar = false, -- Disable tabs (file/buffer/git) - using DiffView instead
+          statusline = false,
+        },
+      })
+    end,
+  },
 }
