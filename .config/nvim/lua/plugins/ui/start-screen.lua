@@ -150,9 +150,25 @@ return {
     -- already preserves window layout, so we just need to fill the void.
     vim.api.nvim_create_autocmd("BufDelete", {
       group = group,
-      nested = true,
-      callback = function()
+      callback = function(ev)
+        -- Ignore buffer churn during startup. lazy.nvim creates and deletes
+        -- scratch buffers while loading plugins; at that point no named buffer
+        -- exists yet, so the "nothing left" check below would fire and pop open
+        -- the dashboard on a plain `nvim` launch. Only react once we're fully
+        -- started and the user is actively editing.
+        if vim.v.vim_did_enter == 0 then
+          return
+        end
+        -- Only react to closing an actual file buffer. Unnamed scratch/plugin
+        -- buffers (which fire BufDelete constantly) must not trigger this.
+        if vim.api.nvim_buf_get_name(ev.buf) == "" then
+          return
+        end
         vim.schedule(function()
+          -- If the dashboard is already up, there's nothing to fill.
+          if vim.bo[vim.api.nvim_get_current_buf()].filetype == "alpha" then
+            return
+          end
           -- Count remaining listed buffers with a real file name.
           for _, buf in ipairs(vim.api.nvim_list_bufs()) do
             if
