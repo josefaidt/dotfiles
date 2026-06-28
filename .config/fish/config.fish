@@ -24,6 +24,8 @@ if status is-interactive
   # abbr --add --position command pi pnpm install
   abbr --add --position command b bun
   abbr --add --position command bi bun install
+  abbr --add --position command bd bun run dev
+  abbr --add --position command bb bun run build
 
   abbr --add --position command c claude
   abbr --add --position command kc kiro-cli chat
