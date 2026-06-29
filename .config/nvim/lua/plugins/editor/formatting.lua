@@ -112,7 +112,7 @@ return {
 		-- Absolute path to prettier-plugin-astro installed under the nvim config dir,
 		-- plus the dotfile-managed prettier config that references it. Used as a
 		-- fallback so .astro files format without requiring a project-local install.
-		local prettier_global_config = vim.fn.stdpath("config") .. "/.prettierrc.json"
+		local prettier_global_config = vim.fn.stdpath("config") .. "/.prettierrc.cjs"
 		local prettier_astro_plugin = vim.fn.stdpath("config")
 			.. "/prettier-plugins/node_modules/prettier-plugin-astro/dist/index.js"
 
