@@ -1,0 +1,35 @@
+# Everforest Dark Hard theme for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#DBBC7F"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#A7C080"
+      - "bold"
+    inactiveBorderColor:
+      - "#4B565C"
+    optionsTextColor:
+      - "#7FBBB3"
+    selectedLineBgColor:
+      - "#2D353B"
+    selectedRangeBgColor:
+      - "#323C41"
+    cherryPickedCommitFgColor:
+      - "#A7C080"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#A7C080"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#E67E80"
+    defaultFgColor:
+      - "#D3C6AA"
+    searchingActiveBorderColor:
+      - "#DBBC7F"

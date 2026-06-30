@@ -1,0 +1,35 @@
+# Embark theme for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#D4BFFF"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#63F2F1"
+      - "bold"
+    inactiveBorderColor:
+      - "#585273"
+    optionsTextColor:
+      - "#D4BFFF"
+    selectedLineBgColor:
+      - "#3E3859"
+    selectedRangeBgColor:
+      - "#2D2B40"
+    cherryPickedCommitBgColor:
+      - "#585273"
+    cherryPickedCommitFgColor:
+      - "#91DDFF"
+    markedBaseCommitFgColor:
+      - "#D4BFFF"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#F48FB1"
+    defaultFgColor:
+      - "#CBE3E7"
+    searchingActiveBorderColor:
+      - "#FFE6B3"

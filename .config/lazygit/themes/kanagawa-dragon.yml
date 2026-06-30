@@ -1,0 +1,35 @@
+# Kanagawa Dragon theme for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#C4B28A"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#87A987"
+      - "bold"
+    inactiveBorderColor:
+      - "#625E5A"
+    optionsTextColor:
+      - "#7FB4CA"
+    selectedLineBgColor:
+      - "#282727"
+    selectedRangeBgColor:
+      - "#1F1C1C"
+    cherryPickedCommitFgColor:
+      - "#8992A7"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#8992A7"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#C4746E"
+    defaultFgColor:
+      - "#C5C9C5"
+    searchingActiveBorderColor:
+      - "#C4B28A"

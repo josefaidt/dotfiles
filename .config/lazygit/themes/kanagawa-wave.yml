@@ -1,0 +1,35 @@
+# Kanagawa Wave theme for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#E6C384"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#98BB6C"
+      - "bold"
+    inactiveBorderColor:
+      - "#727169"
+    optionsTextColor:
+      - "#7FB4CA"
+    selectedLineBgColor:
+      - "#2A2A37"
+    selectedRangeBgColor:
+      - "#252535"
+    cherryPickedCommitFgColor:
+      - "#957FB8"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#957FB8"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#FF5D62"
+    defaultFgColor:
+      - "#DCD7BA"
+    searchingActiveBorderColor:
+      - "#E6C384"

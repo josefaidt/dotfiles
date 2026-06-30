@@ -1,0 +1,35 @@
+# Kanagawa Lotus theme for Lazygit (light)
+git:
+  paging:
+    colorArg: always
+    pager: delta --light --paging=never
+gui:
+  authorColors:
+    "*": "#43532D"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#6F894E"
+      - "bold"
+    inactiveBorderColor:
+      - "#9F9F8F"
+    optionsTextColor:
+      - "#597B75"
+    selectedLineBgColor:
+      - "#E7DBA0"
+    selectedRangeBgColor:
+      - "#DFDAA8"
+    cherryPickedCommitFgColor:
+      - "#624C83"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#624C83"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#C84053"
+    defaultFgColor:
+      - "#545464"
+    searchingActiveBorderColor:
+      - "#77713F"
