@@ -497,6 +497,10 @@ vim.keymap.set("n", "<leader>uc", function()
 	---@type ThemeChoice[]
 	local themes = {
 		{ label = "mellow", apply = applier("mellow") },
+		{ label = "embark", apply = applier("embark") },
+		{ label = "kanagawa-wave", apply = applier("kanagawa-wave") },
+		{ label = "kanagawa-dragon", apply = applier("kanagawa-dragon") },
+		{ label = "kanagawa-lotus", apply = applier("kanagawa-lotus") },
 		{ label = "everforest", apply = applier("everforest") },
 		{ label = "catppuccin", apply = applier("catppuccin") },
 		{ label = "catppuccin-latte", apply = applier("catppuccin-latte") },

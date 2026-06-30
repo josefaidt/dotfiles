@@ -1,5 +1,39 @@
 ---@module 'plugins.ui.theme'
----Theme configuration for Mellow (active), Everforest, Catppuccin, and Nightfox
+---Theme configuration for Mellow (active), Everforest, Catppuccin, Nightfox, and Embark
+
+-- Apply keyword italics whenever mellow is activated (live picker or startup)
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "mellow",
+	callback = function()
+		local italic = { italic = true }
+		for _, group in ipairs({
+			"@keyword.conditional",
+			"@keyword.repeat",
+			"@keyword.import",
+			"@keyword.return",
+			"@keyword.function",
+			"@keyword.operator",
+			"@keyword.modifier",
+			"@keyword.type",
+		}) do
+			local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+			vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
+		end
+	end,
+})
+
+-- Apply startup colorscheme from NVIM_COLORSCHEME env var (set by `theme` fish function).
+-- Falls back to mellow. Runs after all lazy=false plugins are loaded.
+vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
+	callback = function()
+		local cs = vim.env.NVIM_COLORSCHEME or "mellow"
+		local ok = pcall(vim.cmd.colorscheme, cs)
+		if not ok then
+			vim.cmd.colorscheme("mellow")
+		end
+	end,
+})
 
 ---@type LazySpec[]
 return {
@@ -17,24 +51,22 @@ return {
 			vim.g.mellow_highlight_overrides = {
 				["@property.yaml"] = { fg = "#aca1cf" }, -- blue (mellow's c.blue)
 			}
-
-			vim.cmd.colorscheme("mellow")
-
-			-- Selective keyword italics to match catppuccin's approach
-			local italic = { italic = true }
-			for _, group in ipairs({
-				"@keyword.conditional",
-				"@keyword.repeat",
-				"@keyword.import",
-				"@keyword.return",
-				"@keyword.function",
-				"@keyword.operator",
-				"@keyword.modifier",
-				"@keyword.type",
-			}) do
-				local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
-				vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
-			end
+		end,
+	},
+	-- Embark theme
+	{
+		"embark-theme/vim",
+		lazy = false,
+		priority = 1000,
+		name = "embark",
+	},
+	-- Kanagawa theme (wave, dragon, lotus variants)
+	{
+		"rebelot/kanagawa.nvim",
+		lazy = false,
+		priority = 1000,
+		config = function()
+			require("kanagawa").setup({})
 		end,
 	},
 	-- Everforest theme
