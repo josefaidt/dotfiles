@@ -35,12 +35,6 @@ return {
         return orig_ui_input(opts, on_confirm)
       end
 
-      -- Define custom highlight groups for git status using theme colors
-      vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" }) -- green
-      vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" }) -- yellow
-      vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { link = "DiagnosticError" }) -- red
-      vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" }) -- purple/magenta
-
       require("neo-tree").setup({
         -- Use vim.ui for all prompts (noice will intercept and center them)
         use_popups_for_input = false,
@@ -368,6 +362,18 @@ return {
           statusline = false,
         },
       })
+
+      -- Override neo-tree git status highlight groups after setup (and after every
+      -- colorscheme change) so the theme's diagnostic colors are used instead of
+      -- neo-tree's built-in cyan/defaults.
+      local function set_git_hl()
+        vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" })
+        vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" })
+        vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { link = "DiagnosticError" })
+        vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" })
+      end
+      set_git_hl()
+      vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = set_git_hl })
     end,
   },
 }
