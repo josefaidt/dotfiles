@@ -478,6 +478,18 @@ return {
 				},
 			},
 
+			taplo = {
+				-- TOML language server with schema support
+				settings = {
+					evenBetterToml = {
+						schema = {
+							enabled = true,
+							repositoryEnabled = true,
+						},
+					},
+				},
+			},
+
 			lua_ls = {
 				-- cmd = { ... },
 				-- filetypes = { ... },
