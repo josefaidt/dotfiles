@@ -1,27 +1,6 @@
 ---@module 'plugins.ui.theme'
 ---Theme configuration for Mellow (active), Everforest, Catppuccin, Nightfox, and Embark
 
--- Apply keyword italics whenever mellow is activated (live picker or startup)
-vim.api.nvim_create_autocmd("ColorScheme", {
-	pattern = "mellow",
-	callback = function()
-		local italic = { italic = true }
-		for _, group in ipairs({
-			"@keyword.conditional",
-			"@keyword.repeat",
-			"@keyword.import",
-			"@keyword.return",
-			"@keyword.function",
-			"@keyword.operator",
-			"@keyword.modifier",
-			"@keyword.type",
-		}) do
-			local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
-			vim.api.nvim_set_hl(0, group, vim.tbl_extend("force", hl, italic))
-		end
-	end,
-})
-
 -- Apply startup colorscheme from NVIM_COLORSCHEME env var (set by `theme` fish function).
 -- Falls back to mellow. Runs after all lazy=false plugins are loaded.
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -43,7 +22,7 @@ return {
 		priority = 1001, -- Highest priority to make it default
 		lazy = false,
 		config = function()
-			vim.g.mellow_italic_keywords = false
+			vim.g.mellow_italic_keywords = true
 
 			-- YAML keys map to @property, which mellow sets to gray07 (#c1c0d4) —
 			-- nearly identical to fg (#c9c7cd), making them look unstyled.

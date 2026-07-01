@@ -1,6 +1,9 @@
 -- Set to true if you have a Nerd Font installed and selected in your terminal
 vim.g.have_nerd_font = true
 
+-- Use 24-bit RGB colors (required for all modern color themes to render correctly)
+vim.opt.termguicolors = true
+
 -- use personal keymap
 require("config.keymaps")
 
