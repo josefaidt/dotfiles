@@ -485,6 +485,9 @@ return {
 						schema = {
 							enabled = true,
 							repositoryEnabled = true,
+							associations = {
+								["bunfig\\.toml$"] = "https://www.schemastore.org/bunfig.json",
+							},
 						},
 					},
 				},
