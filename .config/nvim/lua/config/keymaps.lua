@@ -83,6 +83,28 @@ local function list_worktrees()
 	end, worktrees)
 end
 
+---Stop LSP clients whose root_dir lives under the given worktree path.
+---nvim-lspconfig scopes a client per unique root_dir and never reaps them on
+---its own, so hopping between worktrees leaks a tsserver/etc. per visited root.
+---Called when leaving a worktree to keep the client count bounded.
+---@param path string worktree root we're switching away from
+local function stop_lsp_for_worktree(path)
+	if not path or path == "" then
+		return
+	end
+	-- Normalize to a directory prefix so we match root_dir by path containment.
+	local prefix = vim.fs.normalize(path)
+	for _, client in ipairs(vim.lsp.get_clients()) do
+		local root = client.config and client.config.root_dir
+		if root then
+			root = vim.fs.normalize(root)
+			if root == prefix or vim.startswith(root, prefix .. "/") then
+				client:stop()
+			end
+		end
+	end
+end
+
 ---Open a snacks picker for selecting a git worktree.
 ---The selected worktree changes the current tab's directory via `tcd`.
 ---@param opts? { on_select?: fun(path: string) } optional post-select hook
@@ -124,6 +146,11 @@ local function pick_worktree(opts)
 		confirm = function(picker, item)
 			picker:close()
 			if item then
+				-- Switching away from the old worktree: reap its LSP clients so
+				-- their tsserver/etc. don't linger (nvim-lspconfig won't).
+				if cwd and item.path ~= cwd then
+					stop_lsp_for_worktree(cwd)
+				end
 				vim.cmd("tcd " .. vim.fn.fnameescape(item.path))
 				if opts.on_select then
 					opts.on_select(item.path)
