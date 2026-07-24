@@ -29,6 +29,10 @@ require("lazy").setup({
 	-- defaults = { lazy = false }, -- Set to false to load plugins on startup
 	-- colorscheme that will be used when installing plugins.
 	install = { colorscheme = { "habamax" } },
-	-- automatically check for plugin updates
-	checker = { enabled = true },
+	-- Disabled: the background update checker pumps the event loop during
+	-- startup, which races neo-tree's netrw-hijack focus callback and
+	-- intermittently throws "Invalid window id" (neo-tree/setup/netrw.lua:85,
+	-- an unguarded nvim_set_current_win on a window the checker already closed).
+	-- Run :Lazy check manually instead.
+	checker = { enabled = false },
 })
