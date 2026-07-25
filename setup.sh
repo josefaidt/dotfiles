@@ -78,6 +78,7 @@ stow_all() {
   xdg-config-stow nvim
   xdg-config-stow ghostty
   xdg-config-stow zellij
+  xdg-config-stow aerospace
   stow claude
 }
 
