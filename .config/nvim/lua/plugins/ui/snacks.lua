@@ -12,6 +12,7 @@ return {
 		bufdelete = { enabled = true }, -- Smart buffer deletion
 		quickfile = { enabled = true }, -- Fast loading for small files
 		words = { enabled = true }, -- Highlight references under cursor
+		rename = { enabled = true }, -- LSP-aware file rename (updates import references)
 		picker = {
 			enabled = true,
 			ui_select = true, -- replace vim.ui.select with snacks

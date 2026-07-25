@@ -163,6 +163,9 @@ return {
                 end
 
                 if success then
+                  -- Let attached LSP clients know the file moved so they can
+                  -- update import/require references (willRenameFiles).
+                  Snacks.rename.on_rename_file(old_path, new_path)
                   -- Refresh neo-tree
                   require("neo-tree.sources.manager").refresh(state.name)
                 end
