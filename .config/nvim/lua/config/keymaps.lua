@@ -210,9 +210,13 @@ vim.keymap.set("n", "<leader>bd", function()
 	Snacks.bufdelete()
 end, { desc = "Buffer delete" })
 
-vim.keymap.set("n", "<leader>bD", function()
+vim.keymap.set("n", "<leader>ba", function()
 	Snacks.bufdelete.all()
 end, { desc = "Buffer delete all" })
+
+vim.keymap.set("n", "<leader>bo", function()
+	Snacks.bufdelete.other()
+end, { desc = "Buffer delete other" })
 
 vim.keymap.set("n", "<leader>bb", "<C-^>", { desc = "Jump to last buffer" })
 vim.keymap.set("n", "<C-->", "<C-o>", { desc = "Jump to previous position" })
