@@ -315,18 +315,27 @@ vim.keymap.set("n", "<leader>cR", function()
 	end, 100)
 end, { desc = "LSP stop and start all" })
 
--- =============================================================================
--- Diagnostics (top-level, work with linters not just LSP)
--- =============================================================================
-
-vim.keymap.set("n", "<leader>e", function()
+vim.keymap.set("n", "<leader>cd", function()
 	local winid = vim.diagnostic.open_float()
 	if winid and vim.api.nvim_win_is_valid(winid) then
 		vim.api.nvim_set_current_win(winid)
 	end
 end, { desc = "Show diagnostic" })
+
+-- =============================================================================
+-- Diagnostics (top-level, work with linters not just LSP)
+-- =============================================================================
+
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+
+-- =============================================================================
+-- Explorer (<leader>e) — snacks file explorer
+-- =============================================================================
+
+vim.keymap.set("n", "<leader>e", function()
+	Snacks.explorer()
+end, { desc = "File Explorer" })
 
 -- =============================================================================
 -- File/Find (<leader>f) + Search (<leader>s) — snacks picker
@@ -368,6 +377,12 @@ end, { desc = "Search keymaps" })
 vim.keymap.set("n", "<leader><leader>", function()
 	Snacks.picker.buffers()
 end, { desc = "Find existing buffers" })
+vim.keymap.set("n", "<leader><space>", function()
+	Snacks.picker.smart()
+end, { desc = "Smart find files" })
+vim.keymap.set("n", "<leader>:", function()
+	Snacks.picker.command_history()
+end, { desc = "Command history" })
 vim.keymap.set({ "n", "x" }, "<leader>sw", function()
 	Snacks.picker.grep_word()
 end, { desc = "Search word under cursor" })
@@ -379,15 +394,36 @@ end, { desc = "Search history" })
 vim.keymap.set("n", '<leader>s"', function()
 	Snacks.picker.registers()
 end, { desc = "Registers" })
+vim.keymap.set("n", "<leader>sa", function()
+	Snacks.picker.autocmds()
+end, { desc = "Search autocmds" })
 vim.keymap.set("n", "<leader>sc", function()
 	Snacks.picker.command_history()
 end, { desc = "Command history" })
+vim.keymap.set("n", "<leader>sC", function()
+	Snacks.picker.commands({ layout = "select" })
+end, { desc = "Search commands" })
 vim.keymap.set("n", "<leader>sd", function()
 	Snacks.picker.diagnostics()
 end, { desc = "Search diagnostics" })
+vim.keymap.set("n", "<leader>sD", function()
+	Snacks.picker.diagnostics_buffer()
+end, { desc = "Search buffer diagnostics" })
+vim.keymap.set("n", "<leader>sH", function()
+	Snacks.picker.highlights()
+end, { desc = "Search highlights" })
 vim.keymap.set("n", "<leader>sj", function()
 	Snacks.picker.jumps()
 end, { desc = "Search jumplist" })
+vim.keymap.set("n", "<leader>sl", function()
+	Snacks.picker.loclist()
+end, { desc = "Search location list" })
+vim.keymap.set("n", "<leader>sq", function()
+	Snacks.picker.qflist()
+end, { desc = "Search quickfix list" })
+vim.keymap.set("n", "<leader>su", function()
+	Snacks.picker.undo()
+end, { desc = "Search undo history" })
 
 -- Capture the grep pattern when results are sent to the quickfix list, so
 -- <leader>sR can pre-fill it. Cleared again when <leader>sR consumes it so
@@ -458,6 +494,28 @@ end, { desc = "Grep text in current package" })
 vim.keymap.set("n", "<leader>gw", function()
 	pick_worktree()
 end, { desc = "Git worktrees" })
+
+vim.keymap.set("n", "<leader>gb", function()
+	Snacks.picker.git_branches()
+end, { desc = "Git branches" })
+vim.keymap.set("n", "<leader>gl", function()
+	Snacks.picker.git_log()
+end, { desc = "Git log" })
+vim.keymap.set("n", "<leader>gL", function()
+	Snacks.picker.git_log_line()
+end, { desc = "Git log line" })
+vim.keymap.set("n", "<leader>gs", function()
+	Snacks.picker.git_status()
+end, { desc = "Git status" })
+vim.keymap.set("n", "<leader>gS", function()
+	Snacks.picker.git_stash()
+end, { desc = "Git stash" })
+vim.keymap.set("n", "<leader>gd", function()
+	Snacks.picker.git_diff()
+end, { desc = "Git diff (hunks)" })
+vim.keymap.set("n", "<leader>gf", function()
+	Snacks.picker.git_log_file()
+end, { desc = "Git log file" })
 
 -- Expose pick_worktree as a command so the alpha dashboard can call it
 -- (dashboard buttons feed keystrokes; <leader> sequences don't resolve there).

@@ -56,6 +56,6 @@ return {
 		statuscolumn = { enabled = false }, -- Using default for now
 		dashboard = { enabled = false }, -- Disabled for now
 		notifier = { enabled = false }, -- Using nvim-notify instead
-		explorer = { enabled = false }, -- Disabled - using neotree instead
+		explorer = { enabled = true }, -- Exploratory - neotree remains the primary file tree for now
 	},
 }

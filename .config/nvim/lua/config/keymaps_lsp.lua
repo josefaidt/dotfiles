@@ -56,6 +56,16 @@ function M.on_attach(event)
 		Snacks.picker.lsp_type_definitions()
 	end, "Goto type definition")
 
+	-- Show functions/methods that call the symbol under your cursor.
+	map("gai", function()
+		Snacks.picker.lsp_incoming_calls()
+	end, "Incoming calls")
+
+	-- Show functions/methods called by the symbol under your cursor.
+	map("gao", function()
+		Snacks.picker.lsp_outgoing_calls()
+	end, "Outgoing calls")
+
 	-- Show hover documentation (like hovering in VSCode)
 	-- Custom hover that suppresses "No information available" when another client
 	-- already returned content (e.g. ts_ls + biome both attached to the same buffer).

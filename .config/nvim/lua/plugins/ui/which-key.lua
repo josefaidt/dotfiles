@@ -63,7 +63,7 @@ return {
 
 		-- Document existing key chains
 		spec = {
-			{ "<leader>e", desc = "Show diagnostic" },
+			{ "<leader>e", desc = "File Explorer" },
 			{ "<leader>b", group = "buffer" },
 			{ "<leader>c", group = "code" },
 			{ "<leader>f", group = "file/find" },
