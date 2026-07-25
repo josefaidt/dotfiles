@@ -34,9 +34,11 @@ end
 set --export EDITOR nvim
 set --export JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
 set --export BUN_INSTALL "$HOME/.bun"
+set --export ANT_INSTALL "$HOME/.ant"
 
 fish_add_path $JAVA_HOME
-fish_add_path "$BUN_INSTALL/bin"
+fish_add_path $BUN_INSTALL/bin
+fish_add_path $ANT_INSTALL/bin
 fish_add_path ~/.local/bin
 fish_add_path $HOME/.opencode/bin
 fish_add_path $HOME/.devcontainers/bin
@@ -52,3 +54,4 @@ set --export --global EZA_CONFIG_DIR ~/.config/eza
 if status is-interactive
   loadenv --silent; or true
 end
+
