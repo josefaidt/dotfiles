@@ -364,13 +364,36 @@ return {
       })
 
       -- Override neo-tree git status highlight groups after setup (and after every
-      -- colorscheme change) so the theme's diagnostic colors are used instead of
-      -- neo-tree's built-in cyan/defaults.
+      -- colorscheme change) so git states are consistent and clearly visible.
+      -- Neo-tree only links Added/Deleted/Modified to GitSigns groups and hardcodes
+      -- Untracked/Conflict, so we map the full set. We derive colors from whatever
+      -- the diagnostic groups define at runtime (theme-aware), but pull them into
+      -- explicit fg values rather than links — some themes' Hint/Info colors are so
+      -- close to fg that a `link` renders as "no color". Untracked gets a distinct
+      -- color so new files stand out instead of blending into normal text.
       local function set_git_hl()
-        vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { link = "DiagnosticOk" })
-        vim.api.nvim_set_hl(0, "NeoTreeGitModified", { link = "DiagnosticWarn" })
-        vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { link = "DiagnosticError" })
-        vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { link = "DiagnosticHint" })
+        -- Read a color from an existing group, falling back to a hex if unset.
+        local function fg(group, fallback)
+          local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
+          return (ok and hl and hl.fg) and string.format("#%06x", hl.fg) or fallback
+        end
+        local ok = fg("DiagnosticOk", "#90b99f")
+        local warn = fg("DiagnosticWarn", "#e6b99d")
+        local err = fg("DiagnosticError", "#f5a191")
+        local info = fg("DiagnosticInfo", "#aca1cf")
+        -- Distinct, high-visibility color for untracked. Pinned to a visible magenta
+        -- rather than derived from a theme group — several themes' candidate groups
+        -- (Special/Hint/Info) sit too close to fg and render as "no color".
+        local untracked = "#e29eca"
+
+        vim.api.nvim_set_hl(0, "NeoTreeGitAdded", { fg = ok })
+        vim.api.nvim_set_hl(0, "NeoTreeGitStaged", { fg = ok })
+        vim.api.nvim_set_hl(0, "NeoTreeGitUntracked", { fg = untracked })
+        vim.api.nvim_set_hl(0, "NeoTreeGitModified", { fg = warn })
+        vim.api.nvim_set_hl(0, "NeoTreeGitUnstaged", { fg = warn })
+        vim.api.nvim_set_hl(0, "NeoTreeGitDeleted", { fg = err })
+        vim.api.nvim_set_hl(0, "NeoTreeGitRenamed", { fg = info })
+        vim.api.nvim_set_hl(0, "NeoTreeGitConflict", { fg = err, bold = true })
       end
       set_git_hl()
       vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = set_git_hl })
