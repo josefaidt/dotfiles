@@ -39,6 +39,7 @@ fish_add_path $JAVA_HOME
 fish_add_path "$BUN_INSTALL/bin"
 fish_add_path ~/.local/bin
 fish_add_path $HOME/.opencode/bin
+fish_add_path $HOME/.devcontainers/bin
 
 # just aws things
 set --export --global AWS_PROFILE josef

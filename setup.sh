@@ -113,6 +113,23 @@ install_nvim_prettier_plugins() {
 }
 
 # ---------------------------------------------------------------------------
+# Shared: devcontainer CLI
+# ---------------------------------------------------------------------------
+# Installs the Dev Container CLI via the standalone script (bundles its own
+# Node.js runtime, into ~/.devcontainers/bin). Passes --update when the CLI is
+# already present to bump it in place.
+
+install_devcontainer_cli() {
+  if command -v devcontainer &>/dev/null; then
+    step "Updating devcontainer CLI..."
+    curl -fsSL https://raw.githubusercontent.com/devcontainers/cli/main/scripts/install.sh | sh -s -- --update
+  else
+    step "Installing devcontainer CLI..."
+    curl -fsSL https://raw.githubusercontent.com/devcontainers/cli/main/scripts/install.sh | sh
+  fi
+}
+
+# ---------------------------------------------------------------------------
 # INSTALL
 # ---------------------------------------------------------------------------
 
@@ -165,6 +182,7 @@ run_install() {
   stow_all
   install_bun_globals
   install_nvim_prettier_plugins
+  install_devcontainer_cli
 
   echo ""
   echo "✅ Install complete!"
@@ -204,6 +222,7 @@ run_update() {
 
   install_bun_globals
   install_nvim_prettier_plugins
+  install_devcontainer_cli
 
   echo ""
   echo "✅ Update complete!"
