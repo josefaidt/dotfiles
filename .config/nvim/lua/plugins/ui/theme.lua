@@ -2,17 +2,18 @@
 ---Theme configuration for Mellow (active), Everforest, Catppuccin, Nightfox, and Embark
 
 -- Apply startup colorscheme from NVIM_COLORSCHEME env var (set by `theme` fish function).
--- Falls back to mellow. Runs after all lazy=false plugins are loaded.
-vim.api.nvim_create_autocmd("VimEnter", {
-	once = true,
-	callback = function()
-		local cs = vim.env.NVIM_COLORSCHEME or "mellow"
-		local ok = pcall(vim.cmd.colorscheme, cs)
-		if not ok then
-			vim.cmd.colorscheme("mellow")
-		end
-	end,
-})
+-- Falls back to mellow. Applied in mellow's `config` below (at plugin-load time,
+-- not VimEnter) so the theme — and the ColorScheme event it fires — happen *before*
+-- neo-tree renders and runs set_git_hl(). Applying it at VimEnter raced neo-tree,
+-- leaving the git-status highlights keyed to pre-theme diagnostic colors (the stray
+-- "orange"), fixed only by a manual `:colorscheme mellow`.
+local function apply_startup_colorscheme()
+	local cs = vim.env.NVIM_COLORSCHEME or "mellow"
+	local ok = pcall(vim.cmd.colorscheme, cs)
+	if not ok then
+		vim.cmd.colorscheme("mellow")
+	end
+end
 
 ---@type LazySpec[]
 return {
@@ -30,6 +31,12 @@ return {
 			vim.g.mellow_highlight_overrides = {
 				["@property.yaml"] = { fg = "#aca1cf" }, -- blue (mellow's c.blue)
 			}
+
+			-- Apply the startup colorscheme now (mellow is the highest-priority,
+			-- lazy=false plugin, so its config runs before neo-tree renders). This
+			-- fires ColorScheme, which drives neo-tree's set_git_hl() against the
+			-- correct theme colors.
+			apply_startup_colorscheme()
 		end,
 	},
 	-- Embark theme
