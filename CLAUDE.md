@@ -1,222 +1,213 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code (claude.ai/code) when working in this repository.
 
 ## Overview
 
-Personal dotfiles repository for macOS development environment. Uses GNU Stow for symlink management (via `xdg-config-stow` and `stow`) to deploy configs from this repo to `~/.config/` and `~`.
+Personal macOS dotfiles. Configs live in `.config/` (and a couple of top-level
+dirs) and are deployed as symlinks via [GNU Stow](https://www.gnu.org/software/stow/):
 
-**Recent Changes:**
+- `xdg-config-stow <name>` — for `.config/<name>/` packages (fish, nvim, ghostty, zellij, aerospace)
+- `stow <name>` — for top-level packages that target `$HOME` (`git`, `claude`)
 
-- Removed VSCode configuration (formerly in `.vscode/`)
-- Reorganized Fish config (moved functions out of `conf.d/` into `functions/`)
-- Added diffview plugin for Git diff viewing in Neovim
-- Expanded Neovim keymaps with more telescope and LSP bindings
-- Added type annotations to Lua configurations
-- Migrated file/grep search from ripgrep-backed Telescope to fff.nvim (Telescope still handles buffers, help, LSP, worktrees, markdown nav)
-- Consolidated keymaps into a single `lua/config/keymaps.lua` (LSP on-attach maps remain in `keymaps_lsp.lua`); aligned leader prefixes with LazyVim conventions ([B]uffer, [C]ode, [F]ile/find, [G]it, [Q]uit, [S]earch, [U]I)
-- Replaced Telescope and fff with snacks.nvim picker; snacks also handles `vim.ui.select` via `ui_select = true`. Custom worktree and markdown-heading pickers rewritten on snacks.
+`xdg-config-stow` is a cargo-installed, XDG-aware wrapper around stow. Editing a
+config here does nothing until it's stowed (or already symlinked). After a
+`git pull`, the git hooks re-stow changed packages automatically (see below).
 
-## Key Components
+## Repository Layout
 
-### Neovim (`.config/nvim/`)
+| Path              | Purpose                                                              | Deploy                     |
+| ----------------- | ------------------------------------------------------------------- | -------------------------- |
+| `.config/nvim/`   | Neovim (lazy.nvim). See [Neovim](#neovim) below.                    | `xdg-config-stow nvim`     |
+| `.config/fish/`   | Fish shell — `config.fish`, `conf.d/`, `functions/`                 | `xdg-config-stow fish`     |
+| `.config/ghostty/`| Ghostty terminal — `config` + `themes/`                            | `xdg-config-stow ghostty`  |
+| `.config/zellij/` | Zellij multiplexer — `config.kdl` + `layouts/`                     | `xdg-config-stow zellij`   |
+| `.config/aerospace/`| AeroSpace tiling WM — `aerospace.toml`                            | `xdg-config-stow aerospace`|
+| `.config/lazygit/`| lazygit — `config.yml` + `themes/` (not stowed by setup.sh)        | —                          |
+| `.config/starship.toml` | Starship prompt (symlinked manually, not stowed)             | —                          |
+| `.config/.bunfig.toml` | Bun config                                                     | —                          |
+| `git/`            | `.gitignore_global` → `~` via stow                                  | `stow git`                 |
+| `claude/`         | `~/.claude/` skills (currently a `dotfiles` skill). Stows to `$HOME`.| `stow claude`             |
+| `.claude/`        | **Repo-local** Claude Code config (agents, skills, hooks, settings). Not stowed — read directly by Claude Code when working in this repo. |
+| `npm/`            | `.npmrc` + `package.json` (global npm setup)                        | —                          |
+| `.devcontainer/`  | Dev Container definition                                            | —                          |
+| `.github/`        | GitHub Actions — `claude.yml`, `claude-code-review.yml`             | —                          |
+| `.githooks/`      | Version-controlled git hooks (see [Git Hooks](#git-hooks))          | —                          |
+| `Brewfile`        | Homebrew deps (brew/cask/cargo/tap)                                 | `brew bundle`              |
+| `setup.sh`        | Install/update entry point (see [Setup](#setup))                    | —                          |
+| `notes.md`        | Running todo/scratch list (see [Working through notes.md](#working-through-notesmd)) |          |
 
-- **Plugin manager**: lazy.nvim (auto-bootstrapped on first run)
-- **Entry point**: `init.lua` loads config/keymaps → config/lazy → config/vscode
-- **Structure**:
-  - `lua/config/` - Core settings and keymaps:
-    - `keymaps.lua` - All eager keymaps (general, buffer, code, file/find, search, git, quit, ui)
-    - `keymaps_lsp.lua` - LSP on-attach keymaps (buffer-local, set when an LSP attaches)
-    - `lazy.lua`, `vscode.lua`
-  - `lua/plugins/editor/` - Editor features:
-    - autocompletion.lua - nvim-cmp with LSP, buffer, path completions
-    - autopairs.lua - Auto-close brackets/quotes
-    - comment.lua - Smart commenting (Comment.nvim)
-    - flash.lua - Quick navigation with labeled jumps
-    - formatting.lua - Code formatting with conform.nvim
-    - linting.lua - Linting with nvim-lint
-    - markdown.lua - Markdown preview
-    - markdown-nav.lua - Snacks-based heading picker for markdown buffers
-    - multiple-cursors.lua - VSCode-like multiple cursors (vim-visual-multi)
-    - persistence.lua - Session save/restore (folke/persistence.nvim); auto-saves on quit, manually restored via alpha dashboard `s`/`S`
-    - syntax-highlighting.lua - Treesitter-based highlighting
-  - `lua/plugins/lsp/` - Language server configuration:
-    - init.lua - LSP setup and configuration
-    - lazydev.lua - Lua development enhancements
-  - `lua/plugins/ui/` - UI components:
-    - diffview.lua - Git diff viewer
-    - dropbar.lua - IDE-like breadcrumbs winbar (passive)
-    - file-tree.lua - Neo-tree file explorer
-    - git-blame.lua - Git blame annotations
-    - snacks.lua - folke/snacks: bufdelete, quickfile, words, picker (replaces telescope/fff and `vim.ui.select`)
-    - statusline.lua - Lualine status bar
-    - tabs.lua - Buffer/tab line (barbar.nvim)
-    - theme.lua - Color scheme configuration
-    - which-key.lua - Keybinding hints
-  - `colors/` - Custom color schemes (rouge2.lua)
-- **Plugin organization**: Each file in `plugins/` returns a lazy.nvim spec table
-- **Formatting**: Uses `.stylelua.toml` for Lua code formatting
+## Setup
 
-### Fish Shell (`.config/fish/`)
+`setup.sh` runs in one of two modes (auto-detected; force with `--install` / `--update`):
 
-- **Main config**: `config.fish` - Shell initialization and environment setup
-- **Custom functions**: `functions/`
-  - `cd.fish` - Enhanced directory navigation
-  - `fish_greeting.fish` - Custom greeting on shell start
-  - `la.fish` - List all files (likely using eza)
-  - `loadenv.fish` - Environment variable loading utility
-  - `zj.fish` - Zellij integration
-- **Config scripts**: `conf.d/` - Additional configuration loaded at startup
-- **Stow config**: `.stowignore` - Controls which files are stowed
-
-### Git (`git/`)
-
-- `.gitignore_global` - Global gitignore patterns
-- Deployed via `stow git` to home directory
-- Configured with `git config --global core.excludesfile ~/.gitignore_global`
-
-### Other Configs
-
-- **ghostty** - Terminal emulator config (`.config/ghostty/config`)
-- **zellij** - Terminal multiplexer (`.config/zellij/config.kdl`)
-- **starship** - Cross-shell prompt (`.config/starship.toml`)
-
-## Dependencies (Brewfile)
-
-### CLI Tools
-
-- **Package managers**: homebrew, fnm (Node.js), uv (Python)
-- **Development**: awscli, copilot-cli, git-secrets, luarocks, neovim
-- **Utilities**: bat, fzf, gh, httpie, jq, lazygit, ripgrep, stow, tree
-- **Database**: sqld (libSQL server)
-- **Shells**: fish, starship
-
-### GUI Applications
-
-- 1password-cli
-- warp (terminal)
-
-### Cargo packages
-
-- eza (modern ls replacement)
-- jj-cli (Jujutsu VCS)
-- rustlings (Rust learning)
-- stylua (Lua formatter)
-- xdg-config-stow (XDG-aware stow wrapper)
-
-### Taps
-
-- 1password/tap
-- aws/tap
-- homebrew/services
-- libsql/sqld
-
-## Setup & Deployment
+- **install** (no repo present): installs Homebrew + GitHub CLI, authenticates
+  `gh`, clones this repo, `brew bundle`, sets fish as default shell, applies
+  macOS defaults, activates git hooks (`git config core.hooksPath .githooks`),
+  stows all configs, installs bun globals + nvim prettier plugins + devcontainer CLI.
+- **update** (repo present): `git pull --rebase`, `brew bundle` + `brew upgrade`
+  + `brew cleanup`, re-stows only changed configs, refreshes bun globals / prettier
+  plugins / devcontainer CLI.
 
 ```bash
-# Initial setup (installs homebrew, dependencies, changes shell to fish)
-./setup.sh
-
-# The setup script:
-# 1. Installs Homebrew if not present
-# 2. Runs `brew bundle` to install all dependencies
-# 3. Sets fish as default shell
-# 4. Configures macOS defaults (show hidden files, dock settings, etc.)
-# 5. Creates ~/github.com/josefaidt directory
-# 6. Clones dotfiles repo
-# 7. Activates version-controlled git hooks (git config core.hooksPath .githooks)
-# 8. Stows git config
-# 9. Stows fish, nvim, ghostty, zellij configs using xdg-config-stow
-# 10. Symlinks starship.toml
-
-# Manual deployment of specific configs
-xdg-config-stow fish        # Deploy fish config
-xdg-config-stow nvim        # Deploy neovim config
-xdg-config-stow ghostty     # Deploy ghostty config
-xdg-config-stow zellij      # Deploy zellij config
-stow git                    # Deploy git config to ~
-
-# Activate git hooks (run once after a fresh clone if not using setup.sh)
-git config core.hooksPath .githooks
+bash setup.sh            # auto-detect mode
+bash setup.sh --install  # force install
+bash setup.sh --update   # force update
 ```
 
-## Git Hooks (`.githooks/`)
+Two toolchains live outside Homebrew:
 
-Version-controlled hooks live in `.githooks/` and are activated via `git config core.hooksPath .githooks` (done automatically by `setup.sh`).
+- **bun globals**: `oxfmt`, `oxlint` (installed via `bun install --global`).
+- **nvim prettier plugins**: `npm install` inside `.config/nvim/prettier-plugins/`
+  so conform.nvim can format filetypes like `.astro` without a project-local install.
 
-- **`post-merge`** — fires after `git pull` (fast-forward merge)
-- **`post-rebase`** — fires after `git pull --rebase` (used when `pull.rebase = true`)
-- **`restow`** — shared helper called by both hooks; diffs `ORIG_HEAD..HEAD`, detects which top-level directories changed, and runs the appropriate stow command for each:
-  - `.config/<name>/` changes → `xdg-config-stow <name>`
-  - `git/` changes → `stow git`
-  - `claude/` changes → `stow claude`
+If a shell login (e.g. `gh auth login`) is needed, ask the user to run it via
+`! <command>` in the prompt.
 
-Only the directories that actually changed are re-stowed; unrelated configs are left untouched.
+## Git Hooks
+
+Version-controlled in `.githooks/`, activated by `git config core.hooksPath .githooks`
+(done by `setup.sh`). After a `git pull`:
+
+- `post-merge` (fast-forward) and `post-rebase` (`pull.rebase = true`) both call
+  the shared `restow` helper with the list of changed files.
+- `restow` diffs the changed paths and re-stows only affected packages:
+  `.config/<name>/` → `xdg-config-stow <name>`; `git/` → `stow git`;
+  `claude/` → `stow claude`. Unrelated configs are left untouched.
+
+## Neovim
+
+`.config/nvim/` — lazy.nvim (auto-bootstrapped on first run), Lua config.
+
+- **Entry**: `init.lua` → `config/keymaps` → `config/lazy` → `config/vscode`.
+- **Plugins auto-import** from `plugins.editor`, `plugins.lua`, `plugins.ui` —
+  each file returns a lazy.nvim spec table; no manual registration.
+
+### Structure
+
+```
+lua/
+  config/
+    keymaps.lua       -- all eager keymaps + helpers (git root, npm pkg, worktree picker)
+    keymaps_lsp.lua   -- LSP on-attach keymaps (buffer-local; set on LspAttach)
+    lazy.lua          -- lazy.nvim bootstrap + plugin imports
+    vscode.lua        -- vscode-neovim overrides
+  plugins/
+    editor/  autocompletion, autopairs, comment, flash, formatting, linting,
+             markdown, markdown-nav, multiple-cursors, persistence, syntax-highlighting
+    lsp/     init.lua (lspconfig + mason + tools), lazydev.lua
+    ui/      dropbar, edgy, file-tree, git-blame, gitsigns, image, noice,
+             snacks, start-screen, statusline, tabs, theme, which-key
+colors/    rouge2.lua (custom)
+```
+
+### Key plugins (what's actually installed)
+
+- **Completion**: `saghen/blink.cmp` (super-tab preset, LuaSnip snippets) — **not** nvim-cmp.
+- **Picker / UI select**: `folke/snacks.nvim` picker; handles `vim.ui.select`.
+  (Telescope and fff.nvim have been fully removed — don't reference them.)
+- **UI stack**: `folke/noice.nvim` + `MunifTanjim/nui.nvim` (cmdline/messages/input/confirm),
+  `rcarriga/nvim-notify` (toasts).
+- **Statusline**: `echasnovski/mini.nvim` (`mini.statusline`) — **not** lualine.
+  mini.nvim also provides `mini.ai` and `mini.surround`.
+- **File tree**: `nvim-neo-tree/neo-tree.nvim`. **Tabs**: `akinsho/bufferline.nvim`.
+- **Git**: `lewis6991/gitsigns.nvim`, `f-person/git-blame.nvim`.
+- **Dashboard**: `goolord/alpha-nvim`. **Sessions**: `folke/persistence.nvim`.
+- **Winbar**: `Bekaboo/dropbar.nvim`. **Layout**: `folke/edgy.nvim`.
+- **Nav**: `folke/flash.nvim`. **Multi-cursor**: `mg979/vim-visual-multi`.
+- **Treesitter**, `numToStr/Comment.nvim`, `windwp/nvim-autopairs`, `3rd/image.nvim`.
+- **Themes** (`theme.lua`): active is **mellow** (`mellow-theme/mellow.nvim`, applied
+  at plugin-load from `NVIM_COLORSCHEME` env, set by the `theme` fish function).
+  Also embark, kanagawa, everforest, catppuccin, nightfox, gruvbox-material, and the
+  local `rouge2`. Selected via `<leader>uc`.
+
+### Keymaps
+
+All eager keymaps are in `lua/config/keymaps.lua`, grouped by leader prefix
+(LazyVim-aligned): **b**uffer, **c**ode, **e**xplorer, **f**ile/find, **g**it,
+**q**uit, **s**earch, **u**i. LSP on-attach maps (e.g. `grn`, `gra`, `grr`, `K`)
+are buffer-local in `keymaps_lsp.lua`. which-key shows hints. Leaders: `<Space>`
+(mapleader), `;` (maplocalleader).
+
+### LSP (`lua/plugins/lsp/init.lua`)
+
+- lspconfig + mason + mason-lspconfig (`automatic_enable = true`) + mason-tool-installer.
+- Capabilities from `require("blink.cmp").get_lsp_capabilities()`.
+- **Servers**: rust_analyzer, ts_ls, html, cssls, tailwindcss, astro, svelte,
+  emmet_ls, biome, jsonls (formatting disabled), yamlls, taplo, lua_ls.
+  Schemas via `b0o/schemastore.nvim`.
+- **Mason-installed tools** (beyond servers): stylua, ruff, oxlint, oxfmt,
+  markdownlint-cli2, yamllint.
+- Diagnostics: `virtual_text = false`; float on CursorHold when
+  `vim.g.lsp_auto_hover` is on (default off, toggled via `<leader>ush`).
+- `tailwindcss`/`biome` attach only when the project actually uses them
+  (walks up reading `package.json` / looking for `biome.json`); biome prefers
+  project-local `node_modules/.bin/biome`.
+
+### Linters & formatters (defaults live in `.config/nvim/`)
+
+Global default configs are passed to each tool when no project-local config is found
+(the fallback only fires when searching upward from the file finds nothing).
+
+| Tool                | Default config       | Filetype(s)                  |
+| ------------------- | -------------------- | ---------------------------- |
+| `oxlint`            | zero-config          | JS/TS (fallback linter)      |
+| `oxfmt`             | `.oxfmtrc.jsonc`     | JS/TS, JSON/JSONC (fallback) |
+| `markdownlint-cli2` | `.markdownlint.json` | markdown                     |
+| `yamllint`          | `.yamllint`          | yaml                         |
+| `stylua`            | `.stylelua.toml`     | lua                          |
+| prettier            | `.prettierrc.cjs` + `prettier-plugins/` | via conform when a project config is found |
+
+- **Linter priority** (nvim-lint, JS/TS): eslint (if config) → oxlint.
+- **Formatter priority** (conform.nvim, JS/TS): prettier/prettierd (if config) → oxfmt.
+
+To add a global linter/formatter: add to `ensure_installed` in `lsp/init.lua`,
+register in `linting.lua` (`linters_by_ft`) and/or `formatting.lua`
+(`formatters_by_ft`), and drop any default config in `.config/nvim/`.
+
+### Building UI in the Neovim config
+
+Use the enhanced stdlib APIs — they're auto-styled by the noice/nui/notify/snacks stack:
+
+- `vim.ui.select(items, { prompt = "..." }, cb)` — picker/dropdown
+- `vim.ui.input({ prompt = "..." }, cb)` — text input
+- `vim.notify(msg, vim.log.levels.INFO|WARN|ERROR)` — notification
+
+Never build raw floating windows or custom pickers from scratch.
+
+### Repo-local Claude agents & skills for Neovim
+
+`.claude/` provides a **`neovim`** agent (worktree-isolated) and an **`add-theme`**
+skill (`/add-theme`). Prefer the `neovim` agent for nontrivial nvim config work.
+The `add-theme` skill knows to register a colorscheme in `theme.lua` **and** wire
+every variant into the `<leader>uc` picker in `keymaps.lua` — both must stay in sync.
+
+> Note: `.claude/agents/neovim.md` contains a config-structure map that has drifted
+> from the current tree (it references a `keymaps/` subdir, `telescope.lua`,
+> `diffview.lua`, `session.lua`, lualine). Trust this file and the live tree over it.
 
 ## Common Tasks
 
-### Neovim linters and formatters
+### Modifying configs
 
-Tools are installed via Mason (`mason_ensure_installed` in `lua/plugins/lsp/init.lua`). The global default configs live inside `.config/nvim/` and are passed to each tool when no project-local config is found:
+Edit under `.config/` (or `git/`, `claude/`), commit, then re-stow the affected
+package (`xdg-config-stow <name>`, or `stow git` / `stow claude`). Changes to a
+stowed symlink take effect immediately; new files need a fresh stow.
 
-| Tool                | Default config            | Filetype(s)                  |
-| ------------------- | ------------------------- | ---------------------------- |
-| `oxlint`            | none needed (zero-config) | JS/TS (fallback)             |
-| `oxfmt`             | `.oxfmtrc.jsonc`          | JS/TS, JSON/JSONC (fallback) |
-| `markdownlint-cli2` | `.markdownlint.json`      | markdown                     |
-| `yamllint`          | `.yamllint`               | yaml                         |
-| `stylua`            | `.stylelua.toml`          | lua                          |
+### Fish functions
 
-**Linter priority** (nvim-lint, per JS/TS buffer): eslint (if config found) → oxlint (default)
+Add to `.config/fish/functions/<name>.fish` (auto-loaded). Existing: `agentbox`,
+`cd`, `fish_greeting`, `la`, `loadenv`, `setcursors`, `theme`, `zj`. Note
+`conf.d/aws.fish` is gitignored (not committed) and stow-ignored.
 
-**Formatter priority** (conform.nvim, per JS/TS buffer): prettier/prettierd (if config found) → oxfmt (default)
+### Dependencies
 
-Project-local configs always take precedence — the fallback to the nvim config dir only fires when no config file is found by searching upward from the file's directory.
+Edit `Brewfile`, then `brew bundle` (and `brew bundle cleanup` to prune). The
+Brewfile also declares `cargo` packages (eza, jj-cli, rustlings, stylua,
+xdg-config-stow) and casks (1password-cli, warp, aerospace).
 
-To add a new global linter/formatter:
+### Working through notes.md
 
-1. Add it to `mason_ensure_installed` in `lua/plugins/lsp/init.lua`
-2. Register it in `lint.linters_by_ft` in `lua/plugins/editor/linting.lua`
-3. Register it in `formatters_by_ft` in `lua/plugins/editor/formatting.lua`
-4. Place any default config file in `.config/nvim/` and wire it up via `prepend_args` / `.args` (see existing oxfmt/markdownlint examples)
-
-### When modifying neovim plugins:
-
-- Add new plugins by creating files in appropriate `plugins/` subdirectory (editor/, lsp/, or ui/)
-- Keymaps are centralized in `config/keymaps/` and organized by category (general, lsp, plugins, telescope)
-- lazy.nvim auto-imports from `plugins.editor`, `plugins.lsp`, `plugins.ui`
-- Format Lua code with stylua using the provided `.stylelua.toml` config
-
-### When building UI elements or dialogs in Neovim config:
-
-- **Always use `vim.ui.select` and `vim.ui.input`** — these are enhanced by the noice/nui stack (telescope-ui-select provides the dropdown, noice styles inputs/confirms)
-- Never build raw floating windows or custom pickers from scratch — the existing UI stack handles styling automatically
-- For pickers: `vim.ui.select(items, { prompt = "..." }, callback)`
-- For text input: `vim.ui.input({ prompt = "..." }, callback)`
-- For notifications: `vim.notify(msg, vim.log.levels.INFO|WARN|ERROR)` (nvim-notify handles display)
-
-### When modifying configs:
-
-- All configs live in `.config/` directory
-- Git config lives in `git/` directory (stowed to home)
-- Changes should be committed to repo, then re-stowed to apply
-- Use `xdg-config-stow <name>` for .config items
-- Use `stow git` for git configuration
-
-### When adding fish functions:
-
-- Place new functions in `.config/fish/functions/`
-- Follow existing naming pattern (e.g., `functionname.fish`)
-- Functions are auto-loaded by fish
-
-### When updating dependencies:
-
-- Edit `Brewfile` to add/remove packages
-- Run `brew bundle` to install new dependencies
-- Run `brew bundle cleanup` to remove unlisted packages
-
-### When working through notes.md items:
-
-- When addressing items line by line from `notes.md`, mark each item as complete by changing `[ ]` to `[x]` after successfully implementing/addressing it
-- If asked to skip or ignore an item, use strikethrough formatting (e.g., `~~- [ ] item text~~`) to indicate it should be skipped
-- This keeps the notes file as an accurate tracking document of what's been accomplished vs. what's pending
+`notes.md` is a tracking doc. When addressing items line by line: mark done with
+`[ ]` → `[x]`; mark skipped/won't-fix with strikethrough (`~~- [ ] item~~`); add
+new items as `- [ ] description`. Keep it an accurate record of done vs. pending.
