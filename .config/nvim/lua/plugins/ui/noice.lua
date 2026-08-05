@@ -93,9 +93,11 @@ return {
 			-- NormalFloat background make the hover stand off the editor background.
 			hover = {
 				-- Anchor below the cursor; nvim auto-flips above when room is tight.
+				-- row = 3 leaves a gap below the cursor so the float (with its 1-row
+				-- vertical border padding) never covers the symbol you're hovering.
 				relative = "cursor",
 				anchor = "NW",
-				position = { row = 1, col = 0 },
+				position = { row = 3, col = 0 },
 				size = {
 					max_width = 80,
 					max_height = 20,
