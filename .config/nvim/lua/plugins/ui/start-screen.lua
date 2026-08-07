@@ -75,31 +75,11 @@ return {
 
     require("alpha").setup(dashboard.config)
 
-    -- Open the dashboard plus the file-tree, leaving alpha focused. Used both
-    -- when launching on a directory and when the last real buffer is closed.
-    --
-    -- Ordering matters. Alpha latches onto whatever window is current at :Alpha
-    -- time and stores its id in state.windows[1], then keys its WinResized redraw
-    -- off that id WITHOUT re-resolving it. If neo-tree opens *after* alpha, its
-    -- split resizes/invalidates alpha's window and the next resize event throws
-    -- "Invalid window id" from alpha's own draw(). So open neo-tree FIRST, let
-    -- the layout settle, then render alpha into the (now stable) main window.
+    -- Render the dashboard, leaving alpha focused. Used both when launching on
+    -- a directory and when the last real buffer is closed. The file explorer is
+    -- now the Snacks explorer, which the user opens on demand (\ or <leader>e),
+    -- so the dashboard no longer force-opens a side tree.
     local function open_dashboard()
-      -- Reveal neo-tree first so its side split is in place before alpha latches
-      -- onto its window. Guard on the command existing — during a fresh startup
-      -- neo-tree may still be loading via lazy.nvim.
-      if vim.fn.exists(":Neotree") ~= 0 then
-        pcall(vim.cmd, "Neotree show")
-      end
-      -- Land in the main editor window (anything that isn't the neo-tree split),
-      -- so alpha renders there rather than inside the tree.
-      for _, win in ipairs(vim.api.nvim_list_wins()) do
-        local buf = vim.api.nvim_win_get_buf(win)
-        if vim.bo[buf].filetype ~= "neo-tree" then
-          vim.api.nvim_set_current_win(win)
-          break
-        end
-      end
       -- :Alpha renders into the current buffer; netrw's directory listing is
       -- 'nomodifiable', so give the window a fresh scratch buffer to draw into.
       local win = vim.api.nvim_get_current_win()
@@ -113,9 +93,9 @@ return {
 
     -- `nvim .` (or any directory arg) lands on a netrw/directory buffer that
     -- alpha's own VimEnter handler skips because argc() > 0. Detect that case
-    -- and swap in the dashboard + file-tree instead. Defer the actual swap until
-    -- after startup settles (lazy.nvim done loading neo-tree, alpha's own
-    -- VimEnter handler finished) so we don't race their window/buffer setup.
+    -- and swap in the dashboard instead. Defer the actual swap until after
+    -- startup settles (lazy.nvim done loading, alpha's own VimEnter handler
+    -- finished) so we don't race their window/buffer setup.
     vim.api.nvim_create_autocmd("VimEnter", {
       group = group,
       nested = true,

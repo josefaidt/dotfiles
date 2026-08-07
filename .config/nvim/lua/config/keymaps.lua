@@ -333,6 +333,20 @@ end, { desc = "Show diagnostic" })
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 
+-- LazyVim-aligned <leader>x diagnostics group.
+vim.keymap.set("n", "<leader>xx", function()
+	Snacks.picker.diagnostics_buffer()
+end, { desc = "Buffer diagnostics" })
+vim.keymap.set("n", "<leader>xX", function()
+	Snacks.picker.diagnostics()
+end, { desc = "Workspace diagnostics" })
+vim.keymap.set("n", "<leader>xd", function()
+	local winid = vim.diagnostic.open_float()
+	if winid and vim.api.nvim_win_is_valid(winid) then
+		vim.api.nvim_set_current_win(winid)
+	end
+end, { desc = "Line diagnostics" })
+
 -- =============================================================================
 -- Explorer (<leader>e) — snacks file explorer
 -- =============================================================================
@@ -671,25 +685,7 @@ end, { desc = "Set buffer language/filetype" })
 -- Plugin shortcuts (top-level)
 -- =============================================================================
 
--- Neo-tree: \ toggles focus between neotree and editor (doesn't close neotree)
+-- File explorer: \ toggles the Snacks explorer (open/close).
 vim.keymap.set("n", "\\", function()
-	local neo_tree_wins = vim.tbl_filter(function(win)
-		local buf = vim.api.nvim_win_get_buf(win)
-		return vim.bo[buf].filetype == "neo-tree"
-	end, vim.api.nvim_list_wins())
-
-	if #neo_tree_wins > 0 then
-		local current_win = vim.api.nvim_get_current_win()
-		local in_neotree = vim.bo[vim.api.nvim_win_get_buf(current_win)].filetype == "neo-tree"
-
-		if in_neotree then
-			vim.cmd("wincmd p")
-		else
-			vim.cmd("Neotree focus")
-		end
-	else
-		vim.cmd("Neotree show")
-	end
-end, { desc = "Toggle focus between NeoTree and editor", silent = true })
-
-vim.keymap.set("n", "<C-\\>", "<cmd>Neotree toggle<CR>", { desc = "Toggle NeoTree visibility", silent = true })
+	Snacks.explorer()
+end, { desc = "Toggle file explorer", silent = true })

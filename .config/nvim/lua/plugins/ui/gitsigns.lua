@@ -5,10 +5,6 @@
 ---All signs use a single thin "│" bar so only the color communicates the
 ---change type (add/change/delete). Colors come from the GitSignsAdd/Change/Delete
 ---highlight groups, which the active colorscheme (or Neovim defaults) provides.
----
----Side benefit: defining these groups lets neo-tree's git highlight fallback
----chain resolve through GitSigns* (see plugins/ui/file-tree.lua), though the
----explicit overrides there still take precedence.
 
 ---@type LazySpec
 return {

@@ -151,7 +151,7 @@ return {
 					},
 				},
 			},
-			-- Center input dialogs (like neotree's delete confirmation)
+			-- Center input dialogs (e.g. rename/delete confirmations)
 			input = {
 				backend = "popup",
 				relative = "editor",
@@ -167,7 +167,7 @@ return {
 					style = "rounded",
 					padding = { 0, 1 },
 					text = {
-						top = false, -- Hide title text like "neo-tree input"
+						top = false, -- Hide any provided title text on input popups
 					},
 				},
 				win_options = {

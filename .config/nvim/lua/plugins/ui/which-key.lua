@@ -72,6 +72,7 @@ return {
 			{ "<leader>s", group = "search" },
 			{ "<leader>sn", group = "noice" },
 			{ "<leader>u", group = "ui" },
+			{ "<leader>x", group = "diagnostics" },
 			{ "gr", group = "goto/refactor" },
 		},
 
