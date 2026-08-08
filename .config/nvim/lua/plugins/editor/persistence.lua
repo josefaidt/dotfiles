@@ -1,6 +1,6 @@
 ---@module 'plugins.editor.persistence'
 ---Session save/restore. Auto-saves on quit; restored manually from
----the alpha dashboard (`s` to load last, `S` to pick).
+---the snacks dashboard (`s` to load last, `S` to pick).
 
 ---@type LazySpec
 return {

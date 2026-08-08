@@ -459,12 +459,12 @@ vim.keymap.set("n", "<leader>gw", function()
 	pick_worktree()
 end, { desc = "Git worktrees" })
 
--- Expose pick_worktree as a command so the alpha dashboard can call it
--- (dashboard buttons feed keystrokes; <leader> sequences don't resolve there).
+-- Expose pick_worktree as a command so the snacks dashboard can call it
+-- (dashboard keys run `:` commands; <leader> sequences don't resolve there).
 -- :PickWorktree         → switch worktree only
 -- :PickWorktree session → switch then restore that worktree's session, falling
---                          back to a file picker if none exists (used from alpha
---                          so the dashboard doesn't linger after selection)
+--                          back to a file picker if none exists (used from the
+--                          dashboard so it doesn't linger after selection)
 vim.api.nvim_create_user_command("PickWorktree", function(args)
 	if args.args == "session" then
 		pick_worktree({
