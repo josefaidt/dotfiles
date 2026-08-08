@@ -9,6 +9,7 @@ cursor-style = block
 #theme = Catppuccin Mocha
 #theme = Everforest Dark Hard
 theme = Mellow
+#theme = Kanagawa Dragon
 macos-titlebar-style = "tabs"
 # macos-titlebar-style = hidden
 shell-integration-features = no-cursor
