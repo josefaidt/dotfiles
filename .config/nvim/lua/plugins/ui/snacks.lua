@@ -69,6 +69,25 @@ return {
 					-- controlled here rather than by the top-level `explorer` opt.
 					explorer = {
 						layout = { layout = { position = "right" } },
+						-- The explorer is a distinct picker source and does NOT
+						-- inherit the `files`/`grep` overrides above, so it needs
+						-- its own visibility flags: show dotfiles/dotdirs (.claude,
+						-- .agents, .config, …) instead of Snacks' default of hiding
+						-- them.
+						hidden = true,
+						win = {
+							list = {
+								keys = {
+									-- Don't dismiss the sidebar on <Esc>. Upstream
+									-- Snacks maps <Esc> to `close`; that made a stray
+									-- Esc (e.g. after closing a diagnostic float)
+									-- tear down the whole explorer. Treat it as a
+									-- persistent sidebar instead — close via \ or
+									-- <leader>e.
+									["<Esc>"] = false,
+								},
+							},
+						},
 					},
 				},
 			},

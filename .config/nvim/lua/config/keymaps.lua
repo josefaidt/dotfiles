@@ -685,7 +685,6 @@ end, { desc = "Set buffer language/filetype" })
 -- Plugin shortcuts (top-level)
 -- =============================================================================
 
--- File explorer: \ toggles the Snacks explorer (open/close).
-vim.keymap.set("n", "\\", function()
-	Snacks.explorer()
-end, { desc = "Toggle file explorer", silent = true })
+-- File explorer is toggled via <leader>e (Snacks.explorer). Move focus to/from
+-- it with the native window motions (<C-w>l to reach the right-side explorer,
+-- <C-w>h/<C-w>w to return) — no dedicated focus key.
