@@ -294,7 +294,9 @@ vim.keymap.set("n", "<leader>cF", function()
 	end)
 end, { desc = "Code format (choose formatter)" })
 
-vim.keymap.set("n", "<leader>cr", function()
+-- LSP restart lives on <leader>cl / <leader>cL: <leader>cr / <leader>ca are
+-- rename / code action (set buffer-locally on LspAttach in keymaps_lsp.lua).
+vim.keymap.set("n", "<leader>cl", function()
 	-- Stop LSP clients attached to current buffer; lspconfig's filetype
 	-- autocmds will reattach them on the next event (e.g. cursor move).
 	local clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -307,7 +309,7 @@ vim.keymap.set("n", "<leader>cr", function()
 	end, 100)
 end, { desc = "LSP restart" })
 
-vim.keymap.set("n", "<leader>cR", function()
+vim.keymap.set("n", "<leader>cL", function()
 	-- Stop every active client; lspconfig reattaches via filetype autocmds
 	-- when buffers are re-edited.
 	for _, client in ipairs(vim.lsp.get_clients()) do
@@ -372,11 +374,23 @@ end, { desc = "Command palette" })
 
 vim.keymap.set("n", "<leader>fn", "<cmd>enew<CR>", { desc = "New file" })
 vim.keymap.set("n", "<leader>fc", function()
-	vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua")
-end, { desc = "Edit nvim config file" })
-
--- Find files within the current npm package
+	Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+end, { desc = "Find config file" })
+vim.keymap.set("n", "<leader>fb", function()
+	Snacks.picker.buffers()
+end, { desc = "Buffers" })
+vim.keymap.set("n", "<leader>fg", function()
+	Snacks.picker.git_files()
+end, { desc = "Find git files" })
 vim.keymap.set("n", "<leader>fp", function()
+	Snacks.picker.projects()
+end, { desc = "Projects" })
+vim.keymap.set("n", "<leader>fr", function()
+	Snacks.picker.recent()
+end, { desc = "Recent files" })
+
+-- Find files within the current npm package (<leader>fp is the projects picker)
+vim.keymap.set("n", "<leader>fP", function()
 	local package_root = find_package_root()
 	if package_root then
 		Snacks.picker.files({ cwd = package_root })
@@ -395,6 +409,12 @@ end, { desc = "Search keymaps" })
 vim.keymap.set("n", "<leader><leader>", function()
 	Snacks.picker.buffers()
 end, { desc = "Find existing buffers" })
+vim.keymap.set("n", "<leader>,", function()
+	Snacks.picker.buffers()
+end, { desc = "Buffers" })
+vim.keymap.set("n", "<leader>n", function()
+	Snacks.picker.notifications()
+end, { desc = "Notification history" })
 vim.keymap.set("n", "<leader><space>", function()
 	Snacks.picker.smart()
 end, { desc = "Smart find files" })
@@ -450,7 +470,7 @@ local last_grep_pattern = nil
 
 -- Grep across project. Wraps the default <C-q> action to stash the live search
 -- before delegating to snacks' built-in qflist sender.
-vim.keymap.set("n", "<leader>sg", function()
+local function grep_project()
 	Snacks.picker.grep({
 		actions = {
 			qflist = function(picker)
@@ -460,7 +480,10 @@ vim.keymap.set("n", "<leader>sg", function()
 			end,
 		},
 	})
-end, { desc = "Grep all text" })
+end
+
+vim.keymap.set("n", "<leader>sg", grep_project, { desc = "Grep all text" })
+vim.keymap.set("n", "<leader>/", grep_project, { desc = "Grep" })
 
 -- Project-wide search & replace via quickfix.
 -- Workflow: <leader>sg → narrow → <C-q> to send results to quickfix → <leader>sR.
@@ -491,8 +514,8 @@ vim.keymap.set("n", "<leader>sR", function()
 	end)
 end, { desc = "Search & replace across quickfix" })
 
--- Fuzzy search in current buffer
-vim.keymap.set("n", "<leader>/", function()
+-- Fuzzy search in current buffer (<leader>/ is project grep, LazyVim-style)
+vim.keymap.set("n", "<leader>sb", function()
 	Snacks.picker.lines()
 end, { desc = "Fuzzily search in current buffer" })
 
@@ -578,82 +601,12 @@ end, { desc = "Select session" })
 -- UI (<leader>u)
 -- =============================================================================
 
-vim.keymap.set("n", "<leader>uc", function()
-	---@param colors string colorscheme name
-	---@param vars? table<string, any> vim.g.* values to set before applying
-	---@return fun() apply
-	local function applier(colors, vars)
-		return function()
-			if vars then
-				for k, v in pairs(vars) do
-					vim.g[k] = v
-				end
-			end
-			vim.cmd.colorscheme(colors)
-		end
-	end
-
-	---@class ThemeChoice
-	---@field label string display name + key for "(current)" check
-	---@field apply fun()
-
-	---@type ThemeChoice[]
-	local themes = {
-		{ label = "mellow", apply = applier("mellow") },
-		{ label = "embark", apply = applier("embark") },
-		{ label = "kanagawa-wave", apply = applier("kanagawa-wave") },
-		{ label = "kanagawa-dragon", apply = applier("kanagawa-dragon") },
-		{ label = "kanagawa-lotus", apply = applier("kanagawa-lotus") },
-		{ label = "everforest", apply = applier("everforest") },
-		{ label = "catppuccin", apply = applier("catppuccin") },
-		{ label = "catppuccin-latte", apply = applier("catppuccin-latte") },
-		{ label = "catppuccin-frappe", apply = applier("catppuccin-frappe") },
-		{ label = "catppuccin-macchiato", apply = applier("catppuccin-macchiato") },
-		{ label = "catppuccin-mocha", apply = applier("catppuccin-mocha") },
-		{ label = "nightfox", apply = applier("nightfox") },
-		{ label = "dayfox", apply = applier("dayfox") },
-		{ label = "dawnfox", apply = applier("dawnfox") },
-		{ label = "duskfox", apply = applier("duskfox") },
-		{ label = "nordfox", apply = applier("nordfox") },
-		{ label = "terafox", apply = applier("terafox") },
-		{ label = "carbonfox", apply = applier("carbonfox") },
-		{
-			label = "gruvbox-material-hard",
-			apply = applier("gruvbox-material", { gruvbox_material_background = "hard" }),
-		},
-		{
-			label = "gruvbox-material-medium",
-			apply = applier("gruvbox-material", { gruvbox_material_background = "medium" }),
-		},
-		{
-			label = "gruvbox-material-soft",
-			apply = applier("gruvbox-material", { gruvbox_material_background = "soft" }),
-		},
-		{ label = "rouge2", apply = applier("rouge2") },
-	}
-
-	vim.ui.select(
-		themes,
-		{
-			prompt = "Select Theme:",
-			---@param item ThemeChoice
-			---@return string
-			format_item = function(item)
-				if item.label == vim.g.theme_picker_current then
-					return item.label .. " (current)"
-				end
-				return item.label
-			end,
-		}, ---@param choice? ThemeChoice
-		function(choice)
-			if choice then
-				choice.apply()
-				vim.g.theme_picker_current = choice.label
-				vim.notify("Switched to " .. choice.label, vim.log.levels.INFO)
-			end
-		end
-	)
-end, { desc = "Choose colorscheme/theme" })
+-- Colorscheme picker: Snacks' built-in source. It discovers every colorscheme on
+-- the runtimepath (including not-yet-loaded lazy plugins) and previews each one
+-- live as you move through the list, so there's no curated list to keep in sync.
+vim.keymap.set("n", "<leader>uC", function()
+	Snacks.picker.colorschemes()
+end, { desc = "Colorschemes" })
 
 vim.keymap.set("n", "<leader>ua", function()
 	vim.g.lsp_auto_hover = not vim.g.lsp_auto_hover

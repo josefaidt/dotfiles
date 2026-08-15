@@ -79,14 +79,21 @@ colors/
 | `<leader>P`                 | Command palette                              |
 | `<leader><leader>`          | Find buffers                                 |
 | `<leader>sg`                | Live grep (from git root)                    |
-| `<leader>/`                 | Fuzzy search current buffer                  |
+| `<leader>/`                 | Grep (project)                               |
+| `<leader>sb`                | Fuzzy search current buffer                  |
 | `<leader>sn`                | Search nvim config files                     |
-| `<leader>fp` / `<leader>sp` | Find/grep in current npm package             |
+| `<leader>fP` / `<leader>sp` | Find/grep in current npm package             |
+| `<leader>fb` / `<leader>,`  | Buffers                                      |
+| `<leader>fc` / `<leader>fg` | Find config file / git files                 |
+| `<leader>fp` / `<leader>fr` | Projects / recent files                      |
+| `<leader>n`                 | Notification history                         |
 | `<leader>sh` / `<leader>sk` | Search help / keymaps                        |
 | `<leader>sw`                | Search word under cursor                     |
-| `grn`                       | LSP rename                                   |
-| `gra`                       | LSP code action                              |
-| `grr` / `gri` / `grd`       | LSP references / implementation / definition |
+| `<leader>cr` / `<leader>ca` | LSP rename / code action                     |
+| `gd` / `gD` / `gr`          | LSP definition / declaration / references    |
+| `gI` / `gy`                 | LSP implementation / type definition         |
+| `gai` / `gao`               | LSP incoming / outgoing calls                |
+| `<leader>ss` / `<leader>sS` | LSP document / workspace symbols (`gO` too)  |
 | `K`                         | Hover documentation                          |
 | `<leader>e`                 | Show diagnostic float (focused)              |
 | `[d` / `]d`                 | Prev/next diagnostic                         |
@@ -96,8 +103,8 @@ colors/
 | `<leader>bd` / `<leader>bD` | Delete buffer / delete all buffers           |
 | `<leader>bb`                | Jump to last buffer                          |
 | `<leader>br`                | Reload buffer from disk                      |
-| `<leader>lr` / `<leader>ls` | LSP restart / stop+start all                 |
-| `<leader>uc`                | Choose colorscheme                           |
+| `<leader>cl` / `<leader>cL` | LSP restart / stop+start all                 |
+| `<leader>uC`                | Colorschemes (Snacks picker, live preview)   |
 | `<leader>ul`                | Show last notification                       |
 | `<leader>un`                | Dismiss all notifications                    |
 | `<leader>w`                 | Write file                                   |

@@ -77,7 +77,7 @@ with open(fn, 'w') as f: f.writelines(lines)
     end
 
     # Neovim: set universal env var — new sessions pick this up via NVIM_COLORSCHEME.
-    # Running sessions: use <leader>uc to switch live.
+    # Running sessions: use <leader>uC to switch live.
     set -Ux NVIM_COLORSCHEME $name
-    echo "neovim: $name (new sessions; use <leader>uc to switch live)"
+    echo "neovim: $name (new sessions; use <leader>uC to switch live)"
 end

@@ -12,49 +12,65 @@ function M.on_attach(event)
 	---@param func function|string Function to execute or command string
 	---@param desc string Description of the mapping
 	---@param mode? string|string[] Mode(s) for the mapping (default: "n")
-	local map = function(keys, func, desc, mode)
+	---@param opts? vim.keymap.set.Opts Extra options merged into the mapping
+	local map = function(keys, func, desc, mode, opts)
 		mode = mode or "n"
-		vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+		vim.keymap.set(
+			mode,
+			keys,
+			func,
+			vim.tbl_extend("force", { buffer = event.buf, desc = "LSP: " .. desc }, opts or {})
+		)
 	end
 
-	-- Rename the variable under your cursor.
-	map("grn", vim.lsp.buf.rename, "Rename")
-
-	-- Execute a code action.
-	map("gra", vim.lsp.buf.code_action, "Code action", { "n", "x" })
-
-	-- Find references for the word under your cursor.
-	map("grr", function()
-		Snacks.picker.lsp_references()
-	end, "Goto references")
-
-	-- Jump to the implementation of the word under your cursor.
-	map("gri", function()
-		Snacks.picker.lsp_implementations()
-	end, "Goto implementation")
+	-- Navigation uses LazyVim's letters (gd/gD/gr/gI/gy) rather than Neovim's
+	-- native gr* prefix. `gr` is <nowait> so it fires without waiting on a longer
+	-- match — which also shadows the built-in grn/gra/grr/gri/grt, so rename and
+	-- code action live on <leader>cr / <leader>ca below.
 
 	-- Jump to the definition of the word under your cursor.
-	map("grd", function()
+	map("gd", function()
 		Snacks.picker.lsp_definitions()
 	end, "Goto definition")
 
 	-- WARN: This is not Goto Definition, this is Goto Declaration (e.g. C header).
-	map("grD", vim.lsp.buf.declaration, "Goto declaration")
+	map("gD", function()
+		Snacks.picker.lsp_declarations()
+	end, "Goto declaration")
 
-	-- Fuzzy find all symbols in the current document.
-	map("gO", function()
-		Snacks.picker.lsp_symbols()
-	end, "Document symbols")
+	-- Find references for the word under your cursor.
+	map("gr", function()
+		Snacks.picker.lsp_references()
+	end, "References", "n", { nowait = true })
 
-	-- Fuzzy find all symbols across the workspace.
-	map("gW", function()
-		Snacks.picker.lsp_workspace_symbols()
-	end, "Workspace symbols")
+	-- Jump to the implementation of the word under your cursor.
+	map("gI", function()
+		Snacks.picker.lsp_implementations()
+	end, "Goto implementation")
 
 	-- Jump to the type of the word under your cursor.
-	map("grt", function()
+	map("gy", function()
 		Snacks.picker.lsp_type_definitions()
-	end, "Goto type definition")
+	end, "Goto t[y]pe definition")
+
+	-- Rename the symbol under your cursor.
+	map("<leader>cr", vim.lsp.buf.rename, "Rename")
+
+	-- Execute a code action.
+	map("<leader>ca", vim.lsp.buf.code_action, "Code action", { "n", "x" })
+
+	-- Fuzzy find all symbols in the current document.
+	local lsp_symbols = function()
+		Snacks.picker.lsp_symbols()
+	end
+	map("<leader>ss", lsp_symbols, "LSP symbols")
+	-- `gO` is Neovim's native document-symbol key; keep it pointed at the picker.
+	map("gO", lsp_symbols, "Document symbols")
+
+	-- Fuzzy find all symbols across the workspace.
+	map("<leader>sS", function()
+		Snacks.picker.lsp_workspace_symbols()
+	end, "LSP workspace symbols")
 
 	-- Show functions/methods that call the symbol under your cursor.
 	map("gai", function()

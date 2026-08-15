@@ -119,14 +119,21 @@ colors/    rouge2.lua (custom)
 - **Themes** (`theme.lua`): active is **mellow** (`mellow-theme/mellow.nvim`, applied
   at plugin-load from `NVIM_COLORSCHEME` env, set by the `theme` fish function).
   Also embark, kanagawa, everforest, catppuccin, nightfox, gruvbox-material, and the
-  local `rouge2`. Selected via `<leader>uc`.
+  local `rouge2`. Selected via `<leader>uC` (`Snacks.picker.colorschemes()`, live
+  preview; it auto-discovers every colorscheme on the runtimepath, so there's no
+  curated list to maintain).
 
 ### Keymaps
 
 All eager keymaps are in `lua/config/keymaps.lua`, grouped by leader prefix
 (LazyVim-aligned): **b**uffer, **c**ode, **e**xplorer, **f**ile/find, **g**it,
-**q**uit, **s**earch, **u**i. LSP on-attach maps (e.g. `grn`, `gra`, `grr`, `K`)
-are buffer-local in `keymaps_lsp.lua`. which-key shows hints. Leaders: `<Space>`
+**q**uit, **s**earch, **u**i. LSP on-attach maps are buffer-local in
+`keymaps_lsp.lua` and use LazyVim letters — `gd`/`gD`/`gr`/`gI`/`gy` for
+definition/declaration/references/implementation/type, `<leader>cr`/`<leader>ca`
+for rename/code action, `<leader>ss`/`<leader>sS` (and `gO`) for symbols, `K` for
+hover. `gr` is `<nowait>`, so Neovim's native `gr*` maps (`grn`, `gra`, `grr`, …)
+are shadowed and unreachable — don't add new mappings under that prefix.
+which-key shows hints. Leaders: `<Space>`
 (mapleader), `;` (maplocalleader).
 
 ### LSP (`lua/plugins/lsp/init.lua`)
@@ -179,8 +186,8 @@ Never build raw floating windows or custom pickers from scratch.
 
 `.claude/` provides a **`neovim`** agent (worktree-isolated) and an **`add-theme`**
 skill (`/add-theme`). Prefer the `neovim` agent for nontrivial nvim config work.
-The `add-theme` skill knows to register a colorscheme in `theme.lua` **and** wire
-every variant into the `<leader>uc` picker in `keymaps.lua` — both must stay in sync.
+The `add-theme` skill registers a colorscheme in `theme.lua`; the `<leader>uC`
+Snacks picker discovers it automatically, so nothing in `keymaps.lua` needs editing.
 
 > Note: `.claude/agents/neovim.md` contains a config-structure map that has drifted
 > from the current tree (it references a `keymaps/` subdir, `telescope.lua`,
