@@ -9,7 +9,6 @@ return {
 	version = "*",
 	dependencies = "nvim-tree/nvim-web-devicons",
 	event = "VeryLazy",
-	-- lazy = false, -- Load immediately so global functions are available for neo-tree
 	opts = {
 		options = {
 			mode = "buffers", -- set to "tabs" to only show tabpages instead
@@ -83,13 +82,9 @@ return {
 			end,
 			offsets = {
 				{
-					filetype = "neo-tree",
-					-- text = function()
-					-- 	return _G.__get_selector() or ""
-					-- end,
-					-- text_align = "center",
-					-- raw = " %{%v:lua.__get_selector()%} ",
-					text = "", -- Leave empty since Neo-tree's winbar will fill it
+					-- Snacks explorer is the file tree; reserve space for it.
+					filetype = "snacks_layout_box",
+					text = "",
 					text_align = "left",
 					separator = true,
 				},

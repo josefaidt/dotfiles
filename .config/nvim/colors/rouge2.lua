@@ -315,16 +315,6 @@ hl('NvimTreeGitNew', { fg = colors.green })
 hl('NvimTreeGitDeleted', { fg = colors.berry })
 hl('NvimTreeGitIgnored', { fg = colors.bg_light })
 
--- neo-tree (alternative file explorer)
-hl('NeoTreeGitAdded', { fg = colors.green })
-hl('NeoTreeGitConflict', { fg = colors.berry })
-hl('NeoTreeGitDeleted', { fg = colors.berry })
-hl('NeoTreeGitIgnored', { fg = colors.bg_light })
-hl('NeoTreeGitModified', { fg = colors.grapple })
-hl('NeoTreeGitUnstaged', { fg = colors.grapple })
-hl('NeoTreeGitUntracked', { fg = colors.green })
-hl('NeoTreeGitStaged', { fg = colors.green })
-
 -- Terminal colors (matches Ghostty config)
 vim.g.terminal_color_0 = colors.ansi_black
 vim.g.terminal_color_1 = colors.ansi_red

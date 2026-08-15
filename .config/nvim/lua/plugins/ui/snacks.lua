@@ -4,10 +4,8 @@
 ---@type LazySpec[]
 return {
 	-- Monochrome file-type icons across the UI (picker, explorer, dropbar).
-	-- This override previously lived alongside the neo-tree spec in
-	-- file-tree.lua; neo-tree is gone, but Snacks' picker/explorer consumes
-	-- nvim-web-devicons for its file icons, so the override moves here to keep
-	-- the icon appearance consistent.
+	-- Snacks' picker/explorer consumes nvim-web-devicons for its file icons,
+	-- so this override keeps the icon appearance consistent.
 	{
 		"nvim-tree/nvim-web-devicons",
 		opts = {

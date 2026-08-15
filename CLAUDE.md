@@ -96,7 +96,7 @@ lua/
     editor/  autocompletion, autopairs, comment, flash, formatting, linting,
              markdown, markdown-nav, multiple-cursors, persistence, syntax-highlighting
     lsp/     init.lua (lspconfig + mason + tools), lazydev.lua
-    ui/      dropbar, edgy, file-tree, git-blame, gitsigns, image, noice,
+    ui/      dropbar, edgy, git-blame, gitsigns, image, noice,
              snacks, start-screen, statusline, tabs, theme, which-key
 colors/    rouge2.lua (custom)
 ```
@@ -110,7 +110,7 @@ colors/    rouge2.lua (custom)
   `rcarriga/nvim-notify` (toasts).
 - **Statusline**: `echasnovski/mini.nvim` (`mini.statusline`) — **not** lualine.
   mini.nvim also provides `mini.ai` and `mini.surround`.
-- **File tree**: `nvim-neo-tree/neo-tree.nvim`. **Tabs**: `akinsho/bufferline.nvim`.
+- **File tree**: `folke/snacks.nvim` explorer (`<leader>e`). **Tabs**: `akinsho/bufferline.nvim`.
 - **Git**: `lewis6991/gitsigns.nvim`, `f-person/git-blame.nvim`.
 - **Dashboard**: `goolord/alpha-nvim`. **Sessions**: `folke/persistence.nvim`.
 - **Winbar**: `Bekaboo/dropbar.nvim`. **Layout**: `folke/edgy.nvim`.
