@@ -111,11 +111,16 @@ colors/    rouge2.lua (custom)
 - **Statusline**: `echasnovski/mini.nvim` (`mini.statusline`) — **not** lualine.
   mini.nvim also provides `mini.ai` and `mini.surround`.
 - **File tree**: `folke/snacks.nvim` explorer (`<leader>e`). **Tabs**: `akinsho/bufferline.nvim`.
-- **Git**: `lewis6991/gitsigns.nvim`, `f-person/git-blame.nvim`.
+- **Git**: `lewis6991/gitsigns.nvim`, `f-person/git-blame.nvim`,
+  `sindrets/diffview.nvim` (side-by-side diffs / merge-conflict resolution /
+  file history — `<leader>gv`/`gV`/`gh`/`gH`).
 - **Dashboard**: `goolord/alpha-nvim`. **Sessions**: `folke/persistence.nvim`.
 - **Winbar**: `Bekaboo/dropbar.nvim`. **Layout**: `folke/edgy.nvim`.
 - **Nav**: `folke/flash.nvim`. **Multi-cursor**: `mg979/vim-visual-multi`.
 - **Treesitter**, `numToStr/Comment.nvim`, `windwp/nvim-autopairs`, `3rd/image.nvim`.
+- **Dependency management** (buffer-local, `<leader>c*`): `saecki/crates.nvim`
+  (Cargo.toml — inline version/outdated hints + blink.cmp completion source) and
+  `vuki656/package-info.nvim` (package.json — inline version/outdated/vulnerable hints).
 - **Themes** (`theme.lua`): active is **mellow** (`mellow-theme/mellow.nvim`, applied
   at plugin-load from `NVIM_COLORSCHEME` env, set by the `theme` fish function).
   Also embark, kanagawa, everforest, catppuccin, nightfox, gruvbox-material, and the
