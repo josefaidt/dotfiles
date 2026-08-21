@@ -183,6 +183,28 @@ return {
 
 			require("snacks").setup(opts)
 
+			-- Snacks' picker/explorer dims three groups by linking them all to
+			-- `NonText` (a grey fg): `SnacksPickerPathHidden` (dotfiles/dotdirs,
+			-- because Snacks flags any `.`-prefixed entry as "hidden"),
+			-- `SnacksPickerPathIgnored` (gitignored), and `SnacksPickerDir` (the
+			-- dirname segment of every entry, incl. folders with git changes).
+			-- We want dotfiles and folders to read normally and only gitignored
+			-- files to stay dim, so relink:
+			--   * PathHidden -> SnacksPickerFile       (normal file fg)
+			--   * Dir        -> SnacksPickerDirectory  (normal directory fg)
+			--   * PathIgnored is left as-is (stays dim, an intentional signal)
+			-- Applied on ColorScheme (and once now) so it survives theme reloads,
+			-- since mellow resets highlights when it loads.
+			local function fix_explorer_dimming()
+				vim.api.nvim_set_hl(0, "SnacksPickerPathHidden", { link = "SnacksPickerFile" })
+				vim.api.nvim_set_hl(0, "SnacksPickerDir", { link = "SnacksPickerDirectory" })
+			end
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				group = vim.api.nvim_create_augroup("snacks_explorer_highlights", { clear = true }),
+				callback = fix_explorer_dimming,
+			})
+			fix_explorer_dimming()
+
 			-- `nvim <dir>` needs no handling here. With `explorer.enabled = true`,
 			-- Snacks covers that case natively: Snacks.dashboard.setup() skips its
 			-- own `argc(-1) > 0` bail for a single directory arg, and the explorer's

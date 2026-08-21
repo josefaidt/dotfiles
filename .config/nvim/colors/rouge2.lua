@@ -301,20 +301,6 @@ hl('TelescopeBorder', { fg = colors.bg_light })
 hl('TelescopeSelection', { bg = colors.selection_bg })
 hl('TelescopeMatching', { fg = colors.grapple, bold = true })
 
--- nvim-tree (file explorer plugin)
-hl('NvimTreeFolderName', { fg = colors.rouge })
-hl('NvimTreeOpenedFolderName', { fg = colors.rouge_light })
-hl('NvimTreeRootFolder', { fg = colors.purple_light, bold = true })
-
--- nvim-tree git status colors
-hl('NvimTreeGitDirty', { fg = colors.grapple })
-hl('NvimTreeGitStaged', { fg = colors.green })
-hl('NvimTreeGitMerge', { fg = colors.berry })
-hl('NvimTreeGitRenamed', { fg = colors.grapple })
-hl('NvimTreeGitNew', { fg = colors.green })
-hl('NvimTreeGitDeleted', { fg = colors.berry })
-hl('NvimTreeGitIgnored', { fg = colors.bg_light })
-
 -- Terminal colors (matches Ghostty config)
 vim.g.terminal_color_0 = colors.ansi_black
 vim.g.terminal_color_1 = colors.ansi_red
