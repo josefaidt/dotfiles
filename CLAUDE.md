@@ -172,6 +172,10 @@ Global default configs are passed to each tool when no project-local config is f
 
 - **Linter priority** (nvim-lint, JS/TS): eslint (if config) → oxlint.
 - **Formatter priority** (conform.nvim, JS/TS): prettier/prettierd (if config) → oxfmt.
+- **Never give oxlint a `--config` fallback.** `-c/--config` disables oxlint's
+  nested config discovery, breaking monorepos where a nested `.oxlintrc.json`
+  extends the root and changes `env` (e.g. `env.browser` in `apps/frontend/`).
+  Its zero-config row above is intentional, not an oversight.
 
 To add a global linter/formatter: add to `ensure_installed` in `lsp/init.lua`,
 register in `linting.lua` (`linters_by_ft`) and/or `formatting.lua`

@@ -195,6 +195,33 @@ return {
 			vim.g.gruvbox_material_foreground = "material" -- 'material' | 'mix' | 'original'
 			vim.g.gruvbox_material_better_performance = 1
 			vim.g.gruvbox_material_enable_italic = 1
+
+			-- enable_italic only italicizes legacy syntax groups (Keyword, Include, ...);
+			-- treesitter @keyword.* groups link to plain Red/Orange. Re-apply italic to
+			-- them (preserving color) so JS/TS keywords like import/const/function/type
+			-- render italic.
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				pattern = "gruvbox-material",
+				callback = function()
+					for _, group in ipairs({
+						"@keyword", -- const, let, var, default, extends, ...
+						"@keyword.import", -- import, export, from
+						"@keyword.function", -- function
+						"@keyword.type", -- interface, type, enum, class
+						"@keyword.modifier", -- readonly, abstract, declare
+						"@keyword.coroutine", -- async, await
+						"@keyword.return",
+						"@keyword.conditional",
+						"@keyword.repeat",
+						"@keyword.exception",
+						"@keyword.operator", -- typeof, instanceof, new, as
+					}) do
+						local hl = vim.api.nvim_get_hl(0, { name = group, link = false })
+						hl.italic = true
+						vim.api.nvim_set_hl(0, group, hl)
+					end
+				end,
+			})
 		end,
 	},
 }

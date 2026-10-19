@@ -59,6 +59,13 @@ return {
 
 		-- Dynamically choose linter based on project config.
 		-- Priority: eslint (if config) > oxlint (default); biome is never used as linter
+		--
+		-- NOTE: oxlint deliberately gets no `--config` fallback, unlike
+		-- markdownlint-cli2/yamllint above (and oxfmt in formatting.lua). Passing
+		-- `-c/--config` disables oxlint's nested config discovery, so a monorepo
+		-- where e.g. apps/frontend/.oxlintrc.json extends the root config and sets
+		-- `env.browser` would silently fall back to root-only rules and report
+		-- browser globals as undefined. Zero-config is what makes nesting work.
 		local function get_js_linters()
 			if has_eslint_config() then
 				return { "eslint" }
