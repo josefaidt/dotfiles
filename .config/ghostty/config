@@ -1,16 +1,17 @@
+theme = Gruvbox Material Dark
+#theme = /Users/josef/github.com/josefaidt/rouge-theme/packages/rouge-3-ghostty/themes/rouge3
+
 font-size = 14
-font-family = "OperatorMono Nerd Font"
+# Unpatched font on purpose: Ghostty bundles Symbols Nerd Font and sizes/centers
+# icons to the cell grid. The self-patched "OperatorMono Nerd Font" glyphs
+# rendered at inconsistent sizes/offsets (e.g. in the nvim file explorer).
+font-family = "Operator Mono"
 font-style = Book
-font-family-italic = "OperatorMono Nerd Font"
+font-family-italic = "Operator Mono"
 font-style-italic = "Book Italic"
 font-thicken = true
 cursor-style = block
-# Theme options (uncomment to switch):
-#theme = Catppuccin Mocha
-#theme = Everforest Dark Hard
-theme = Mellow
-#theme = Kanagawa Dragon
-macos-titlebar-style = "tabs"
+macos-titlebar-style = "transparent"
 # macos-titlebar-style = hidden
 shell-integration-features = no-cursor
 window-padding-x = 8

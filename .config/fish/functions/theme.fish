@@ -5,7 +5,9 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
         everforest \
         kanagawa-wave \
         kanagawa-dragon \
-        kanagawa-lotus
+        kanagawa-lotus \
+        gruvbox-material \
+        rouge3
 
     set -l current (set -q NVIM_COLORSCHEME; and echo $NVIM_COLORSCHEME; or echo mellow)
 
@@ -51,6 +53,11 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
             set ghostty_name "Kanagawa Dragon"
         case kanagawa-lotus
             set ghostty_name "Kanagawa Lotus"
+        case gruvbox-material
+            set ghostty_name "Gruvbox Material Dark"
+        case rouge3
+            # Not a built-in: Ghostty accepts an absolute path to a theme file
+            set ghostty_name ~/github.com/josefaidt/rouge-theme/packages/rouge-3-ghostty/themes/rouge3
     end
 
     # Ghostty: write in-place via python3 (preserves hardlink to dotfiles source)

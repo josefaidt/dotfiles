@@ -1,0 +1,35 @@
+# Gruvbox Material Dark (medium) theme for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#D8A657"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#A9B665"
+      - "bold"
+    inactiveBorderColor:
+      - "#5A524C"
+    optionsTextColor:
+      - "#7DAEA3"
+    selectedLineBgColor:
+      - "#32302F"
+    selectedRangeBgColor:
+      - "#45403D"
+    cherryPickedCommitFgColor:
+      - "#A9B665"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#A9B665"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#EA6962"
+    defaultFgColor:
+      - "#D4BE98"
+    searchingActiveBorderColor:
+      - "#D8A657"

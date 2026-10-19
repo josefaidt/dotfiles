@@ -46,6 +46,13 @@ return {
 		priority = 1000,
 		name = "embark",
 	},
+	-- Rouge 3 (local, generated from the rouge-theme repo)
+	{
+		dir = "~/github.com/josefaidt/rouge-theme/packages/rouge-3-nvim",
+		name = "rouge3",
+		lazy = false,
+		priority = 1000,
+	},
 	-- Kanagawa theme (wave, dragon, lotus variants)
 	{
 		"rebelot/kanagawa.nvim",
