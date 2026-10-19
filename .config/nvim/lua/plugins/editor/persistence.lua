@@ -63,4 +63,18 @@ return {
 			end,
 		})
 	end,
+	config = function(_, opts)
+		local persistence = require("persistence")
+		persistence.setup(opts)
+		-- Prune sessions whose project dir is gone (e.g. removed worktrees) so they
+		-- don't linger in the dashboard picker. Filename is `<dir>[%%<branch>].vim`
+		-- with `/` encoded as `%` — same decoding as persistence.select().
+		local dir = require("persistence.config").options.dir
+		for _, session in ipairs(persistence.list()) do
+			local project = vim.split(session:sub(#dir + 1, -5), "%%", { plain = true })[1]:gsub("%%", "/")
+			if vim.fn.isdirectory(project) == 0 then
+				vim.fn.delete(session)
+			end
+		end
+	end,
 }

@@ -17,8 +17,22 @@ vim.g.maplocalleader = ";"
 -- =============================================================================
 
 ---Find the git repository root by searching upward from current directory
----@return string The git root directory, or initial cwd if not in a git repo
+---@return string The git root directory, or cwd if not in a git repo
 local function find_git_root()
+	-- If cwd was deleted out from under nvim (e.g. a removed worktree), spawning
+	-- anything there fails with ENOENT ("failed to spawn fd"). Hop to the nearest
+	-- surviving ancestor of the current buffer first (getcwd() is "" by then).
+	if not vim.uv.cwd() then
+		local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+		while dir:sub(1, 1) == "/" and dir ~= "/" and vim.fn.isdirectory(dir) == 0 do
+			dir = vim.fs.dirname(dir)
+		end
+		if dir:sub(1, 1) ~= "/" or dir == "/" then
+			dir = vim.env.HOME
+		end
+		vim.notify("cwd no longer exists, switched to " .. dir, vim.log.levels.WARN)
+		vim.fn.chdir(dir)
+	end
 	local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
 	if vim.v.shell_error == 0 and git_root then
 		return git_root
