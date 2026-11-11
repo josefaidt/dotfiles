@@ -27,7 +27,7 @@ config here does nothing until it's stowed (or already symlinked). After a
 | `.config/starship.toml` | Starship prompt (symlinked manually, not stowed)             | —                          |
 | `.config/.bunfig.toml` | Bun config                                                     | —                          |
 | `git/`            | `.gitignore_global` → `~` via stow                                  | `stow git`                 |
-| `claude/`         | `~/.claude/` skills (currently a `dotfiles` skill). Stows to `$HOME`.| `stow claude`             |
+| `claude/`         | `~/.claude/` skills (a `dotfiles` skill) and themes (`ember-hollow`). Stows to `$HOME`.| `stow claude`             |
 | `.claude/`        | **Repo-local** Claude Code config (agents, skills, hooks, settings). Not stowed — read directly by Claude Code when working in this repo. |
 | `npm/`            | `.npmrc` + `package.json` (global npm setup)                        | —                          |
 | `.devcontainer/`  | Dev Container definition                                            | —                          |
@@ -98,7 +98,8 @@ lua/
     lsp/     init.lua (lspconfig + mason + tools), lazydev.lua
     ui/      dropbar, edgy, git-blame, gitsigns, image, noice,
              snacks, start-screen, statusline, tabs, theme, which-key
-colors/    rouge2.lua (custom)
+  rex_colors.lua      -- colorscheme engine for palettes ported from the Rex terminal
+colors/    rouge2.lua (custom), ember-hollow.lua (Rex palette → rex_colors)
 ```
 
 ### Key plugins (what's actually installed)
@@ -124,7 +125,10 @@ colors/    rouge2.lua (custom)
 - **Themes** (`theme.lua`): active is **mellow** (`mellow-theme/mellow.nvim`, applied
   at plugin-load from `NVIM_COLORSCHEME` env, set by the `theme` fish function).
   Also embark, kanagawa, everforest, catppuccin, nightfox, gruvbox-material, and the
-  local `rouge2`. Selected via `<leader>uC` (`Snacks.picker.colorschemes()`, live
+  local `rouge2` and `ember-hollow`. `ember-hollow` is a port of the Rex terminal's
+  built-in theme: `colors/ember-hollow.lua` holds the exact palette from Rex's bundled
+  `themes.json`, and `lua/rex_colors.lua` maps any such palette to highlight groups
+  (another Rex theme is just another palette file). Selected via `<leader>uC` (`Snacks.picker.colorschemes()`, live
   preview; it auto-discovers every colorscheme on the runtimepath, so there's no
   curated list to maintain).
 

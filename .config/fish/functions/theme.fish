@@ -7,7 +7,8 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
         kanagawa-dragon \
         kanagawa-lotus \
         gruvbox-material \
-        rouge3
+        rouge3 \
+        ember-hollow
 
     set -l current (set -q NVIM_COLORSCHEME; and echo $NVIM_COLORSCHEME; or echo mellow)
 
@@ -39,6 +40,7 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
 
     # Map fish theme name to ghostty's built-in theme name.
     # Declare before the switch so the variable is in function scope.
+    # Themes with no Ghostty port (ember-hollow is a Rex built-in) leave it empty.
     set -l ghostty_name ""
     switch $name
         case mellow
@@ -62,14 +64,18 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
 
     # Ghostty: write in-place via python3 (preserves hardlink to dotfiles source)
     set -l ghostty_config ~/.config/ghostty/config
-    python3 -c "
+    if test -n "$ghostty_name"
+        python3 -c "
 import sys
 fn, name = sys.argv[1], sys.argv[2]
 with open(fn) as f: lines = f.readlines()
 lines = ['theme = ' + name + '\n' if l.startswith('theme = ') else l for l in lines]
 with open(fn, 'w') as f: f.writelines(lines)
 " $ghostty_config $ghostty_name
-    echo "ghostty: $ghostty_name (open a new window to apply)"
+        echo "ghostty: $ghostty_name (open a new window to apply)"
+    else
+        echo "ghostty: no $name theme, skipped"
+    end
 
     # Lazygit: write theme content in-place to preserve hardlink to dotfiles source
     set -l lg_themes ~/.config/lazygit/themes
