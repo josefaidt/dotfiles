@@ -10,7 +10,7 @@ function theme --description "Switch color theme across ghostty, lazygit, and ne
         rouge3 \
         ember-hollow
 
-    set -l current (set -q NVIM_COLORSCHEME; and echo $NVIM_COLORSCHEME; or echo mellow)
+    set -l current (set -q NVIM_COLORSCHEME; and echo $NVIM_COLORSCHEME; or echo ember-hollow)
 
     if test (count $argv) -eq 0
         set -l i 1

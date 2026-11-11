@@ -122,13 +122,16 @@ colors/    rouge2.lua (custom), ember-hollow.lua (Rex palette → rex_colors)
 - **Dependency management** (buffer-local, `<leader>c*`): `saecki/crates.nvim`
   (Cargo.toml — inline version/outdated hints + blink.cmp completion source) and
   `vuki656/package-info.nvim` (package.json — inline version/outdated/vulnerable hints).
-- **Themes** (`theme.lua`): active is **mellow** (`mellow-theme/mellow.nvim`, applied
-  at plugin-load from `NVIM_COLORSCHEME` env, set by the `theme` fish function).
-  Also embark, kanagawa, everforest, catppuccin, nightfox, gruvbox-material, and the
-  local `rouge2` and `ember-hollow`. `ember-hollow` is a port of the Rex terminal's
-  built-in theme: `colors/ember-hollow.lua` holds the exact palette from Rex's bundled
-  `themes.json`, and `lua/rex_colors.lua` maps any such palette to highlight groups
-  (another Rex theme is just another palette file). Selected via `<leader>uC` (`Snacks.picker.colorschemes()`, live
+- **Themes** (`theme.lua`): default is **ember-hollow** (local), applied at plugin-load
+  from the `NVIM_COLORSCHEME` env var (set by the `theme` fish function), falling back
+  to ember-hollow; the loader runs in mellow's plugin `config` because that spec has
+  the highest priority. `ember-hollow` is a port of the Rex terminal's built-in theme:
+  `colors/ember-hollow.lua` holds the exact palette from Rex's bundled `themes.json`,
+  and `lua/rex_colors.lua` maps any such palette to highlight groups (another Rex theme
+  is just another palette file). Also mellow, embark, rouge3, kanagawa, everforest,
+  catppuccin, nightfox, gruvbox-material, and the local `rouge2`. lazygit's tracked
+  `config.yml` matches the default theme (`theme <name>` overwrites it from `themes/`).
+  Selected via `<leader>uC` (`Snacks.picker.colorschemes()`, live
   preview; it auto-discovers every colorscheme on the runtimepath, so there's no
   curated list to maintain).
 

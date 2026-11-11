@@ -1,17 +1,18 @@
 ---@module 'plugins.ui.theme'
----Theme configuration for Mellow (active), Everforest, Catppuccin, Nightfox, and Embark
+---Theme configuration. Default is ember-hollow (local: colors/ember-hollow.lua); also
+---Mellow, Embark, Rouge 3, Kanagawa, Everforest, Catppuccin, Nightfox, Gruvbox Material
 
 -- Apply startup colorscheme from NVIM_COLORSCHEME env var (set by `theme` fish function).
--- Falls back to mellow. Applied in mellow's `config` below (at plugin-load time,
+-- Falls back to ember-hollow. Applied in mellow's `config` below (at plugin-load time,
 -- not VimEnter) so the theme — and the ColorScheme event it fires — happen early,
 -- before other UI (file explorer, statusline) renders against theme colors.
 -- Applying at VimEnter previously raced those consumers, leaving highlights keyed
 -- to pre-theme colors until a manual `:colorscheme mellow`.
 local function apply_startup_colorscheme()
-	local cs = vim.env.NVIM_COLORSCHEME or "mellow"
+	local cs = vim.env.NVIM_COLORSCHEME or "ember-hollow"
 	local ok = pcall(vim.cmd.colorscheme, cs)
 	if not ok then
-		vim.cmd.colorscheme("mellow")
+		vim.cmd.colorscheme("ember-hollow")
 	end
 end
 
@@ -20,7 +21,7 @@ return {
 	-- Mellow theme
 	{
 		"mellow-theme/mellow.nvim",
-		priority = 1001, -- Highest priority to make it default
+		priority = 1001, -- Highest priority: its config applies the startup colorscheme
 		lazy = false,
 		config = function()
 			vim.g.mellow_italic_keywords = true
