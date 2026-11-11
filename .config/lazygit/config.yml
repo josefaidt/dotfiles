@@ -1,35 +1,35 @@
-# Gruvbox Material Dark (medium) theme for Lazygit
+# Ember Hollow (Rex terminal built-in theme) for Lazygit
 git:
   paging:
     colorArg: always
     pager: delta --dark --paging=never
 gui:
   authorColors:
-    "*": "#D8A657"
+    "*": "#E8A75A"
   nerdFontsVersion: "3"
   theme:
     activeBorderColor:
-      - "#A9B665"
+      - "#F0955C"
       - "bold"
     inactiveBorderColor:
-      - "#5A524C"
+      - "#4E4641"
     optionsTextColor:
-      - "#7DAEA3"
+      - "#8E9FB3"
     selectedLineBgColor:
-      - "#32302F"
+      - "#34241C"
     selectedRangeBgColor:
-      - "#45403D"
+      - "#47302A"
     cherryPickedCommitFgColor:
-      - "#A9B665"
+      - "#F0955C"
     cherryPickedCommitBgColor:
       - "bg"
     markedBaseCommitFgColor:
-      - "#A9B665"
+      - "#8E9FB3"
     markedBaseCommitBgColor:
       - "bg"
     unstagedChangesColor:
-      - "#EA6962"
+      - "#E06C4F"
     defaultFgColor:
-      - "#D4BE98"
+      - "#E0CFC4"
     searchingActiveBorderColor:
-      - "#D8A657"
+      - "#E8A75A"
