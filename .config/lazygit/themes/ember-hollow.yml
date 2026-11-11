@@ -1,0 +1,35 @@
+# Ember Hollow (Rex terminal built-in theme) for Lazygit
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+gui:
+  authorColors:
+    "*": "#E8A75A"
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#F0955C"
+      - "bold"
+    inactiveBorderColor:
+      - "#4E4641"
+    optionsTextColor:
+      - "#8E9FB3"
+    selectedLineBgColor:
+      - "#34241C"
+    selectedRangeBgColor:
+      - "#47302A"
+    cherryPickedCommitFgColor:
+      - "#F0955C"
+    cherryPickedCommitBgColor:
+      - "bg"
+    markedBaseCommitFgColor:
+      - "#8E9FB3"
+    markedBaseCommitBgColor:
+      - "bg"
+    unstagedChangesColor:
+      - "#E06C4F"
+    defaultFgColor:
+      - "#E0CFC4"
+    searchingActiveBorderColor:
+      - "#E8A75A"
