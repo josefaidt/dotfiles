@@ -365,6 +365,23 @@ return {
 				-- Handle monorepo setups with symlinked node_modules
 				-- Use root_markers instead of root_dir function for simple pattern matching
 				root_markers = { "tsconfig.json", "package.json" },
+				-- Keep vendored reference repos (git subtrees under `<git root>/repos/`)
+				-- out of auto-import suggestions. Computed per client because the
+				-- server's root is the nearest package.json, which in a monorepo is a
+				-- nested package; `./repos/**` would resolve against that, and a bare
+				-- `repos/**` becomes `/**/repos/**` (hiding `src/repos/` code too).
+				-- An absolute path at the git root sidesteps both.
+				before_init = function(params, config)
+					local root = config.root_dir and vim.fs.root(config.root_dir, ".git")
+					if not root then
+						return
+					end
+					local opts = params.initializationOptions or {}
+					opts.preferences = vim.tbl_deep_extend("force", opts.preferences or {}, {
+						autoImportFileExcludePatterns = { root .. "/repos/**" },
+					})
+					params.initializationOptions = opts
+				end,
 			},
 			html = {}, -- HTML
 			cssls = {}, -- CSS
