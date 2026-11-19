@@ -4,6 +4,17 @@ vim.g.have_nerd_font = true
 -- Use 24-bit RGB colors (required for all modern color themes to render correctly)
 vim.opt.termguicolors = true
 
+-- `nvim <dir>` doesn't change cwd on its own, so the explorer would show <dir>
+-- while every cwd-based picker (files, grep, git root, sessions) still targets
+-- the shell's directory. Treat a lone directory argument as the project root,
+-- like `code <dir>`. Runs before plugins load so they all see the new cwd.
+if vim.fn.argc() == 1 then
+	local arg = vim.fn.argv(0) --[[@as string]]
+	if vim.fn.isdirectory(arg) == 1 then
+		vim.fn.chdir(vim.fn.fnamemodify(arg, ":p"))
+	end
+end
+
 -- use personal keymap
 require("config.keymaps")
 
