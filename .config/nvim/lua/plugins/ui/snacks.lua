@@ -90,6 +90,10 @@ return {
 							".amplify-hosting",
 							".venv",
 							".DS_Store",
+							-- Vendored reference repos (git subtrees) at the project
+							-- root. Leading `/` anchors to the search root so a nested
+							-- `src/repos/` (repository-pattern code) still shows up.
+							"/repos/",
 						},
 					},
 					grep = {
@@ -105,6 +109,7 @@ return {
 							"coverage",
 							".amplify-hosting",
 							".venv",
+							"/repos/", -- vendored subtrees; see files.exclude
 						},
 					},
 					-- Open the file explorer on the right side (LazyVim-style).
