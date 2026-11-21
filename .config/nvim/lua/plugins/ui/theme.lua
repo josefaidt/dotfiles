@@ -1,6 +1,6 @@
 ---@module 'plugins.ui.theme'
 ---Theme configuration. Default is ember-hollow (local: colors/ember-hollow.lua); also
----Mellow, Embark, Rouge 3, Kanagawa, Everforest, Catppuccin, Nightfox, Gruvbox Material
+---Mellow, Embark, Rouge 3, Kanagawa, Everforest, Catppuccin, Nightfox, Ember, Gruvbox Material
 
 -- Apply startup colorscheme from NVIM_COLORSCHEME env var (set by `theme` fish function).
 -- Falls back to ember-hollow. Applied in mellow's `config` below (at plugin-load time,
@@ -192,6 +192,13 @@ return {
 	-- Not set as active; loads when invoked via :colorscheme.
 	{
 		"EdenEast/nightfox.nvim",
+		lazy = true,
+	},
+	-- Ember (ember, ember-soft, ember-light, ember-lighter, ember-auto)
+	-- Not set as active; loads when invoked via :colorscheme.
+	{
+		"ember-theme/nvim",
+		name = "ember-theme",
 		lazy = true,
 	},
 	-- Gruvbox Material — single colorscheme name; variants tuned via vim.g.gruvbox_material_*.
