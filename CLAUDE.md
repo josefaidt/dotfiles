@@ -117,6 +117,9 @@ colors/    rouge2.lua (custom), ember-hollow.lua (Rex palette → rex_colors)
   file history — `<leader>gv`/`gV`/`gh`/`gH`).
 - **Dashboard**: `goolord/alpha-nvim`. **Sessions**: `folke/persistence.nvim`.
 - **Winbar**: `Bekaboo/dropbar.nvim`. **Layout**: `folke/edgy.nvim`.
+- **Soft wrap column** (`plugins/ui/soft-wrap.lua`): `shortcuts/no-neck-pain.nvim`
+  caps and centers the text area at `vim.g.wrap_column` (default 120) so long lines
+  wrap there like VS Code's `wordWrapColumn`. `<leader>uw` toggles, `<leader>uW` sets the column.
 - **Nav**: `folke/flash.nvim`. **Multi-cursor**: `mg979/vim-visual-multi`.
 - **Treesitter**, `numToStr/Comment.nvim`, `windwp/nvim-autopairs`, `3rd/image.nvim`.
 - **Dependency management** (buffer-local, `<leader>c*`): `saecki/crates.nvim`
