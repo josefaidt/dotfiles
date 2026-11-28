@@ -37,6 +37,9 @@ return {
 		return {
 			width = vim.g.wrap_column,
 			autocmds = { enableOnVimEnter = true },
+			-- The snacks explorer opens on the right (see snacks.lua); the default
+			-- is "left", which shrinks the wrong side and squeezes the editor.
+			integrations = { snacks_picker = { position = "right" } },
 			-- Empty side splits: no number/sign clutter, and don't count as buffers.
 			buffers = {
 				wo = { fillchars = "eob: " },
