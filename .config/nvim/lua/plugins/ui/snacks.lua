@@ -32,7 +32,11 @@ end
 local function open_dashboard()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
 		local buf = vim.api.nvim_win_get_buf(win)
-		if vim.api.nvim_win_get_config(win).relative == "" and not vim.bo[buf].filetype:find("snacks") then
+		-- Also skip no-neck-pain's empty padding splits (soft-wrap.lua); they are
+		-- first in window order, so the dashboard would otherwise land in the
+		-- left padding instead of the editor.
+		local ft = vim.bo[buf].filetype
+		if vim.api.nvim_win_get_config(win).relative == "" and not ft:find("snacks") and ft ~= "no-neck-pain" then
 			-- Focus the target window explicitly, otherwise the dashboard is
 			-- silently rendered into a window that never gets focus.
 			vim.api.nvim_set_current_win(win)
