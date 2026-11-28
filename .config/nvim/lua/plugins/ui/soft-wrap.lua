@@ -39,7 +39,13 @@ return {
 			autocmds = { enableOnVimEnter = true },
 			-- The snacks explorer opens on the right (see snacks.lua); the default
 			-- is "left", which shrinks the wrong side and squeezes the editor.
-			integrations = { snacks_picker = { position = "right" } },
+			integrations = {
+				snacks_picker = { position = "right" },
+				-- Leave the snacks dashboard full-width and uncentered; no-neck-pain
+				-- kicks in once a real file opens. Its default filetype list only has
+				-- "snacks", which doesn't match "snacks_dashboard".
+				dashboard = { enabled = true, filetypes = { "dashboard", "alpha", "starter", "snacks", "snacks_dashboard" } },
+			},
 			-- Empty side splits: no number/sign clutter, and don't count as buffers.
 			buffers = {
 				wo = { fillchars = "eob: " },
@@ -50,5 +56,10 @@ return {
 		require("no-neck-pain").setup(opts)
 		-- Wrap long lines visually inside the capped area.
 		vim.opt.wrap = true
+		-- With 'equalalways' (the default), opening any split (e.g. the snacks
+		-- explorer) makes nvim equalize every window, so the padding splits and the
+		-- editor each end up ~1/3 of the width. Turning it off lets no-neck-pain keep
+		-- the editor at the wrap column and shrink only the padding.
+		vim.opt.equalalways = false
 	end,
 }
